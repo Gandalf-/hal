@@ -280,7 +280,7 @@ while inotifywait -e modify $log_file; do
       "/gamemode spectator $user"
 
     # weather
-    hcsr 'make it sunny' \
+    hcsr 'make it clear' \
       "$(random_okay 'Rain clouds begone!')" \
       "/weather clear 600"
 
