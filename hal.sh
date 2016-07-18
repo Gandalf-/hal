@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Modify this line to reflect your configuration
+log_file='/home/minecraft/logs/latest.log'
+memory_dir='/tmp/hal/'
+
 function hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
@@ -75,7 +79,7 @@ function random_musing(){
   : ' none -> string
   returns a random musing
   '
-  echo "$(random 'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' 'Just growing some trees...' 'Reorganizing clouds...' 'Turning dirt to grass...' 'Mind controlling a squid...' 'Hiding diamonds...' 'Looking for lost cows...')"
+  echo "$(random 'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' 'Just growing some trees...' 'Reorganizing clouds...' 'Turning dirt to grass...' 'Mind controlling a squid...' 'Hiding diamonds...' 'Looking for lost cows...' 'Did you know about overviewer.anardil.net?')"
 }
 
 function shut_down(){
@@ -98,6 +102,44 @@ function hcsr(){
   fi
 }
 
+function go_home(){
+  : ' none -> none
+  attempts to teleport the current user to their home destination
+  '
+  homeline=$(cat "$memory_dir""$user".home)
+  xcoord=$(echo "$homeline" | cut -f 1 -d ' ')
+  ycoord=$(echo "$homeline" | cut -f 2 -d ' ')
+  zcoord=$(echo "$homeline" | cut -f 3 -d ' ')
+
+  if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
+    say "Sorry $user, either you never told me where home was or I forgot!"
+
+  else
+    say "Off you go $user!"
+    run "/tp $user $xcoord $ycoord $zcoord"
+  fi
+  ran_command=0
+}
+
+function set_home(){
+  : ' none -> none
+  attempts to set the current users home destination
+  '
+  homeline=$(echo "$currline" | grep -oh 'set home as .*$')
+  xcoord=$(echo "$homeline" | cut -f 4 -d ' ')
+  ycoord=$(echo "$homeline" | cut -f 5 -d ' ')
+  zcoord=$(echo "$homeline" | cut -f 6 -d ' ')
+
+  if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
+    say "Sorry $user, something doesn't look right with those coordinates"
+
+  else
+    echo "$xcoord $ycoord $zcoord" > "$memory_dir""$user".home
+    say "Okay $user, I've set your home to be $xcoord $ycoord $zcoord!"
+  fi
+  ran_command=0
+}
+
 currline=""
 prevline=""
 user=""
@@ -109,21 +151,29 @@ echo 'Hal starting up'
 say "I'm alive!"
 trap shut_down INT
 starttime=$(date +%s)
+mkdir -p "$memory_dir"
 sleep 1
 
-while true; do
+while inotifywait -e modify $log_file; do
+
+  # preparation
   ran_command=1
-  currline=$(tail -n 3 /home/minecraft/logs/latest.log | grep -v 'Keeping entity' | tail -n 1)
-  user=$(echo "$currline" | grep -oh '<.*>' | grep -oh '[^<>]*')
+  currline=$(tail -n 3 $log_file | grep -v 'Keeping entity' | tail -n 1)
   lifetime=$(expr $(date +%s) - $starttime)
+
+  user=$(echo "$currline" | grep -oh '<[^ ]*>' | grep -oh '[^<>]*')
   if test "$user" == ""; then
-    user=$(echo "$currline" | cut -f 4 -d ' ')
+    if test "$(echo "$currline" | grep "User Authenticator")" == ''; then
+      user=$(echo "$currline" | cut -f 4 -d ' ')
+    else
+      user=$(echo "$currline" | cut -f 8 -d ' ')
+    fi
   fi
 
   # time based
-  if [[ $(expr $(date +%s) % 600) -le 3 ]] && [[ $num_players -ne 0 ]] ; then
+  if [[ $(expr $(date +%s) % 900) -le 2 ]] && [[ $num_players -ne 0 ]] ; then
     say "$(random_musing)"
-    sleep 3
+    sleep 2
   fi
 
   if [[ $quiet -ge 300 ]] ; then
@@ -133,16 +183,18 @@ while true; do
   fi
 
   if test "$prevline" != "$currline" && not_repeat ; then
+
     # administrative
     if $(hc "help"); then
       say "I'm Hal, a teenie tiny AI that will try to help you!"
       say "Here are somethings I understand:"
       say "- hello, hey, how are you, what's up"
       say "- thanks, yes, no, whatever"
-      say "- help, restart, be quiet, you can talk"
-      say "- make it (day, night, sunny, rainy)"
+      say "- help, restart, be quiet, you can talk, status update"
+      say "- make it (day, night, clear, rainy)"
       say "- make me (healthy, invisible, fast)"
-      say "- take me to the telehub"
+      say "- take me (to the telehub, home)"
+      say "- set home as <x> <y> <z>"
       say "- put me in (creative, survival, spectator) mode"
       ran_command=0
     fi
@@ -156,11 +208,18 @@ while true; do
     if $(hc 'be quiet'); then
       say "Oh... Okay. I'll still do as you say but stay quiet for a while"
       quiet=1
+      ran_command=0
     fi
 
     if $(hc 'you can talk'); then
       say "Hooray!"
       quiet=0
+      ran_command=0
+    fi
+
+    if $(hc 'status update'); then
+      say "Active players: $num_players"
+      ran_command=0
     fi
 
     # chatting
@@ -199,6 +258,14 @@ while true; do
       "$(random_okay 'Off you go!')" \
       "/tp $user -108 3 98"
 
+    if $(hc 'take me home'); then
+      go_home
+    fi
+
+    if $(hc 'set home as'); then
+      set_home
+    fi
+
     # gamemode
     hcsr 'put me in survival mode' \
       "$(random_okay 'Remember to eat!')" \
@@ -230,7 +297,8 @@ while true; do
       "/time set night"
 
     # player joins
-    if $(contains "$user joined the game"); then
+    if $(contains "UUID of player"); then
+      sleep 0.1
       say "Hey there $user! Try saying \"Hal help\""
       num_players=$(expr $num_players + 1)
       ran_command=0
@@ -274,6 +342,5 @@ while true; do
 
   fi
 
-  prevline="$curline"
-  sleep 1
+  prevline="$currline"
 done
