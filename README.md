@@ -18,7 +18,7 @@ Minecraft AI in Shell
 - [Server] [Hal] - make it (day, night, clear, rainy)
 - [Server] [Hal] - make me (healthy, invisible, fast)
 - [Server] [Hal] - take me (to the telehub, home)
-- [Server] [Hal] - set home as <x> <y> <z>
+- [Server] [Hal] - set home as \<x\> \<y\> \<z\>
 - [Server] [Hal] - put me in (creative, survival, spectator) mode
 
 ## Setup
