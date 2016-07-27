@@ -240,6 +240,7 @@ mkdir -p "$memory_dir"
 sleep 1
 
 # main
+while true; do
 while inotifywait -e modify $log_file; do
 
   # preparation
@@ -441,4 +442,6 @@ while inotifywait -e modify $log_file; do
 
   fi
   prevline="$currline"
+done
+sleep 1
 done
