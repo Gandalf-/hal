@@ -167,14 +167,13 @@ function go_home(){
   : ' none -> none
   attempts to teleport the current user to their home destination
   '
-  homeline=$(cat "$memory_dir""$user".home)
-  xcoord=$(echo "$homeline" | cut -f 1 -d ' ')
-  ycoord=$(echo "$homeline" | cut -f 2 -d ' ')
-  zcoord=$(echo "$homeline" | cut -f 3 -d ' ')
+  local homeline=$(cat "$memory_dir""$user".home)
+  local xcoord=$(echo "$homeline" | cut -f 1 -d ' ')
+  local ycoord=$(echo "$homeline" | cut -f 2 -d ' ')
+  local zcoord=$(echo "$homeline" | cut -f 3 -d ' ')
 
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
     say "Sorry $user, either you never told me where home was or I forgot!"
-
   else
     say "Off you go $user!"
     run "/tp $user $xcoord $ycoord $zcoord"
@@ -186,14 +185,13 @@ function set_home(){
   : ' none -> none
   attempts to set the current users home destination
   '
-  homeline=$(echo "$currline" | grep -ioh 'set home as .*$')
-  xcoord=$(echo "$homeline" | cut -f 4 -d ' ')
-  ycoord=$(echo "$homeline" | cut -f 5 -d ' ')
-  zcoord=$(echo "$homeline" | cut -f 6 -d ' ')
+  local homeline=$(echo "$currline" | grep -ioh 'set home as .*$')
+  local xcoord=$(echo "$homeline" | cut -f 4 -d ' ')
+  local ycoord=$(echo "$homeline" | cut -f 5 -d ' ')
+  local zcoord=$(echo "$homeline" | cut -f 6 -d ' ')
 
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
     say "Sorry $user, something doesn't look right with those coordinates"
-
   else
     echo "$xcoord $ycoord $zcoord" > "$memory_dir""$user".home
     say "Okay $user, I've set your home to be $xcoord $ycoord $zcoord!"
@@ -205,24 +203,54 @@ function remember_phrase(){
   : ' none -> none
   parse out note to remember and write to user file
   '
-  say "Okay $user, I'll remember!"
-  note=$(echo "$currline" | grep -oih 'remember .*$' | cut -f 2- -d ' ')
-  echo "$note" >> "$memory_dir""$user".memories
+  local note=$(echo "$currline" | grep -oih 'remember .*$' | cut -f 2- -d ' ')
   ran_command=0
+
+  if test "$note" != ""; then
+    echo "$note" >> "$memory_dir""$user".memories
+    say "Okay $user, I'll remember!"
+  else
+    say "Remember what?"
+  fi
 }
 
 function recall_phrase(){
   : ' none -> none
   search through user memories for related information
   '
-  phrase=$(echo $currline | grep -oih 'recall .*$' | cut -f 2- -d ' ')
-  mem_file="$memory_dir""$user".memories
+  local phrase=$(echo $currline | grep -oih 'recall .*$' | cut -f 2- -d ' ')
+  local mem_file="$memory_dir""$user".memories
   ran_command=0
 
-  say "Okay $user, here's what I know about $phrase:"
-  for memory in "$(cat $mem_file | grep "$phrase")"; do
-    say "\"$memory\""
-  done
+  if test "$phrase" != ""; then
+    if test "$(cat $mem_file | grep "$phrase")" != ""; then
+      say "Okay $user, here's what I know about $phrase:"
+      for memory in "$(cat $mem_file | grep "$phrase")"; do
+        say "\"$memory\""
+      done
+    else
+      say "Sorry $user, looks like I don't know anything about $phrase"
+    fi
+  else
+    say "Recall what?"
+  fi
+}
+
+function forget_phrase(){
+  : ' none -> none
+  remove all related phrases from user file
+  '
+  local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
+  local phrase=$(echo $currline | sed -e "$regex" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
+  local mem_file="$memory_dir""$user".memories
+  ran_command=0
+
+  if test "$phrase" != ""; then
+    grep -v "$phrase" "$mem_file" > "$mem_file"
+    say "Okay $user, I've forgetten everything about \"$phrase!\""
+  else
+    say "Sorry $user, I'm not sure what to do"
+  fi
 }
 
 currline=""
