@@ -11,10 +11,16 @@ source "./utility.sh"
 source "./memories.sh"
 source "./chatting.sh"
 source "./teleport.sh"
+
 debug=1
+quiet=0
+user='<player1>'
 
 # boilerplate
 #==================
+function test_cleanup(){
+  debug=1 ; quiet=0 ; user='<player1>'; echo
+}
 function pass(){ echo -n " pass"; }
 function fail(){ echo -n " fail"; }
 function scpass(){
@@ -58,7 +64,7 @@ function test_tell_joke() {
   '
   echo -n 'tell_joke       '
   scfail tell_joke ""
-  echo
+  test_cleanup
 }
 
 function test_hc(){
@@ -75,82 +81,105 @@ function test_hc(){
   for currline in "${arry[@]}"; do
     ocfail $(hc 'blah')
   done
-  echo
+  test_cleanup
 }
 
 function test_contains(){
   echo -n 'contains        '
-  echo
+  declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah')
+  for currline in "${arry[@]}"; do
+    ocpass $(contains 'blah')
+  done
+
+  declare -a arry=('goof' 'hal herp' 'HAL' 'herp derp')
+  for currline in "${arry[@]}"; do
+    ocfail $(contains 'blah')
+  done
+  test_cleanup
 }
 
 function test_say(){
   echo -n 'say             '
-  echo
+  scpass "$(say "hello there")" '/say [Hal] hello there'
+  scpass "$(say "hello there $user")" '/say [Hal] hello there <player1>'
+  scpass "$(say "")" '/say [Hal] '
+  test_cleanup
 }
 
 function test_tell(){
   echo -n 'tell            '
-  echo
+  scpass "$(tell "hello there")" "/tell $user hello there"
+  scpass "$(tell "hello $user there wow")" "/tell $user hello $user there wow"
+  scpass "$(tell "")" "/tell $user "
+  scpass "$(tell )" "/tell $user "
+  quiet=1
+  scpass "$(tell "hello there")" ""
+  scpass "$(tell "hello $user there wow")" ""
+  test_cleanup
 }
 
 function test_run(){
   echo -n 'run             '
-  echo
+  scpass "$(run "/hello there")" "/hello there"
+  scpass "$(run "/hello $user there wow")" "/hello $user there wow"
+  scpass "$(run "")" ""
+  scpass "$(run   )" ""
+  test_cleanup
 }
 
 function test_not_repeat(){
   echo -n 'not_repeat      '
-  echo
+  test_cleanup
 }
 
 function test_random(){
   echo -n 'random          '
-  echo
+  test_cleanup
 }
 
 function test_random_okay(){
   echo -n 'random_okay     '
-  echo
+  test_cleanup
 }
 
 function test_random_musing(){
   echo -n 'random_musing   '
-  echo
+  test_cleanup
 }
 
 function test_shut_down(){
   echo -n 'shut_down       '
-  echo
+  test_cleanup
 }
 
 function test_hcsr(){
   echo -n 'hcsr            '
-  echo
+  test_cleanup
 }
 
 function test_go_home(){
   echo -n 'go_home         '
-  echo
+  test_cleanup
 }
 
 function test_set_home(){
   echo -n 'set_home        '
-  echo
+  test_cleanup
 }
 
 function test_remember_phrase(){
   echo -n 'remember_phrase '
-  echo
+  test_cleanup
 }
 
 function test_recall_phrase(){
   echo -n 'recall_phrase   '
-  echo
+  test_cleanup
 }
 
 function test_forget_phrase(){
   echo -n 'forget_phrase   '
-  echo
+  test_cleanup
 }
 
 # run

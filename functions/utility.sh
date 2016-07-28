@@ -64,7 +64,7 @@ function run(){
   run a command in the server
   '
   if test "$1" != ""; then
-    if [[ $debug -ne 0 ]]; then
+    if test "$debug" == "0"; then
       tmux send-keys -t minecraft "$@" Enter
     else
       echo "$@"
