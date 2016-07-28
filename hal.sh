@@ -51,7 +51,9 @@ while inotifywait -e modify $log_file; do
     quiet=$(expr $quiet + 1)
   fi
 
-  if test "$prevline" != "$currline" && not_repeat ; then
+  if test "$prevline" != "$currline" && not_repeat; then
+    echo "prev: $prevline"
+    echo "curr: $currline"
 
     # administrative
     if $(hc "help"); then
@@ -63,7 +65,7 @@ while inotifywait -e modify $log_file; do
       say "- make it (day, night, clear, rainy)"
       say "- make me (healthy, invisible, fast)"
       say "- take me (to the telehub, home), set home as <x> <y> <z>"
-      say "- remember <phrase>, recall <phrase>, forget everything"
+      say "- (remember, recall, forget) <phrase>"
       say "- put me in (creative, survival, spectator) mode"
       ran_command=0
     fi
@@ -125,6 +127,11 @@ while inotifywait -e modify $log_file; do
       say "Done $user, I forgot everything"
       echo "" > "$memory_dir""$user".memories
       ran_command=0
+
+    else
+      if $(hc 'forget'); then
+        forget_phrase
+      fi
     fi
 
     # effects

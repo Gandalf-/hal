@@ -76,7 +76,7 @@ function say(){
   say a phrase in the server
   '
   if test "$quiet" == "0" ; then
-    if [[ $debug -ne 0 ]]; then
+    if test "$debug" == "0"; then
       tmux send-keys -t minecraft "/say [Hal] $1" Enter
     else
       echo "/say [Hal] $1"
@@ -89,7 +89,7 @@ function tell(){
   say a phrase in the server
   '
   if test "$quiet" == "0" ; then
-    if [[ $debug -ne 0 ]]; then
+    if test "$debug" == "0"; then
       tmux send-keys -t minecraft "/tell $user $1" Enter
     else
       echo "/tell $user $1"
@@ -210,7 +210,8 @@ function remember_phrase(){
   : ' none -> none
   parse out note to remember and write to user file
   '
-  local note=$(echo "$currline" | grep -oih 'remember .*$' | cut -f 2- -d ' ')
+  local regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
+  local note=$(echo "$currline" | grep -oih 'remember .*$' | sed -e "$regex")
 
   if test "$note" != ""; then
     echo "$note" >> "$memory_dir""$user".memories
@@ -225,14 +226,15 @@ function recall_phrase(){
   : ' none -> none
   search through user memories for related information
   '
-  local phrase=$(echo $currline | grep -oih 'recall .*$' | cut -f 2- -d ' ')
+  local regex='s/\(recall\ \|hal$\)//gI'
+  local phrase=$(echo $currline | grep -oih 'recall .*$' | sed -e "$regex")
   local mem_file="$memory_dir""$user".memories
 
   if test "$phrase" != ""; then
     if test "$(cat $mem_file | grep "$phrase")" != ""; then
-      say "Okay $user, here's what I know about $phrase:"
-      for memory in "$(cat $mem_file | grep "$phrase")"; do
-        say "\"$memory\""
+      say "Okay $user, here's what I know about \"$phrase\":"
+      cat $mem_file | grep "$phrase" | while read line; do
+        say "\"$line\""
       done
     else
       say "Sorry $user, looks like I don't know anything about $phrase"
