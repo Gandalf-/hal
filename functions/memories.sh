@@ -8,7 +8,7 @@ function remember_phrase(){
   local note=$(echo "$currline" | grep -oih 'remember .*$' | sed -e "$regex")
 
   if test "$note" != ""; then
-    echo "$note" >> "$memory_dir""$user".memories
+    echo "$note" >> "$mem_dir""$user".memories
     say "Okay $user, I'll remember!"
   else
     say "Remember what?"
@@ -22,7 +22,7 @@ function recall_phrase(){
   '
   local regex='s/\(recall\ \|hal$\)//gI'
   local phrase=$(echo $currline | grep -oih 'recall .*$' | sed -e "$regex")
-  local mem_file="$memory_dir""$user".memories
+  local mem_file="$mem_dir""$user".memories
 
   if test "$phrase" != ""; then
     if test "$(cat $mem_file | grep "$phrase")" != ""; then
@@ -45,7 +45,7 @@ function forget_phrase(){
   '
   local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
   local phrase=$(echo $currline | sed -e "$regex" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
-  local mem_file="$memory_dir""$user".memories
+  local mem_file="$mem_dir""$user".memories
   local file_contents=$(cat "$mem_file")
 
   if test "$phrase" != ""; then

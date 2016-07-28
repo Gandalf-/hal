@@ -4,7 +4,7 @@ function go_home(){
   : ' none -> none
   attempts to teleport the current user to their home destination
   '
-  local homeline=$(cat "$memory_dir""$user".home)
+  local homeline=$(cat "$mem_dir""$user".home)
   local xcoord=$(echo "$homeline" | cut -f 1 -d ' ')
   local ycoord=$(echo "$homeline" | cut -f 2 -d ' ')
   local zcoord=$(echo "$homeline" | cut -f 3 -d ' ')
@@ -30,7 +30,7 @@ function set_home(){
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
     say "Sorry $user, something doesn't look right with those coordinates"
   else
-    echo "$xcoord $ycoord $zcoord" > "$memory_dir""$user".home
+    echo "$xcoord $ycoord $zcoord" > "$mem_dir""$user".home
     say "Okay $user, I've set your home to be $xcoord $ycoord $zcoord!"
   fi
   ran_command=0

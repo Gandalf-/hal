@@ -1,8 +1,19 @@
 #!/bin/bash
 
-# Modify this line to reflect your configuration
-log_file='/home/minecraft/logs/latest.log'
-memory_dir='/tmp/hal/'
+if [[ -e ~/.halrc ]] ; then
+  ins_dir=$(cat ~/.halrc | grep "INSTALLDIR " | cut -f 2- -d ' ')
+  log_file=$(cat ~/.halrc | grep "LOGFILE " | cut -f 2- -d ' ')
+  mem_dir=$(cat ~/.halrc | grep "MEMDIR " | cut -f 2- -d ' ')
+
+  if test "$ins_dir" == ""|| test "$log_file" == ""|| test "$mem_dir" == ""; then
+    echo "Configuration file is incomplete"
+    exit
+  fi
+
+else
+  echo "Cannot find ~/.halrc"
+  exit
+fi
 
 debug=0
 currline=""
@@ -12,16 +23,17 @@ ran_command=0
 num_players=0
 quiet=0
 starttime=$(date +%s)
+eval ins_dir=$ins_dir
 
-source "./functions/utility.sh"
-source "./functions/memories.sh"
-source "./functions/chatting.sh"
-source "./functions/teleport.sh"
+source "$ins_dir""functions/utility.sh"
+source "$ins_dir""functions/memories.sh"
+source "$ins_dir""functions/chatting.sh"
+source "$ins_dir""functions/teleport.sh"
 
 echo 'Hal starting up'
 say "I'm alive!"
 trap shut_down INT
-mkdir -p "$memory_dir"
+mkdir -p "$mem_dir"
 sleep 1
 
 # main
@@ -124,7 +136,7 @@ while inotifywait -e modify $log_file; do
 
     if $(hc 'recall everything') ; then
       say "Okay $user, here's everything I know for you!"
-      cat "$memory_dir""$user".memories | while read line; do
+      cat "$mem_dir""$user".memories | while read line; do
         say "$line"
       done
       ran_command=0
@@ -135,7 +147,7 @@ while inotifywait -e modify $log_file; do
     
     if $(hc 'forget everything') ; then
       say "Done $user, I forgot everything!"
-      echo "" > "$memory_dir""$user".memories
+      echo "" > "$mem_dir""$user".memories
       ran_command=0
 
     elif $(hc 'forget') ; then
