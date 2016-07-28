@@ -1,6 +1,9 @@
 #!/bin/bash
 
-source functions.sh
+source "./utility.sh"
+source "./memories.sh"
+source "./chatting.sh"
+source "./teleport.sh"
 debug=1
 
 # boilerplate

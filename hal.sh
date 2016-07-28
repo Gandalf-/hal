@@ -13,7 +13,10 @@ num_players=0
 quiet=0
 starttime=$(date +%s)
 
-source "./functions/functions.sh"
+source "./functions/utility.sh"
+source "./functions/memories.sh"
+source "./functions/chatting.sh"
+source "./functions/teleport.sh"
 
 echo 'Hal starting up'
 say "I'm alive!"
