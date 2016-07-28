@@ -119,19 +119,24 @@ while inotifywait -e modify $log_file; do
       remember_phrase
     fi
 
-    if $(hc 'recall'); then
+    if $(hc 'recall everything') ; then
+      say "Okay $user, here's everything I know for you!"
+      cat "$memory_dir""$user".memories | while read line; do
+        say "$line"
+      done
+      ran_command=0
+
+    elif $(hc 'recall') ; then
       recall_phrase
     fi
     
-    if $(hc 'forget everything'); then
-      say "Done $user, I forgot everything"
+    if $(hc 'forget everything') ; then
+      say "Done $user, I forgot everything!"
       echo "" > "$memory_dir""$user".memories
       ran_command=0
 
-    else
-      if $(hc 'forget'); then
-        forget_phrase
-      fi
+    elif $(hc 'forget') ; then
+      forget_phrase
     fi
 
     # effects

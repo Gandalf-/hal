@@ -252,9 +252,10 @@ function forget_phrase(){
   local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
   local phrase=$(echo $currline | sed -e "$regex" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
   local mem_file="$memory_dir""$user".memories
+  local file_contents=$(cat "$mem_file")
 
   if test "$phrase" != ""; then
-    grep -v "$phrase" "$mem_file" > "$mem_file"
+    echo "$file_contents" | grep -v "$phrase" > "$mem_file"
     say "Okay $user, I've forgetten everything about \"$phrase!\""
   else
     say "Sorry $user, I'm not sure what to do"
