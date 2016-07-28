@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# Modify this line to reflect your configuration
-log_file='/home/minecraft/logs/latest.log'
-memory_dir='/tmp/hal/'
+log_file=$(cat "./halrc" | grep "LOGFILE " | cut -f 2- -d ' ')
+mem_dir=$(cat "./halrc" | grep "MEMFILE " | cut -f 2- -d ' ')
+
+if test "$log_file" == "" || test "$mem_dir" == ""; then
+  echo "Unable to find configuration or it's incomplete!"
+  exit
+fi
 
 debug=0
 currline=""
@@ -21,7 +25,7 @@ source "./functions/teleport.sh"
 echo 'Hal starting up'
 say "I'm alive!"
 trap shut_down INT
-mkdir -p "$memory_dir"
+mkdir -p "$mem_dir"
 sleep 1
 
 # main
@@ -124,7 +128,7 @@ while inotifywait -e modify $log_file; do
 
     if $(hc 'recall everything') ; then
       say "Okay $user, here's everything I know for you!"
-      cat "$memory_dir""$user".memories | while read line; do
+      cat "$mem_dir""$user".memories | while read line; do
         say "$line"
       done
       ran_command=0
@@ -135,7 +139,7 @@ while inotifywait -e modify $log_file; do
     
     if $(hc 'forget everything') ; then
       say "Done $user, I forgot everything!"
-      echo "" > "$memory_dir""$user".memories
+      echo "" > "$mem_dir""$user".memories
       ran_command=0
 
     elif $(hc 'forget') ; then

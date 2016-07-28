@@ -1,0 +1,7 @@
+# Configuration file for hal.sh
+
+# full path to minecraft server's latest.log
+LOGFILE /home/minecraft/logs/latest.log
+
+# full path to directory that will contain user memories
+MEMFILE /tmp/hal/
