@@ -4,4 +4,7 @@
 LOGFILE /home/minecraft/logs/latest.log
 
 # full path to directory that will contain user memories
-MEMFILE /tmp/hal/
+MEMDIR /tmp/hal/
+
+# full path to hal installation directory
+INSTALLDIR ~/.hal/
