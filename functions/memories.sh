@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# memories.sh
+
 function remember_phrase(){
   : ' none -> none
   parse out note to remember and write to user file

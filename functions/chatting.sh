@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# chatting.sh
+
 function random_okay(){
   : ' string -> string
   returns a random affirmative

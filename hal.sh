@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# hal.sh
+
+set -u
+set -o pipefail
+
 if [[ -e ~/.halrc ]] ; then
   ins_dir=$(cat ~/.halrc | grep "INSTALLDIR " | cut -f 2- -d ' ')
   log_file=$(cat ~/.halrc | grep "LOGFILE " | cut -f 2- -d ' ')

@@ -1,4 +1,9 @@
-# Configuration file for hal.sh
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# halrc
 
 # full path to minecraft server's latest.log
 LOGFILE /home/minecraft/logs/latest.log

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# utility.sh
+
 function hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# unit_test.sh
+
 source "./utility.sh"
 source "./memories.sh"
 source "./chatting.sh"

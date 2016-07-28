@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux, inotify-tools
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
+# teleport.sh
+
 function go_home(){
   : ' none -> none
   attempts to teleport the current user to their home destination
