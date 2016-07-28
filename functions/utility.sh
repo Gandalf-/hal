@@ -77,7 +77,7 @@ function not_repeat(){
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
   '
-  if test "$(echo "$currline" | grep "\[Hal\]")" == ""; then
+  if test "$(echo $currline | grep -oih '\[Hal\]' )" == ''; then
     return 0
   else
     return 1

@@ -129,6 +129,17 @@ function test_run(){
 
 function test_not_repeat(){
   echo -n 'not_repeat      '
+  declare -a arry=('[hal] blah' '[hal] blah blah' 'blah [HAL]' 'blah [hAl] blah')
+  for currline in "${arry[@]}"; do
+    not_repeat
+    ocfail 
+  done
+
+  declare -a arry=('goof' 'hal herp' 'HAL' 'herp derp')
+  for currline in "${arry[@]}"; do
+    not_repeat
+    ocpass 
+  done
   test_cleanup
 }
 
