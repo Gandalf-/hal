@@ -25,8 +25,18 @@ function go_to_dest(){
     run "/tp $user -108 3 98"
 
   else
-    say "Okay $user, I'll try!"
-    run "/tp $user $where"
+    local dest=$(\
+      cat ~/.halrc | grep '\->' | grep -i "$where" | grep -oih '\->.*$' |
+      cut -f 2- -d ' ')
+
+    if test "$dest" == '' ; then
+      say "Okay $user, I'll try!"
+      run "/tp $user $where"
+
+    else
+      say "Okay $user, I think I know where that is. Off you go!"
+      run "/tp $user $dest"
+    fi
   fi
 }
 

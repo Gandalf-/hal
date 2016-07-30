@@ -7,6 +7,24 @@
 
 # utility.sh
 
+function show_help(){
+  : ' none -> none
+  print in game usage information
+  '
+  say "I'm Hal, a teenie tiny AI that will try to help you!"
+  say "Here are somethings I understand:"
+  say "- hello, hey, how are you, what's up, tell a joke"
+  say "- thanks, yes, no, whatever"
+  say "- help, restart, be quiet, you can talk, status update"
+  say "- make it (day, night, clear, rainy)"
+  say "- make me (healthy, invisible, fast)"
+  say "- take me to (the telehub, <player>)"
+  say "- take me home, set home as <x> <y> <z>"
+  say "- (remember, recall, forget) <phrase>"
+  say "- put me in (creative, survival, spectator) mode"
+  ran_command=0
+}
+
 function hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
