@@ -90,7 +90,7 @@ function test_hc(){
   make sure hc only accepts inputs that match "hal" and $1
   '
   echo -n 'hc              '
-  declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah')
+  declare -a arry=('hal blah' 'HAL blah blah' 'BLAH HAL' 'blah hAl blah')
   for currline in "${arry[@]}"; do
     $(hc 'blah')
     ocpass 
@@ -106,7 +106,7 @@ function test_hc(){
 
 function test_contains(){
   echo -n 'contains        '
-  declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah')
+  declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah' 'BLAH')
   for currline in "${arry[@]}"; do
     $(contains 'blah')
     ocpass
@@ -199,7 +199,13 @@ function test_hcsr(){
   currline='hal whats up?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
 
+  currline='hal WHATS UP?'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+
   currline='whats up hal?'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+
+  currline='WHATS UP hal?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
 
   currline='herbert be quiet'
@@ -240,10 +246,6 @@ function test_go_to_dest(){
   rcpass "$(go_to_dest)" "/tp player Jimmy"
 
   currline='hal take me to Herp Derp'
-  rcpass "$(go_to_dest)" "Okay player, I'll try!"
-  rcpass "$(go_to_dest)" "/tp player Herp Derp"
-
-  currline='take me to Herp Derp hal'
   rcpass "$(go_to_dest)" "Okay player, I'll try!"
   rcpass "$(go_to_dest)" "/tp player Herp Derp"
   test_cleanup
