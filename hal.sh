@@ -10,31 +10,36 @@
 set -u
 set -o pipefail
 
+debug=0
+quiet=0
+currline=''
+prevline=''
+user=''
+ran_command=0
+num_players=0
+starttime=$(date +%s)
+ins_dir=''
+log_file=''
+mem_dir=''
+
 if [[ -e ~/.halrc ]] ; then
   ins_dir=$(cat ~/.halrc | grep "INSTALLDIR " | cut -f 2- -d ' ')
   log_file=$(cat ~/.halrc | grep "LOGFILE " | cut -f 2- -d ' ')
   mem_dir=$(cat ~/.halrc | grep "MEMDIR " | cut -f 2- -d ' ')
 
   if test "$ins_dir" == ""|| test "$log_file" == ""|| test "$mem_dir" == ""; then
-    echo "Configuration file is incomplete"
-    exit
+    echo "error: Configuration file is incomplete"; exit
   fi
 
 else
-  echo "Cannot find ~/.halrc"
-  exit
+  echo "error: Cannot find ~/.halrc"; exit
 fi
 
-debug=0
-currline=""
-prevline=""
-user=""
-ran_command=0
-num_players=0
-quiet=0
-starttime=$(date +%s)
-eval ins_dir=$ins_dir
+if test "$(which tmux)" == '' || test "$(which inotifywait)" == ''; then
+  echo "error: hal.sh requires tmux and inotify-tools to run"; exit
+fi
 
+eval ins_dir=$ins_dir
 source "$ins_dir""functions/utility.sh"
 source "$ins_dir""functions/memories.sh"
 source "$ins_dir""functions/chatting.sh"
@@ -57,7 +62,7 @@ while inotifywait -e modify $log_file; do
 
   user=$(echo "$currline" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
   if test "$user" == ""; then
-    if test "$(echo "$currline" | grep -oih "User Authenticator")" == ''; then
+    if test "$(echo "$currline" | grep -oih 'User Authenticator')" == ''; then
       user=$(echo "$currline" | cut -f 4 -d ' ')
     else
       user=$(echo "$currline" | cut -f 8 -d ' ')
@@ -81,20 +86,7 @@ while inotifywait -e modify $log_file; do
     echo "curr: $currline"
 
     # administrative
-    if $(hc "help"); then
-      say "I'm Hal, a teenie tiny AI that will try to help you!"
-      say "Here are somethings I understand:"
-      say "- hello, hey, how are you, what's up, tell a joke"
-      say "- thanks, yes, no, whatever"
-      say "- help, restart, be quiet, you can talk, status update"
-      say "- make it (day, night, clear, rainy)"
-      say "- make me (healthy, invisible, fast)"
-      say "- take me to (the telehub, <player>)"
-      say "- take me home, set home as <x> <y> <z>"
-      say "- (remember, recall, forget) <phrase>"
-      say "- put me in (creative, survival, spectator) mode"
-      ran_command=0
-    fi
+    if $(hc "help"); then show_help ; fi
 
     if $(hc 'restart'); then
       say 'Okay, restarting!'
@@ -141,9 +133,7 @@ while inotifywait -e modify $log_file; do
     if $(hc 'tell a joke'); then tell_joke ; fi
 
     # memory
-    if $(hc 'remember'); then
-      remember_phrase
-    fi
+    if $(hc 'remember'); then remember_phrase ; fi
 
     if $(hc 'recall everything') ; then
       say "Okay $user, here's everything I know for you!"
