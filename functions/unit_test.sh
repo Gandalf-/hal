@@ -218,19 +218,25 @@ function test_go_to_dest(){
   echo -n 'go_to_dest      '
   user='player'
   currline='hal take me to the telehub'
+  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
   currline='take me to the telehub hal'
+  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
   currline='HAL TAKE ME TO THE TELEHUB'
+  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
   currline='TAKE ME TO THE TELEHUB HAL'
+  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
   currline='hal go to the telehub'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
+  echo
+  echo -n '                '
 
   currline='go to the telehub hal'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"

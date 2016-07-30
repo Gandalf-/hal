@@ -19,10 +19,10 @@ function go_to_dest(){
   if test "$where" == ''; then
     say "Sorry $user, I don't know where that is!"
 
-  # ${var,,} == tolower()
-  elif test "${where,,}" == 'the telehub'; then
-    say "$(random_okay 'Off you go!')"
-    run "/tp $user -108 3 98"
+#  # ${var,,} == tolower()
+#  elif test "${where,,}" == 'the telehub'; then
+#    say "$(random_okay 'Off you go!')"
+#    run "/tp $user -108 3 98"
 
   else
     local dest=$(\
