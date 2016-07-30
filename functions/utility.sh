@@ -102,7 +102,9 @@ function shut_down(){
   '
   echo 'Hal shutting down'
   say 'I died!'
-  exit
+  if test "$debug" == "0"; then
+    exit
+  fi
 }
 
 function hcsr(){

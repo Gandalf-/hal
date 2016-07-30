@@ -22,26 +22,46 @@ function test_cleanup(){
   debug=1 ; quiet=0 ; user='<player1>'; echo
 }
 function pass(){ echo -n " pass"; }
-function fail(){ echo -n " fail"; }
+function fail(){ echo " fail"; }
 function scpass(){
-  if test "$1" == "$2"; then pass; else fail; fi
+  if test "$1" == "$2"; then 
+    pass
+  else 
+    fail; echo "Expected: $1"; echo "Received: $2"
+  fi
 }
 function scfail(){
-  if test "$1" == "$2"; then fail; else pass; fi
+  if test "$1" == "$2"; then 
+    fail; echo "Expected: $1"; echo "Received: $2"
+  else 
+    pass
+  fi
 }
 function rcpass(){
-  if test "$(echo "$1" | grep "$2")" != ""; then pass;
-  else fail; fi
+  if test "$(echo "$1" | grep -F "$2")" != ""; then 
+    pass
+  else 
+    fail; echo "Expected: $2"; echo "Received: $1"
+  fi
 }
 function rcfail(){
-  if test "$(echo "$1" | grep "$2")" != ""; then fail;
+  if test "$(echo "$1" | grep "$2")" != ""; then 
+    fail; echo "Expected: $2"; echo "Received: $1"
   else pass; fi
 }
 function ocpass(){
-  if [[ $? -eq 0 ]]; then pass; else fail; fi
+  if [[ $? -eq 0 ]]; then 
+    pass
+  else 
+    fail; echo "Return value was non-zero"
+  fi
 }
 function ocfail(){
-  if [[ $? -eq 0 ]]; then fail; else pass; fi
+  if [[ $? -eq 0 ]]; then 
+    fail; echo "Return value was zero"
+  else 
+    pass
+  fi
 }
 function test_test(){
   echo -n 'test            '
@@ -51,8 +71,7 @@ function test_test(){
   scfail 'a' 'b'
   rcfail 'apple blueberry watermelon' 'green'
   false ; ocfail 
-  cleanup
-  echo
+  test_cleanup
 }
 
 # tests
@@ -158,21 +177,75 @@ function test_random(){
 
 function test_random_okay(){
   echo -n 'random_okay     '
+  scfail "$(random_okay 'hello')" ''
+  scfail "$(random_okay '')" ''
   test_cleanup
 }
 
 function test_random_musing(){
   echo -n 'random_musing   '
+  scfail "$(random_okay)" ''
   test_cleanup
 }
 
 function test_shut_down(){
   echo -n 'shut_down       '
+  rcpass "$(shut_down)" "Hal shutting down"
   test_cleanup
 }
 
 function test_hcsr(){
   echo -n 'hcsr            '
+  currline='hal whats up?'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+
+  currline='whats up hal?'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+
+  currline='herbert be quiet'
+  rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" '/say [Hal] okie doke /my command'
+  test_cleanup
+}
+
+function test_go_to_dest(){
+  echo -n 'go_to_dest      '
+  user='player'
+  currline='hal take me to the telehub'
+  rcpass "$(go_to_dest)" '/tp player -108 3 98'
+
+  currline='take me to the telehub hal'
+  rcpass "$(go_to_dest)" '/tp player -108 3 98'
+
+  currline='HAL TAKE ME TO THE TELEHUB'
+  rcpass "$(go_to_dest)" '/tp player -108 3 98'
+
+  currline='TAKE ME TO THE TELEHUB HAL'
+  rcpass "$(go_to_dest)" '/tp player -108 3 98'
+
+  currline='hal go to the telehub'
+  rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
+
+  currline='go to the telehub hal'
+  rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
+
+  currline='hal go to blerug'
+  rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
+
+  currline='hal take me to Jimmy'
+  rcpass "$(go_to_dest)" "Okay player, I'll try!"
+  rcpass "$(go_to_dest)" "/tp player Jimmy"
+
+  currline='take me to Jimmy hal'
+  rcpass "$(go_to_dest)" "Okay player, I'll try!"
+  rcpass "$(go_to_dest)" "/tp player Jimmy"
+
+  currline='hal take me to Herp Derp'
+  rcpass "$(go_to_dest)" "Okay player, I'll try!"
+  rcpass "$(go_to_dest)" "/tp player Herp Derp"
+
+  currline='take me to Herp Derp hal'
+  rcpass "$(go_to_dest)" "Okay player, I'll try!"
+  rcpass "$(go_to_dest)" "/tp player Herp Derp"
   test_cleanup
 }
 
@@ -216,6 +289,7 @@ test_random_okay
 test_random_musing
 test_shut_down
 test_hcsr
+test_go_to_dest
 test_go_home
 test_set_home
 test_remember_phrase

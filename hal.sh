@@ -55,9 +55,9 @@ while inotifywait -e modify $log_file; do
   currline=$(tail -n 3 $log_file | grep -v 'Keeping entity' | tail -n 1)
   lifetime=$(expr $(date +%s) - $starttime)
 
-  user=$(echo "$currline" | grep -oh '<[^ ]*>' | grep -oh '[^<>]*')
+  user=$(echo "$currline" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
   if test "$user" == ""; then
-    if test "$(echo "$currline" | grep "User Authenticator")" == ''; then
+    if test "$(echo "$currline" | grep -oih "User Authenticator")" == ''; then
       user=$(echo "$currline" | cut -f 4 -d ' ')
     else
       user=$(echo "$currline" | cut -f 8 -d ' ')

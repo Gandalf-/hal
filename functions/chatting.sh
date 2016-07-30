@@ -11,8 +11,13 @@ function random_okay(){
   : ' string -> string
   returns a random affirmative
   '
-  echo $(random \
-    "$1" 'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!')
+  if test "$1" == ''; then
+    echo $(random \
+      'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!')
+  else
+    echo $(random \
+      "$1" 'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!')
+  fi
 }
 
 function random_musing(){

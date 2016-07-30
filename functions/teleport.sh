@@ -11,11 +11,16 @@ function go_to_dest(){
   : ' none -> none
   attempts to teleport the current user to the destination user
   '
-  local where=$(echo "$currline" | grep -oih 'take me to .*$' | cut -f 4- -d ' ')
+  local where=$(\
+    echo "$currline" | grep -oih 'take me to .*$' |
+    sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' |
+    cut -f 4- -d ' ')
+
   if test "$where" == ''; then
     say "Sorry $user, I don't know where that is!"
 
-  elif test "$where" == 'the telehub'; then
+  # ${var,,} == tolower()
+  elif test "${where,,}" == 'the telehub'; then
     say "$(random_okay 'Off you go!')"
     run "/tp $user -108 3 98"
 
