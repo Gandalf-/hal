@@ -89,7 +89,8 @@ while inotifywait -e modify $log_file; do
       say "- help, restart, be quiet, you can talk, status update"
       say "- make it (day, night, clear, rainy)"
       say "- make me (healthy, invisible, fast)"
-      say "- take me (to the telehub, home), set home as <x> <y> <z>"
+      say "- take me to (the telehub, <player>)"
+      say "- take me home, set home as <x> <y> <z>"
       say "- (remember, recall, forget) <phrase>"
       say "- put me in (creative, survival, spectator) mode"
       ran_command=0
@@ -178,12 +179,9 @@ while inotifywait -e modify $log_file; do
       "/effect $user minecraft:speed 60 5"
 
     # teleportation
-    hcsr 'take me to the telehub' \
-      "$(random_okay 'Off you go!')" \
-      "/tp $user -108 3 98"
-
-    if $(hc 'take me home'); then go_home  ; fi
-    if $(hc 'set home as') ; then set_home ; fi
+    if $(hc 'take me home '); then go_home  ; fi
+    if $(hc 'set home as ') ; then set_home ; fi
+    if $(hc 'take me to '); then go_to_dest ; fi
 
     # gamemode
     hcsr 'put me in survival mode' \

@@ -7,6 +7,24 @@
 
 # teleport.sh
 
+function go_to_dest(){
+  : ' none -> none
+  attempts to teleport the current user to the destination user
+  '
+  local where=$(echo "$currline" | grep -oih 'take me to .*$' | cut -f 4- -d ' ')
+  if test "$where" == ''; then
+    say "Sorry $user, I don't know where that is!"
+
+  elif test "$where" == 'the telehub'; then
+    say "$(random_okay 'Off you go!')"
+    run "/tp $user -108 3 98"
+
+  else
+    say "Okay $user, I'll try!"
+    run "/tp $user $where"
+  fi
+}
+
 function go_home(){
   : ' none -> none
   attempts to teleport the current user to their home destination
