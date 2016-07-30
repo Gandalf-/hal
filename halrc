@@ -13,3 +13,6 @@ MEMDIR /tmp/hal/
 
 # full path to hal installation directory
 INSTALLDIR ~/.hal/
+
+# teleportation locations
+the telehub -> -108 3 98
