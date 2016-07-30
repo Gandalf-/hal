@@ -5,6 +5,10 @@ conf_file = ~/.halrc
 all:
 	@echo "Nothing to build. Ready for make install"
 
+test:
+	cd functions && bash unit_test.sh
+	@echo "Done"
+
 clean:
 	@rm -r $(install_loc) $(exec_file) $(conf_file)
 	@echo "Done"

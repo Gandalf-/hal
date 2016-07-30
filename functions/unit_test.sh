@@ -209,7 +209,8 @@ function test_hcsr(){
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
 
   currline='herbert be quiet'
-  rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" '/say [Hal] okie doke /my command'
+  rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" \
+    '/say [Hal] okie doke /my command'
   test_cleanup
 }
 
