@@ -47,12 +47,11 @@ function test_test(){
   echo -n 'test            '
   scpass 'a' 'a'
   rcpass 'apple blueberry watermelon' 'blue'
-  true
-  ocpass 
+  true ; ocpass 
   scfail 'a' 'b'
   rcfail 'apple blueberry watermelon' 'green'
-  false
-  ocfail 
+  false ; ocfail 
+  cleanup
   echo
 }
 
@@ -74,12 +73,14 @@ function test_hc(){
   echo -n 'hc              '
   declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah')
   for currline in "${arry[@]}"; do
-    ocpass $(hc 'blah')
+    $(hc 'blah')
+    ocpass 
   done
 
   declare -a arry=('blah' 'hal herp' 'HAL' 'herp')
   for currline in "${arry[@]}"; do
-    ocfail $(hc 'blah')
+    $(hc 'blah')
+    ocfail 
   done
   test_cleanup
 }
@@ -88,12 +89,14 @@ function test_contains(){
   echo -n 'contains        '
   declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah')
   for currline in "${arry[@]}"; do
-    ocpass $(contains 'blah')
+    $(contains 'blah')
+    ocpass
   done
 
   declare -a arry=('goof' 'hal herp' 'HAL' 'herp derp')
   for currline in "${arry[@]}"; do
-    ocfail $(contains 'blah')
+    $(contains 'blah')
+    ocfail
   done
   test_cleanup
 }
@@ -145,6 +148,11 @@ function test_not_repeat(){
 
 function test_random(){
   echo -n 'random          '
+  scpass "$(random 'hello')" 'hello'
+  scpass "$(random 'string with spaces')" 'string with spaces'
+  scpass "$(random)" ''
+  scfail "$(random 'hello')" 'goodbye'
+  scfail "$(random 'hello there' 'goodbye')" ''
   test_cleanup
 }
 

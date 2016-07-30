@@ -88,8 +88,12 @@ function random(){
   : ' any, ... -> any
   returns a randomly chosen element out of the arguments
   '
-  local array=("$@")
-  echo ${array[$RANDOM % ${#array[@]} ]}
+  if test "$1" == ""; then
+    echo ''
+  else
+    local array=("$@")
+    echo ${array[$RANDOM % ${#array[@]} ]}
+  fi
 }
 
 function shut_down(){
