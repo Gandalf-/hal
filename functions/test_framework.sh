@@ -15,18 +15,18 @@ function test_cleanup(){
 
 function pass(){ echo -n " pass"; }
 
-function fail(){ echo " fail"; exit 1; }
+function fail(){ echo " fail"; }
 
 function scpass(){
   if test "$1" == "$2"; then 
     pass
   else 
-    fail; echo "Expected: $1"; echo "Received: $2"
+    fail; echo "Expected: $1"; echo "Received: $2"; exit 1
   fi
 }
 function scfail(){
   if test "$1" == "$2"; then 
-    fail; echo "Expected: $1"; echo "Received: $2"
+    fail; echo "Expected: $1"; echo "Received: $2"; exit 1
   else 
     pass
   fi
@@ -35,24 +35,24 @@ function rcpass(){
   if test "$(echo "$1" | grep -F "$2")" != ""; then 
     pass
   else 
-    fail; echo "Expected: $2"; echo "Received: $1"
+    fail; echo "Expected: $2"; echo "Received: $1"; exit 1
   fi
 }
 function rcfail(){
   if test "$(echo "$1" | grep "$2")" != ""; then 
-    fail; echo "Expected: $2"; echo "Received: $1"
+    fail; echo "Expected: $2"; echo "Received: $1"; exit 1
   else pass; fi
 }
 function ocpass(){
   if [[ $? -eq 0 ]]; then 
     pass
   else 
-    fail; echo "Return value was non-zero"
+    fail; echo "Return value was non-zero"; exit 1
   fi
 }
 function ocfail(){
   if [[ $? -eq 0 ]]; then 
-    fail; echo "Return value was zero"
+    fail; echo "Return value was zero"; exit 1
   else 
     pass
   fi
