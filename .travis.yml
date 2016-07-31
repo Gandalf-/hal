@@ -3,6 +3,6 @@ sudo: required
 dist: trusty
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get -y install tmux
+  - sudo apt-get -y install tmux inotify-tools
 before_script: make install
 script: make test
