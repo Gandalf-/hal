@@ -76,9 +76,21 @@ function test_test(){
 
 # tests
 #==================
-function test_tell_joke() {
+function test_requirements(){
   : ' none -> none
-  make sure tell_joke returns a string
+  make sure all the required external programs are present
+  '
+  echo -n 'requirements    '
+  rcpass "$(which tmux)" "tmux"
+  rcpass "$(bash --version)" "version 4"
+  rcpass "$(which inotifywait)" "inotifywait"
+  rcpass "$(which sed)" "sed"
+  test_cleanup
+}
+
+function test_tell_joke(){
+  : ' none -> none
+  make sure tell_joke() returns a string
   '
   echo -n 'tell_joke       '
   scfail tell_joke ""
@@ -87,7 +99,7 @@ function test_tell_joke() {
 
 function test_hc(){
   : ' none -> none
-  make sure hc only accepts inputs that match "hal" and $1
+  make sure hc() only accepts inputs that match "hal" and $1
   '
   echo -n 'hc              '
   declare -a arry=('hal blah' 'HAL blah blah' 'BLAH HAL' 'blah hAl blah')
@@ -105,6 +117,9 @@ function test_hc(){
 }
 
 function test_contains(){
+  : ' none -> none
+  make sure that contains() succeeds when $1 is present in $currline
+  '
   echo -n 'contains        '
   declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah' 'BLAH')
   for currline in "${arry[@]}"; do
@@ -121,6 +136,9 @@ function test_contains(){
 }
 
 function test_say(){
+  : ' none -> none
+  make sure say() builds "/say [Hal] <phrase>" commands correctly
+  '
   echo -n 'say             '
   scpass "$(say "hello there")" '/say [Hal] hello there'
   scpass "$(say "hello there $user")" '/say [Hal] hello there <player1>'
@@ -129,6 +147,9 @@ function test_say(){
 }
 
 function test_tell(){
+  : ' none -> none
+  make sure tell() builds "/tell $user <phrase>" commands correctly
+  '
   echo -n 'tell            '
   scpass "$(tell "hello there")" "/tell $user hello there"
   scpass "$(tell "hello $user there wow")" "/tell $user hello $user there wow"
@@ -141,6 +162,9 @@ function test_tell(){
 }
 
 function test_run(){
+  : ' none -> none
+  make sure run() builds "/<command>" commands correctly
+  '
   echo -n 'run             '
   scpass "$(run "/hello there")" "/hello there"
   scpass "$(run "/hello $user there wow")" "/hello $user there wow"
@@ -150,8 +174,11 @@ function test_run(){
 }
 
 function test_not_repeat(){
+  : ' none -> none
+  make sure that not_repeat() returns 0 if $currline contains output from hal.sh
+  '
   echo -n 'not_repeat      '
-  declare -a arry=('[hal] blah' '[hal] blah blah' 'blah [HAL]' 'blah [hAl] blah')
+  declare -a arry=('[hal] blah' '[hal] BLAH ' 'blah [HAL]' 'blah [hAl] blah')
   for currline in "${arry[@]}"; do
     not_repeat
     ocfail 
@@ -166,6 +193,9 @@ function test_not_repeat(){
 }
 
 function test_random(){
+  : ' none -> none
+  make sure random() returns a selection out of the arguments
+  '
   echo -n 'random          '
   scpass "$(random 'hello')" 'hello'
   scpass "$(random 'string with spaces')" 'string with spaces'
@@ -176,6 +206,9 @@ function test_random(){
 }
 
 function test_random_okay(){
+  : ' none -> none
+  make sure random_okay() always returns a string
+  '
   echo -n 'random_okay     '
   scfail "$(random_okay 'hello')" ''
   scfail "$(random_okay '')" ''
@@ -183,38 +216,58 @@ function test_random_okay(){
 }
 
 function test_random_musing(){
+  : ' none -> none
+  make sure random_musing() always returns a string
+  '
   echo -n 'random_musing   '
   scfail "$(random_okay)" ''
   test_cleanup
 }
 
 function test_shut_down(){
+  : ' none -> none
+  make sure shut_down() reports to the users that hal.sh is shutting down
+  '
   echo -n 'shut_down       '
   rcpass "$(shut_down)" "Hal shutting down"
   test_cleanup
 }
 
 function test_hcsr(){
+  : ' none -> none
+  make sure hcsr() says $2 and runs $3 if "hal" is present in $currline
+  '
   echo -n 'hcsr            '
   currline='hal whats up?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
   currline='hal WHATS UP?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
   currline='whats up hal?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
   currline='WHATS UP hal?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
+  rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
   currline='herbert be quiet'
-  rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" \
-    '/say [Hal] okie doke /my command'
+  rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" '/say [Hal] okie doke'
+  rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" '/my command'
   test_cleanup
 }
 
 function test_go_to_dest(){
+  : ' none -> none
+  make sure that go_to_dest() can handle the following cases:
+    - hal take me to <dest in config>
+    - take me to <dest in config> hal
+    - hal take me to <player>
+    - take me to <player> hal
+  '
   echo -n 'go_to_dest      '
   user='player'
   currline='hal take me to the telehub'
@@ -235,11 +288,11 @@ function test_go_to_dest(){
 
   currline='hal go to the telehub'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
-  echo
-  echo -n '                '
 
   currline='go to the telehub hal'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
+  echo
+  echo -n '                '
 
   currline='hal go to blerug'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
@@ -259,26 +312,36 @@ function test_go_to_dest(){
 }
 
 function test_go_home(){
+  : ' none -> none
+  '
   echo -n 'go_home         '
   test_cleanup
 }
 
 function test_set_home(){
+  : ' none -> none
+  '
   echo -n 'set_home        '
   test_cleanup
 }
 
 function test_remember_phrase(){
+  : ' none -> none
+  '
   echo -n 'remember_phrase '
   test_cleanup
 }
 
 function test_recall_phrase(){
+  : ' none -> none
+  '
   echo -n 'recall_phrase   '
   test_cleanup
 }
 
 function test_forget_phrase(){
+  : ' none -> none
+  '
   echo -n 'forget_phrase   '
   test_cleanup
 }
@@ -286,6 +349,7 @@ function test_forget_phrase(){
 # run
 #==================
 test_test
+test_requirements
 test_tell_joke
 test_hc
 test_contains
