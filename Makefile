@@ -6,8 +6,16 @@ all:
 	@echo "Nothing to build. Ready for make install"
 
 test:
+	@echo "Unit Tests"
+	@echo "====================="
 	cd functions && bash unit_test.sh
-	@echo "Done"
+	@echo "====================="
+	@echo "Unit Tests Done";echo
+	@echo "Integration Tests"
+	@echo "====================="
+	cd functions && bash integration_test.sh
+	@echo "====================="
+	@echo "Integration Tests Done"
 
 clean:
 	@rm -r $(install_loc) $(exec_file) $(conf_file)
