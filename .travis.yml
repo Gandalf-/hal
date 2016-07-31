@@ -1,2 +1,8 @@
 language: bash
+sudo: required
+dist: trusty
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get -y install tmux
+before_script: make install
 script: make test

@@ -15,7 +15,7 @@ function test_cleanup(){
 
 function pass(){ echo -n " pass"; }
 
-function fail(){ echo " fail"; }
+function fail(){ echo " fail"; exit 1; }
 
 function scpass(){
   if test "$1" == "$2"; then 
