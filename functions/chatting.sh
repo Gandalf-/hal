@@ -12,11 +12,11 @@ function random_okay(){
   returns a random affirmative
   '
   if test "$1" == ''; then
-    echo $(random \
-      'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!')
+    random \
+      'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
   else
-    echo $(random \
-      "$1" 'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!')
+    random \
+      "$1" 'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
   fi
 }
 
@@ -24,12 +24,12 @@ function random_musing(){
   : ' none -> string
   returns a random musing
   '
-  echo $(random \
-    'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' 
-    'Just growing some trees...' 'Reorganizing clouds...' \ 
-    'Turning dirt to grass...' 'Mind controlling a squid...' \ 
-    'Hiding diamonds...' 'Looking for lost cows...' \ 
-    'Did you know about overviewer.anardil.net?' )
+  random \
+    'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' \
+    'Just growing some trees...' 'Reorganizing clouds...' \
+    'Turning dirt to grass...' 'Mind controlling a squid...' \
+    'Hiding diamonds...' 'Looking for lost cows...' \
+    'Did you know about overviewer.anardil.net?'
 }
 
 function tell_joke(){
@@ -70,7 +70,7 @@ function tell_joke(){
   'Why couldnt the minecraft player go to the bar?  Because he was a miner.' \
   'An Insult:  Your IQ is lower than bedrock.' \
   'How good is Minecraft?  Top-Notch!' \
-  'Why did the enderman cross the road?  He didn’t, he Teleported.' \
+  'Why did the enderman cross the road?  He didnt, he Teleported.' \
   'Whats an endermans favourite band?  Imagine Dragons!' \
   'How does Steve chop down trees with his fists?  How wood I know?' \
   'What is a pigmans favorite cereal?  Golden nuggets.')"

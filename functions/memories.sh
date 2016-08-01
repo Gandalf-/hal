@@ -28,13 +28,13 @@ function recall_phrase(){
   search through user memories for related information
   '
   local regex='s/\(recall\ \|hal$\)//gI'
-  local phrase=$(echo $currline | grep -oih 'recall .*$' | sed -e "$regex")
+  local phrase=$(echo "$currline" | grep -oih 'recall .*$' | sed -e "$regex")
   local mem_file="$mem_dir""$user".memories
 
   if test "$phrase" != ""; then
-    if test "$(cat $mem_file | grep "$phrase")" != ""; then
+    if test "$(grep "$phrase" "$mem_file")" != ""; then
       say "Okay $user, here's what I know about \"$phrase\":"
-      cat $mem_file | grep "$phrase" | while read line; do
+      grep "$phrase" "$mem_file" | while read -r line; do
         say "\"$line\""
       done
     else
@@ -51,7 +51,8 @@ function forget_phrase(){
   remove all related phrases from user file
   '
   local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
-  local phrase=$(echo $currline | sed -e "$regex" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
+  local phrase=$(echo "$currline" | sed -e "$regex" | grep -oih 'forget .*$' | 
+                 cut -f 2- -d ' ')
   local mem_file="$mem_dir""$user".memories
   local file_contents=$(cat "$mem_file")
 
