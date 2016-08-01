@@ -95,7 +95,7 @@ function not_repeat(){
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
   '
-  if test "$(echo $currline | grep -oih '\[Hal\]' )" == ''; then
+  if test "$(echo "$currline" | grep -oih '\[Hal\]' )" == ''; then
     return 0
   else
     return 1
@@ -110,7 +110,7 @@ function random(){
     echo ''
   else
     local array=("$@")
-    echo ${array[$RANDOM % ${#array[@]} ]}
+    echo "${array[$RANDOM % ${#array[@]} ]}"
   fi
 }
 
@@ -129,7 +129,7 @@ function hcsr(){
   : ' string, string, string -> none
   wrapper around check $1, say $2, run $3 logic
   '
-  if $(hc "$1"); then
+  if hc "$1"; then
     say "$2"
     run "$3"
     ran_command=0
