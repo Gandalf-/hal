@@ -23,7 +23,7 @@ starttime=$(date +%s)
 ins_dir=''
 log_file=''
 
-if [[ -e ~/.halrc ]] ; then
+if [[ -e ~/.halrc ]]; then
   log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
   ins_dir=$( grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
   MEM_DIR=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
@@ -75,14 +75,14 @@ while inotifywait -e modify "$log_file"; do
   fi
 
   # time based
-  if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ $num_players -ne 0 ]] ; then
+  if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ $num_players -ne 0 ]]; then
     say "$(random_musing)"
     sleep 2
   fi
 
-  if [[ $QUIET -ge 300 ]] ; then
+  if [[ $QUIET -ge 300 ]]; then
     QUIET=0
-  elif [[ $QUIET -ne 0 ]] ; then
+  elif [[ $QUIET -ne 0 ]]; then
     QUIET=$(( QUIET + 1 ))
   fi
 
@@ -91,11 +91,11 @@ while inotifywait -e modify "$log_file"; do
     echo "curr: $CLINE"
 
     # administrative
-    if hc 'help'; then show_help ; fi
+    if hc 'help'; then show_help; fi
 
     if hc 'restart'; then
       say 'Okay, restarting!'
-      bash "$( cd "$(dirname "$0")" ; pwd -P )"/"$(basename "$0")" &
+      bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0")" &
       exit
     fi
 
@@ -134,13 +134,13 @@ while inotifywait -e modify "$log_file"; do
     hcsr "what's up" \
       "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
 
-    if hc 'tell me a joke'; then tell_joke ; fi
-    if hc 'tell a joke'; then tell_joke ; fi
+    if hc 'tell me a joke'; then tell_joke; fi
+    if hc 'tell a joke'   ; then tell_joke; fi
 
     # memory
-    if hc 'remember'; then remember_phrase ; fi
+    if hc 'remember'; then remember_phrase; fi
 
-    if hc 'recall everything' ; then
+    if hc 'recall everything'; then
       say "Okay $USER, here's everything I know for you!"
       cat "$MEM_DIR""$USER".memories | while read -r line; do
         say "$line"
@@ -215,13 +215,13 @@ while inotifywait -e modify "$log_file"; do
       num_players=$(( num_players + 1 ))
       RCOMMAND=0
 
-      if [[ $num_players -eq 1 ]] ; then
+      if [[ $num_players -eq 1 ]]; then
         say "You're the first one here!"
 
-      elif [[ $num_players -eq 2 ]] ; then
+      elif [[ $num_players -eq 2 ]]; then
         say "Three makes a party!"
 
-      elif [[ $num_players -ge 3 ]] ; then
+      elif [[ $num_players -ge 3 ]]; then
         say "Things sure are busy today!"
       fi
     fi
@@ -232,11 +232,11 @@ while inotifywait -e modify "$log_file"; do
       num_players=$(( num_players - 1 ))
       RCOMMAND=0
 
-      if [[ $num_players -eq 0 ]] ; then
+      if [[ $num_players -eq 0 ]]; then
         say "All alone..."
         QUIET=0
 
-      elif [[ $num_players -eq 1 ]] ; then
+      elif [[ $num_players -eq 1 ]]; then
         say "I guess it's just you and me now!"
       fi
     fi
