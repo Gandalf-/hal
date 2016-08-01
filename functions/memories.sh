@@ -12,15 +12,15 @@ function remember_phrase(){
   parse out note to remember and write to user file
   '
   local regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  local note=$(echo "$currline" | grep -oih 'remember .*$' | sed -e "$regex")
+  local note=$(echo "$CLINE" | grep -oih 'remember .*$' | sed -e "$regex")
 
   if test "$note" != ""; then
-    echo "$note" >> "$mem_dir""$user".memories
-    say "Okay $user, I'll remember!"
+    echo "$note" >> "$MEM_DIR""$USER".memories
+    say "Okay $USER, I'll remember!"
   else
     say "Remember what?"
   fi
-  ran_command=0
+  RCOMMAND=0
 }
 
 function recall_phrase(){
@@ -28,22 +28,22 @@ function recall_phrase(){
   search through user memories for related information
   '
   local regex='s/\(recall\ \|hal$\)//gI'
-  local phrase=$(echo "$currline" | grep -oih 'recall .*$' | sed -e "$regex")
-  local mem_file="$mem_dir""$user".memories
+  local phrase=$(echo "$CLINE" | grep -oih 'recall .*$' | sed -e "$regex")
+  local mem_file="$MEM_DIR""$USER".memories
 
   if test "$phrase" != ""; then
     if test "$(grep "$phrase" "$mem_file")" != ""; then
-      say "Okay $user, here's what I know about \"$phrase\":"
+      say "Okay $USER, here's what I know about \"$phrase\":"
       grep "$phrase" "$mem_file" | while read -r line; do
         say "\"$line\""
       done
     else
-      say "Sorry $user, looks like I don't know anything about $phrase"
+      say "Sorry $USER, looks like I don't know anything about $phrase"
     fi
   else
     say "Recall what?"
   fi
-  ran_command=0
+  RCOMMAND=0
 }
 
 function forget_phrase(){
@@ -51,16 +51,16 @@ function forget_phrase(){
   remove all related phrases from user file
   '
   local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
-  local phrase=$(echo "$currline" | sed -e "$regex" | grep -oih 'forget .*$' | 
+  local phrase=$(echo "$CLINE" | sed -e "$regex" | grep -oih 'forget .*$' | 
                  cut -f 2- -d ' ')
-  local mem_file="$mem_dir""$user".memories
+  local mem_file="$MEM_DIR""$USER".memories
   local file_contents=$(cat "$mem_file")
 
   if test "$phrase" != ""; then
     echo "$file_contents" | grep -v "$phrase" > "$mem_file"
-    say "Okay $user, I've forgetten everything about \"$phrase!\""
+    say "Okay $USER, I've forgetten everything about \"$phrase!\""
   else
-    say "Sorry $user, I'm not sure what to do"
+    say "Sorry $USER, I'm not sure what to do"
   fi
-  ran_command=0
+  RCOMMAND=0
 }

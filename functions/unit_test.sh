@@ -14,9 +14,9 @@ source "./memories.sh"
 source "./chatting.sh"
 source "./teleport.sh"
 
-debug=1
-quiet=0
-user='<player1>'
+DEBUG=1
+QUIET=0
+USER='<player1>'
 
 # tests
 #==================
@@ -47,14 +47,14 @@ function test_hc(){
   '
   echo -n 'hc              '
   declare -a arry=('hal blah' 'HAL blah blah' 'BLAH HAL' 'blah hAl blah')
-  for currline in "${arry[@]}"; do
-    $(hc 'blah')
+  for CLINE in "${arry[@]}"; do
+    hc 'blah'
     ocpass 
   done
 
   declare -a arry=('blah' 'hal herp' 'HAL' 'herp')
-  for currline in "${arry[@]}"; do
-    $(hc 'blah')
+  for CLINE in "${arry[@]}"; do
+    hc 'blah'
     ocfail 
   done
   test_cleanup
@@ -62,18 +62,18 @@ function test_hc(){
 
 function test_contains(){
   : ' none -> none
-  make sure that contains() succeeds when $1 is present in $currline
+  make sure that contains() succeeds when $1 is present in $CLINE
   '
   echo -n 'contains        '
   declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah' 'BLAH')
-  for currline in "${arry[@]}"; do
-    $(contains 'blah')
+  for CLINE in "${arry[@]}"; do
+    contains 'blah'
     ocpass
   done
 
   declare -a arry=('goof' 'hal herp' 'HAL' 'herp derp')
-  for currline in "${arry[@]}"; do
-    $(contains 'blah')
+  for CLINE in "${arry[@]}"; do
+    contains 'blah'
     ocfail
   done
   test_cleanup
@@ -85,23 +85,23 @@ function test_say(){
   '
   echo -n 'say             '
   scpass "$(say "hello there")" '/say [Hal] hello there'
-  scpass "$(say "hello there $user")" '/say [Hal] hello there <player1>'
+  scpass "$(say "hello there $USER")" '/say [Hal] hello there <player1>'
   scpass "$(say "")" '/say [Hal] '
   test_cleanup
 }
 
 function test_tell(){
   : ' none -> none
-  make sure tell() builds "/tell $user <phrase>" commands correctly
+  make sure tell() builds "/tell $USER <phrase>" commands correctly
   '
   echo -n 'tell            '
-  scpass "$(tell "hello there")" "/tell $user hello there"
-  scpass "$(tell "hello $user there wow")" "/tell $user hello $user there wow"
-  scpass "$(tell "")" "/tell $user "
-  scpass "$(tell )" "/tell $user "
-  quiet=1
+  scpass "$(tell "hello there")" "/tell $USER hello there"
+  scpass "$(tell "hello $USER there wow")" "/tell $USER hello $USER there wow"
+  scpass "$(tell "")" "/tell $USER "
+  scpass "$(tell )" "/tell $USER "
+  QUIET=1
   scpass "$(tell "hello there")" ""
-  scpass "$(tell "hello $user there wow")" ""
+  scpass "$(tell "hello $USER there wow")" ""
   test_cleanup
 }
 
@@ -111,7 +111,7 @@ function test_run(){
   '
   echo -n 'run             '
   scpass "$(run "/hello there")" "/hello there"
-  scpass "$(run "/hello $user there wow")" "/hello $user there wow"
+  scpass "$(run "/hello $USER there wow")" "/hello $USER there wow"
   scpass "$(run "")" ""
   scpass "$(run   )" ""
   test_cleanup
@@ -119,17 +119,17 @@ function test_run(){
 
 function test_not_repeat(){
   : ' none -> none
-  make sure that not_repeat() returns 0 if $currline contains output from hal.sh
+  make sure that not_repeat() returns 0 if $CLINE contains output from hal.sh
   '
   echo -n 'not_repeat      '
   declare -a arry=('[hal] blah' '[hal] BLAH ' 'blah [HAL]' 'blah [hAl] blah')
-  for currline in "${arry[@]}"; do
+  for CLINE in "${arry[@]}"; do
     not_repeat
     ocfail 
   done
 
   declare -a arry=('goof' 'hal herp' 'HAL' 'herp derp')
-  for currline in "${arry[@]}"; do
+  for CLINE in "${arry[@]}"; do
     not_repeat
     ocpass 
   done
@@ -179,26 +179,26 @@ function test_shut_down(){
 
 function test_hcsr(){
   : ' none -> none
-  make sure hcsr() says $2 and runs $3 if "hal" is present in $currline
+  make sure hcsr() says $2 and runs $3 if "hal" is present in $CLINE
   '
   echo -n 'hcsr            '
-  currline='hal whats up?'
+  CLINE='hal whats up?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
-  currline='hal WHATS UP?'
+  CLINE='hal WHATS UP?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
-  currline='whats up hal?'
+  CLINE='whats up hal?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
-  currline='WHATS UP hal?'
+  CLINE='WHATS UP hal?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/my command'
 
-  currline='herbert be quiet'
+  CLINE='herbert be quiet'
   rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" '/say [Hal] okie doke'
   rcfail "$(hcsr 'be quiet' 'okie doke' '/my command')" '/my command'
   test_cleanup
@@ -213,43 +213,43 @@ function test_go_to_dest(){
     - take me to <player> hal
   '
   echo -n 'go_to_dest      '
-  user='player'
-  currline='hal take me to the telehub'
-  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
+  USER='player'
+  CLINE='hal take me to the telehub'
+  rcpass "$(go_to_dest)" "Okay $USER, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
-  currline='take me to the telehub hal'
-  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
+  CLINE='take me to the telehub hal'
+  rcpass "$(go_to_dest)" "Okay $USER, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
-  currline='HAL TAKE ME TO THE TELEHUB'
-  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
+  CLINE='HAL TAKE ME TO THE TELEHUB'
+  rcpass "$(go_to_dest)" "Okay $USER, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
-  currline='TAKE ME TO THE TELEHUB HAL'
-  rcpass "$(go_to_dest)" "Okay $user, I think I know where that is."
+  CLINE='TAKE ME TO THE TELEHUB HAL'
+  rcpass "$(go_to_dest)" "Okay $USER, I think I know where that is."
   rcpass "$(go_to_dest)" '/tp player -108 3 98'
 
-  currline='hal go to the telehub'
+  CLINE='hal go to the telehub'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
 
-  currline='go to the telehub hal'
+  CLINE='go to the telehub hal'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
   echo
   echo -n '...             '
 
-  currline='hal go to blerug'
+  CLINE='hal go to blerug'
   rcpass "$(go_to_dest)" "Sorry player, I don't know where that is"
 
-  currline='hal take me to Jimmy'
+  CLINE='hal take me to Jimmy'
   rcpass "$(go_to_dest)" "Okay player, I'll try!"
   rcpass "$(go_to_dest)" "/tp player Jimmy"
 
-  currline='take me to Jimmy hal'
+  CLINE='take me to Jimmy hal'
   rcpass "$(go_to_dest)" "Okay player, I'll try!"
   rcpass "$(go_to_dest)" "/tp player Jimmy"
 
-  currline='hal take me to Herp Derp'
+  CLINE='hal take me to Herp Derp'
   rcpass "$(go_to_dest)" "Okay player, I'll try!"
   rcpass "$(go_to_dest)" "/tp player Herp Derp"
   test_cleanup

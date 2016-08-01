@@ -74,5 +74,5 @@ function tell_joke(){
   'Whats an endermans favourite band?  Imagine Dragons!' \
   'How does Steve chop down trees with his fists?  How wood I know?' \
   'What is a pigmans favorite cereal?  Golden nuggets.')"
-  ran_command=0
+  RCOMMAND=0
 }

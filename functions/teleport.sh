@@ -12,12 +12,12 @@ function go_to_dest(){
   attempts to teleport the current user to the destination user
   '
   local where=$(\
-    echo "$currline" | grep -oih 'take me to .*$' |
+    echo "$CLINE" | grep -oih 'take me to .*$' |
     sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' |
     cut -f 4- -d ' ') || ''
 
   if test "$where" == ''; then
-    say "Sorry $user, I don't know where that is!"
+    say "Sorry $USER, I don't know where that is!"
 
   else
     local dest=$(\
@@ -25,50 +25,50 @@ function go_to_dest(){
       cut -f 2- -d ' ')
 
     if test "$dest" == '' ; then
-      say "Okay $user, I'll try!"
-      run "/tp $user $where"
+      say "Okay $USER, I'll try!"
+      run "/tp $USER $where"
 
     else
-      say "Okay $user, I think I know where that is. Off you go!"
-      run "/tp $user $dest"
+      say "Okay $USER, I think I know where that is. Off you go!"
+      run "/tp $USER $dest"
     fi
   fi
-  ran_command=0
+  RCOMMAND=0
 }
 
 function go_home(){
   : ' none -> none
   attempts to teleport the current user to their home destination
   '
-  local homeline=$(cat "$mem_dir""$user".home) || ''
+  local homeline=$(cat "$MEM_DIR""$USER".home) || ''
   local xcoord=$(echo "$homeline" | cut -f 1 -d ' ') || ''
   local ycoord=$(echo "$homeline" | cut -f 2 -d ' ') || ''
   local zcoord=$(echo "$homeline" | cut -f 3 -d ' ') || ''
 
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
-    say "Sorry $user, either you never told me where home was or I forgot!"
+    say "Sorry $USER, either you never told me where home was or I forgot!"
   else
-    say "Off you go $user!"
-    run "/tp $user $xcoord $ycoord $zcoord"
+    say "Off you go $USER!"
+    run "/tp $USER $xcoord $ycoord $zcoord"
   fi
-  ran_command=0
+  RCOMMAND=0
 }
 
 function set_home(){
   : ' none -> none
   attempts to set the current users home destination
   '
-  local homeline=$(echo "$currline" | grep -ioh 'set home as .*$') || ''
+  local homeline=$(echo "$CLINE" | grep -ioh 'set home as .*$') || ''
   local xcoord=$(echo "$homeline" | cut -f 4 -d ' ') || ''
   local ycoord=$(echo "$homeline" | cut -f 5 -d ' ') || ''
   local zcoord=$(echo "$homeline" | cut -f 6 -d ' ') || ''
 
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
-    say "Sorry $user, something doesn't look right with those coordinates"
+    say "Sorry $USER, something doesn't look right with those coordinates"
   else
-    echo "$xcoord $ycoord $zcoord" > "$mem_dir""$user".home
-    say "Okay $user, I've set your home to be $xcoord $ycoord $zcoord!"
+    echo "$xcoord $ycoord $zcoord" > "$MEM_DIR""$USER".home
+    say "Okay $USER, I've set your home to be $xcoord $ycoord $zcoord!"
   fi
-  ran_command=0
+  RCOMMAND=0
 }
 

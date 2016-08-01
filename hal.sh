@@ -10,24 +10,25 @@
 set -u
 set -o pipefail
 
-debug=0
-quiet=0
-currline=''
+USER=''
+DEBUG=0
+QUIET=0
+CLINE=''
+MEM_DIR=''
+RCOMMAND=0
+
 prevline=''
-user=''
-ran_command=0
 num_players=0
 starttime=$(date +%s)
 ins_dir=''
 log_file=''
-mem_dir=''
 
 if [[ -e ~/.halrc ]] ; then
-  ins_dir=$( grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
-  mem_dir=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
   log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
+  ins_dir=$( grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
+  MEM_DIR=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
 
-  if test "$ins_dir" == ""|| test "$log_file" == ""|| test "$mem_dir" == ""; then
+  if test "$ins_dir" == ""|| test "$log_file" == ""|| test "$MEM_DIR" == ""; then
     echo "error: Configuration file is incomplete"; exit
   fi
 
@@ -40,15 +41,19 @@ if test "$(which tmux)" == '' || test "$(which inotifywait)" == ''; then
 fi
 
 eval ins_dir="$ins_dir"
+# shellcheck source=functions/utility.sh
 source "$ins_dir""functions/utility.sh"
+# shellcheck source=functions/memories.sh
 source "$ins_dir""functions/memories.sh"
+# shellcheck source=functions/chatting.sh
 source "$ins_dir""functions/chatting.sh"
+# shellcheck source=functions/teleport.sh
 source "$ins_dir""functions/teleport.sh"
 
 echo 'Hal starting up'
 say "I'm alive!"
 trap shut_down INT
-mkdir -p "$mem_dir"
+mkdir -p "$MEM_DIR"
 sleep 1
 
 # main
@@ -56,16 +61,16 @@ while true; do
 while inotifywait -e modify "$log_file"; do
 
   # preparation
-  ran_command=1
-  currline=$(tail -n 3 "$log_file" | grep -v 'Keeping entity' | tail -n 1)
+  RCOMMAND=1
+  CLINE=$(tail -n 3 "$log_file" | grep -v 'Keeping entity' | tail -n 1)
   lifetime=$(( "$(date +%s)" - starttime ))
 
-  user=$(echo "$currline" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
-  if test "$user" == ""; then
-    if test "$(echo "$currline" | grep -oih 'User Authenticator')" == ''; then
-      user=$(echo "$currline" | cut -f 4 -d ' ')
+  USER=$(echo "$CLINE" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
+  if test "$USER" == ""; then
+    if test "$(echo "$CLINE" | grep -oih 'User Authenticator')" == ''; then
+      USER=$(echo "$CLINE" | cut -f 4 -d ' ')
     else
-      user=$(echo "$currline" | cut -f 8 -d ' ')
+      USER=$(echo "$CLINE" | cut -f 8 -d ' ')
     fi
   fi
 
@@ -75,15 +80,15 @@ while inotifywait -e modify "$log_file"; do
     sleep 2
   fi
 
-  if [[ $quiet -ge 300 ]] ; then
-    quiet=0
-  elif [[ $quiet -ne 0 ]] ; then
-    quiet=$(( quiet + 1 ))
+  if [[ $QUIET -ge 300 ]] ; then
+    QUIET=0
+  elif [[ $QUIET -ne 0 ]] ; then
+    QUIET=$(( QUIET + 1 ))
   fi
 
-  if test "$prevline" != "$currline" && not_repeat; then
+  if test "$prevline" != "$CLINE" && not_repeat; then
     echo "prev: $prevline"
-    echo "curr: $currline"
+    echo "curr: $CLINE"
 
     # administrative
     if hc 'help'; then show_help ; fi
@@ -94,21 +99,21 @@ while inotifywait -e modify "$log_file"; do
       exit
     fi
 
-    if hc 'be quiet'; then
-      say "Oh... Okay. I'll still do as you say but stay quiet for a while"
-      quiet=1
-      ran_command=0
+    if hc 'be QUIET'; then
+      say "Oh... Okay. I'll still do as you say but stay QUIET for a while"
+      QUIET=1
+      RCOMMAND=0
     fi
 
     if hc 'you can talk'; then
       say "Hooray!"
-      quiet=0
-      ran_command=0
+      QUIET=0
+      RCOMMAND=0
     fi
 
     if hc 'status update'; then
       say "Active players: $num_players"
-      ran_command=0
+      RCOMMAND=0
     fi
 
     # chatting
@@ -116,18 +121,18 @@ while inotifywait -e modify "$log_file"; do
       adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
       adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
       say "I'm feeling $adverb $adjective! I've been alive for $lifetime seconds."
-      ran_command=0
+      RCOMMAND=0
     fi
 
-    hcsr 'hello' "Hey there $user!"
-    hcsr 'hey' "Hello there $user!"
+    hcsr 'hello' "Hey there $USER!"
+    hcsr 'hey' "Hello there $USER!"
     hcsr 'yes' 'Ah... okay'
     hcsr 'no' 'Oh... okay'
     hcsr 'whatever' 'Well. If you say so'
-    hcsr 'thanks' "You're quite welcome $user!"
+    hcsr 'thanks' "You're quite welcome $USER!"
 
     hcsr "what's up" \
-      "Not too much $user! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+      "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
 
     if hc 'tell me a joke'; then tell_joke ; fi
     if hc 'tell a joke'; then tell_joke ; fi
@@ -136,20 +141,20 @@ while inotifywait -e modify "$log_file"; do
     if hc 'remember'; then remember_phrase ; fi
 
     if hc 'recall everything' ; then
-      say "Okay $user, here's everything I know for you!"
-      cat "$mem_dir""$user".memories | while read -r line; do
+      say "Okay $USER, here's everything I know for you!"
+      cat "$MEM_DIR""$USER".memories | while read -r line; do
         say "$line"
       done
-      ran_command=0
+      RCOMMAND=0
 
     elif hc 'recall'; then
       recall_phrase
     fi
     
     if hc 'forget everything'; then
-      say "Done $user, I forgot everything!"
-      echo '' > "$mem_dir""$user".memories
-      ran_command=0
+      say "Done $USER, I forgot everything!"
+      echo '' > "$MEM_DIR""$USER".memories
+      RCOMMAND=0
 
     elif hc 'forget'; then
       forget_phrase
@@ -158,15 +163,15 @@ while inotifywait -e modify "$log_file"; do
     # effects
     hcsr 'make me healthy' \
       "$(random_okay 'This should help you feel better')" \
-      "/effect $user minecraft:instant_health 1 10"
+      "/effect $USER minecraft:instant_health 1 10"
 
     hcsr 'make me invisible' \
       "$(random_okay 'Not even I know where you are now!')" \
-      "/effect $user minecraft:invisibility 60 5"
+      "/effect $USER minecraft:invisibility 60 5"
 
     hcsr 'make me fast' \
       "$(random_okay 'Gotta go fast!')" \
-      "/effect $user minecraft:speed 60 5"
+      "/effect $USER minecraft:speed 60 5"
 
     # teleportation
     if hc 'take me home '; then go_home   ; fi
@@ -176,15 +181,15 @@ while inotifywait -e modify "$log_file"; do
     # gamemode
     hcsr 'put me in survival mode' \
       "$(random_okay 'Remember to eat!')" \
-      "/gamemode surival $user"
+      "/gamemode surival $USER"
 
     hcsr 'put me in creative mode' \
       "$(random_okay)" \
-      "/gamemode creative $user"
+      "/gamemode creative $USER"
 
     hcsr 'put me in spectator mode' \
       "$(random_okay)" \
-      "/gamemode spectator $user"
+      "/gamemode spectator $USER"
 
     # weather
     hcsr 'make it clear' \
@@ -206,9 +211,9 @@ while inotifywait -e modify "$log_file"; do
     # player joins
     if contains "UUID of player"; then
       sleep 0.1
-      say "Hey there $user! Try saying \"Hal help\""
+      say "Hey there $USER! Try saying \"Hal help\""
       num_players=$(( num_players + 1 ))
-      ran_command=0
+      RCOMMAND=0
 
       if [[ $num_players -eq 1 ]] ; then
         say "You're the first one here!"
@@ -222,14 +227,14 @@ while inotifywait -e modify "$log_file"; do
     fi
 
     # player leaves
-    if contains "$user left the game"; then
-      say "Goodbye $user! See you again soon I hope!"
+    if contains "$USER left the game"; then
+      say "Goodbye $USER! See you again soon I hope!"
       num_players=$(( num_players - 1 ))
-      ran_command=0
+      RCOMMAND=0
 
       if [[ $num_players -eq 0 ]] ; then
         say "All alone..."
-        quiet=0
+        QUIET=0
 
       elif [[ $num_players -eq 1 ]] ; then
         say "I guess it's just you and me now!"
@@ -237,18 +242,18 @@ while inotifywait -e modify "$log_file"; do
     fi
 
     # misc server triggered
-    if contains "$user moved too quickly"; then
-      ran_command=0
-      say "Woah there $user! Maybe slow down a little?!"
+    if contains "$USER moved too quickly"; then
+      RCOMMAND=0
+      say "Woah there $USER! Maybe slow down a little?!"
     fi
 
     # not sure
-    if ! test "$ran_command" == 0 && contains "hal"; then
+    if ! test "$RCOMMAND" == 0 && contains "hal"; then
       say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
     fi
 
   fi
-  prevline="$currline"
+  prevline="$CLINE"
 done
 sleep 1
 done

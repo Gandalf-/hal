@@ -10,7 +10,7 @@
 # boilerplate
 #==================
 function test_cleanup(){
-  debug=1 ; quiet=0 ; user='<player1>'; echo
+  DEBUG=1 ; QUIET=0 ; USER='<player1>'; echo
 }
 
 function pass(){ echo -n " pass"; }
