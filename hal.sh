@@ -23,9 +23,9 @@ log_file=''
 mem_dir=''
 
 if [[ -e ~/.halrc ]] ; then
-  ins_dir=$(cat ~/.halrc | grep "INSTALLDIR " | cut -f 2- -d ' ')
-  log_file=$(cat ~/.halrc | grep "LOGFILE " | cut -f 2- -d ' ')
-  mem_dir=$(cat ~/.halrc | grep "MEMDIR " | cut -f 2- -d ' ')
+  ins_dir=$( grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
+  mem_dir=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
+  log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
 
   if test "$ins_dir" == ""|| test "$log_file" == ""|| test "$mem_dir" == ""; then
     echo "error: Configuration file is incomplete"; exit
@@ -39,7 +39,7 @@ if test "$(which tmux)" == '' || test "$(which inotifywait)" == ''; then
   echo "error: hal.sh requires tmux and inotify-tools to run"; exit
 fi
 
-eval ins_dir=$ins_dir
+eval ins_dir="$ins_dir"
 source "$ins_dir""functions/utility.sh"
 source "$ins_dir""functions/memories.sh"
 source "$ins_dir""functions/chatting.sh"
@@ -53,12 +53,12 @@ sleep 1
 
 # main
 while true; do
-while inotifywait -e modify $log_file; do
+while inotifywait -e modify "$log_file"; do
 
   # preparation
   ran_command=1
-  currline=$(tail -n 3 $log_file | grep -v 'Keeping entity' | tail -n 1)
-  lifetime=$(expr $(date +%s) - $starttime)
+  currline=$(tail -n 3 "$log_file" | grep -v 'Keeping entity' | tail -n 1)
+  lifetime=$(( "$(date +%s)" - starttime ))
 
   user=$(echo "$currline" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
   if test "$user" == ""; then
@@ -70,7 +70,7 @@ while inotifywait -e modify $log_file; do
   fi
 
   # time based
-  if [[ $(expr $(date +%s) % 900) -le 2 ]] && [[ $num_players -ne 0 ]] ; then
+  if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ $num_players -ne 0 ]] ; then
     say "$(random_musing)"
     sleep 2
   fi
@@ -78,7 +78,7 @@ while inotifywait -e modify $log_file; do
   if [[ $quiet -ge 300 ]] ; then
     quiet=0
   elif [[ $quiet -ne 0 ]] ; then
-    quiet=$(expr $quiet + 1)
+    quiet=$(( quiet + 1 ))
   fi
 
   if test "$prevline" != "$currline" && not_repeat; then
@@ -86,33 +86,33 @@ while inotifywait -e modify $log_file; do
     echo "curr: $currline"
 
     # administrative
-    if $(hc "help"); then show_help ; fi
+    if hc 'help'; then show_help ; fi
 
-    if $(hc 'restart'); then
+    if hc 'restart'; then
       say 'Okay, restarting!'
-      bash "$( cd $(dirname $0) ; pwd -P )"/"$(basename $0)" &
+      bash "$( cd "$(dirname "$0")" ; pwd -P )"/"$(basename "$0")" &
       exit
     fi
 
-    if $(hc 'be quiet'); then
+    if hc 'be quiet'; then
       say "Oh... Okay. I'll still do as you say but stay quiet for a while"
       quiet=1
       ran_command=0
     fi
 
-    if $(hc 'you can talk'); then
+    if hc 'you can talk'; then
       say "Hooray!"
       quiet=0
       ran_command=0
     fi
 
-    if $(hc 'status update'); then
+    if hc 'status update'; then
       say "Active players: $num_players"
       ran_command=0
     fi
 
     # chatting
-    if $(hc 'how are you'); then
+    if hc 'how are you'; then
       adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
       adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
       say "I'm feeling $adverb $adjective! I've been alive for $lifetime seconds."
@@ -129,29 +129,29 @@ while inotifywait -e modify $log_file; do
     hcsr "what's up" \
       "Not too much $user! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
 
-    if $(hc 'tell me a joke'); then tell_joke ; fi
-    if $(hc 'tell a joke'); then tell_joke ; fi
+    if hc 'tell me a joke'; then tell_joke ; fi
+    if hc 'tell a joke'; then tell_joke ; fi
 
     # memory
-    if $(hc 'remember'); then remember_phrase ; fi
+    if hc 'remember'; then remember_phrase ; fi
 
-    if $(hc 'recall everything') ; then
+    if hc 'recall everything' ; then
       say "Okay $user, here's everything I know for you!"
-      cat "$mem_dir""$user".memories | while read line; do
+      cat "$mem_dir""$user".memories | while read -r line; do
         say "$line"
       done
       ran_command=0
 
-    elif $(hc 'recall') ; then
+    elif hc 'recall'; then
       recall_phrase
     fi
     
-    if $(hc 'forget everything') ; then
+    if hc 'forget everything'; then
       say "Done $user, I forgot everything!"
-      echo "" > "$mem_dir""$user".memories
+      echo '' > "$mem_dir""$user".memories
       ran_command=0
 
-    elif $(hc 'forget') ; then
+    elif hc 'forget'; then
       forget_phrase
     fi
 
@@ -169,9 +169,9 @@ while inotifywait -e modify $log_file; do
       "/effect $user minecraft:speed 60 5"
 
     # teleportation
-    if $(hc 'take me home '); then go_home  ; fi
-    if $(hc 'set home as ') ; then set_home ; fi
-    if $(hc 'take me to '); then go_to_dest ; fi
+    if hc 'take me home '; then go_home   ; fi
+    if hc 'set home as ' ; then set_home  ; fi
+    if hc 'take me to '  ; then go_to_dest; fi
 
     # gamemode
     hcsr 'put me in survival mode' \
@@ -204,10 +204,10 @@ while inotifywait -e modify $log_file; do
       "/time set night"
 
     # player joins
-    if $(contains "UUID of player"); then
+    if contains "UUID of player"; then
       sleep 0.1
       say "Hey there $user! Try saying \"Hal help\""
-      num_players=$(expr $num_players + 1)
+      num_players=$(( num_players + 1 ))
       ran_command=0
 
       if [[ $num_players -eq 1 ]] ; then
@@ -222,9 +222,9 @@ while inotifywait -e modify $log_file; do
     fi
 
     # player leaves
-    if $(contains "$user left the game"); then
+    if contains "$user left the game"; then
       say "Goodbye $user! See you again soon I hope!"
-      num_players=$(expr $num_players - 1)
+      num_players=$(( num_players - 1 ))
       ran_command=0
 
       if [[ $num_players -eq 0 ]] ; then
@@ -237,14 +237,14 @@ while inotifywait -e modify $log_file; do
     fi
 
     # misc server triggered
-    if $(contains "$user moved too quickly"); then
+    if contains "$user moved too quickly"; then
       ran_command=0
       say "Woah there $user! Maybe slow down a little?!"
     fi
 
     # not sure
-    if ! test "$ran_command" == 0 && $(contains "hal"); then
-      say $(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')
+    if ! test "$ran_command" == 0 && contains "hal"; then
+      say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
     fi
 
   fi
