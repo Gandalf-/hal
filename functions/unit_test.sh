@@ -13,10 +13,12 @@ source "./utility.sh"
 source "./memories.sh"
 source "./chatting.sh"
 source "./teleport.sh"
+source "./intent.sh"
 
 DEBUG=1
 QUIET=0
 USER='<player1>'
+MEM_DIR='/tmp/haltest/'
 
 # tests
 #==================
@@ -290,11 +292,52 @@ function test_forget_phrase(){
   test_cleanup
 }
 
+function test_check_intent(){
+  : ' none -> none
+  '
+  echo -n 'check_intent    '
+  CLINE='yes hal'
+  set_intent 'yes\|no' intent_simple_response
+  scpass "$(check_intent)" 'hello'
+
+  test_cleanup
+}
+
+function test_set_intent(){
+  : ' none -> none
+  '
+  echo -n 'set_intent      '
+  CLINE='yes hal'
+  set_intent 'yes\|no' intent_simple_response
+  out_str='yes\|no%intent_simple_response'
+
+  if test "$(grep -F "$out_str" "$MEM_DIR"intent.list)"; then
+    scpass '' ''
+  else
+    scfail '' ''
+  fi
+
+  test_cleanup
+}
+
+function test_clear_intent(){
+  : ' none -> none
+  '
+  echo -n 'clear_intent      '
+
+  test_cleanup
+}
+
 # run
 #==================
+test_cleanup
 test_test
 test_requirements
+
 test_tell_joke
+test_random_okay
+test_random_musing
+
 test_hc
 test_contains
 test_say
@@ -302,13 +345,16 @@ test_tell
 test_run
 test_not_repeat
 test_random
-test_random_okay
-test_random_musing
 test_shut_down
 test_hcsr
+
 test_go_to_dest
 test_go_home
 test_set_home
+
 test_remember_phrase
 test_recall_phrase
 test_forget_phrase
+
+test_check_intent
+test_set_intent

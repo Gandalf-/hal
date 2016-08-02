@@ -10,7 +10,9 @@
 # boilerplate
 #==================
 function test_cleanup(){
-  DEBUG=1 ; QUIET=0 ; USER='<player1>'; echo
+  DEBUG=1 ; QUIET=0 ; USER='<player1>'
+  MEM_DIR='/tmp/haltest/'; rm -rf "$MEM_DIR"; mkdir -p "$MEM_DIR"
+  echo
 }
 
 function pass(){ echo -n " pass"; }
