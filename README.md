@@ -1,11 +1,9 @@
 # Hal
 Minecraft AI in Shell
 
-| Branch | Status |
-|-------------|---|
-| Master      |  [![Build Status](https://travis-ci.org/Gandalf-/hal.svg?branch=master)](https://travis-ci.org/Gandalf-/hal)  |
-| Development |  [![Build Status](https://travis-ci.org/Gandalf-/hal.svg?branch=development)](https://travis-ci.org/Gandalf-/hal) |
-| Test |   [![Build Status](https://travis-ci.org/Gandalf-/hal.svg?branch=test)](https://travis-ci.org/Gandalf-/hal)|
+|  Branch: | Master  | Development | Test |
+|---------|---------|-------------|------|
+| **Status:**  |  [![Build Status](https://travis-ci.org/Gandalf-/hal.svg?branch=master)](https://travis-ci.org/Gandalf-/hal)  |  [![Build Status](https://travis-ci.org/Gandalf-/hal.svg?branch=development)](https://travis-ci.org/Gandalf-/hal) |  [![Build Status](https://travis-ci.org/Gandalf-/hal.svg?branch=test)](https://travis-ci.org/Gandalf-/hal) |
 
 ## Description
 - Hal is a lightweight AI for Minecraft servers. He is intended to make running a server more fun!
