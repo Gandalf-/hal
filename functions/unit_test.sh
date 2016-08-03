@@ -390,9 +390,6 @@ function test_clear_intent(){
 # run
 #==================
 test_cleanup
-test_check_intent
-test_set_intent
-exit
 
 test_test
 test_requirements
@@ -419,3 +416,5 @@ test_remember_phrase
 test_recall_phrase
 test_forget_phrase
 
+test_check_intent
+test_set_intent

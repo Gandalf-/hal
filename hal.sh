@@ -7,7 +7,6 @@
 
 # hal.sh
 
-set -u
 set -o pipefail
 
 USER=''
@@ -69,7 +68,7 @@ while inotifywait -e modify "$log_file"; do
   # preparation
   RCOMMAND=1
   CLINE=$(tail -n 3 "$log_file" | grep -v 'Keeping entity' | tail -n 1)
-  lifetime=$(( "$(date +%s)" - starttime ))
+  lifetime=$(( $(date +%s) - starttime ))
 
   USER=$(echo "$CLINE" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
   if test "$USER" == ""; then
@@ -92,6 +91,9 @@ while inotifywait -e modify "$log_file"; do
     QUIET=$(( QUIET + 1 ))
   fi
 
+  # intention checks
+  check_intent
+
   if test "$prevline" != "$CLINE" && not_repeat; then
     echo "prev: $prevline"
     echo "curr: $CLINE"
@@ -112,8 +114,8 @@ while inotifywait -e modify "$log_file"; do
     fi
 
     if hc 'you can talk'; then
-      say "Hooray!"
       QUIET=0
+      say "Hooray!"
       RCOMMAND=0
     fi
 
@@ -180,7 +182,7 @@ while inotifywait -e modify "$log_file"; do
       "/effect $USER minecraft:speed 60 5"
 
     # teleportation
-    if hc 'take me home '; then go_home   ; fi
+    if hc 'take me home'; then go_home   ; fi
     if hc 'set home as ' ; then set_home  ; fi
     if hc 'take me to '  ; then go_to_dest; fi
 
