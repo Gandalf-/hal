@@ -308,14 +308,28 @@ function test_set_intent(){
   '
   echo -n 'set_intent      '
   CLINE='yes hal'
-  set_intent 'yes\|no' intent_simple_response
-  out_str='yes\|no%intent_simple_response'
+  set_intent 'yes\|no' functionA
+  scpass "$INTENT_A" 'yes\|no%functionA'
+  scpass "$INTENT_B" ''
+  scpass "$INTENT_C" ''
 
-  if test "$(grep -F "$out_str" "$MEM_DIR"intent.list)"; then
-    scpass '' ''
-  else
-    scfail '' ''
-  fi
+  set_intent 'yes\|no' functionB
+  scpass "$INTENT_A" 'yes\|no%functionB'
+  scpass "$INTENT_B" 'yes\|no%functionA'
+  scpass "$INTENT_C" ''
+
+  set_intent 'yes\|no' functionC
+  scpass "$INTENT_A" 'yes\|no%functionC'
+  scpass "$INTENT_B" 'yes\|no%functionB'
+  scpass "$INTENT_C" 'yes\|no%functionA'
+
+  # cycle
+  set_intent 'yes\|no' functionD
+  scpass "$INTENT_A" 'yes\|no%functionD'
+  echo
+  echo -n '...             '
+  scpass "$INTENT_B" 'yes\|no%functionC'
+  scpass "$INTENT_C" 'yes\|no%functionB'
 
   test_cleanup
 }

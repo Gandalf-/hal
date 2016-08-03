@@ -12,6 +12,7 @@
 function test_cleanup(){
   DEBUG=1 ; QUIET=0 ; USER='<player1>'
   MEM_DIR='/tmp/haltest/'; rm -rf "$MEM_DIR"; mkdir -p "$MEM_DIR"
+  INTENT_A=''; INTENT_B=''; INTENT_C=''
   echo
 }
 
@@ -23,7 +24,7 @@ function scpass(){
   if test "$1" == "$2"; then 
     pass
   else 
-    fail; echo "Expected: $1"; echo "Received: $2"; exit 1
+    fail; echo "Expected: $2"; echo "Received: $1"; exit 1
   fi
 }
 function scfail(){

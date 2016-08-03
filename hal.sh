@@ -17,6 +17,10 @@ CLINE=''
 MEM_DIR=''
 RCOMMAND=0
 
+INTENT_A=''
+INTENT_B=''
+INTENT_C=''
+
 prevline=''
 num_players=0
 starttime=$(date +%s)

@@ -9,29 +9,57 @@
 
 function check_intent(){
   : ' none -> none
+  checks if the current line satisfies each of the intents. If a match is
+  found, evaluate it and move the subsequent intents up the list
   '
-  local intent_file="$MEM_DIR"intent.list
-  tac "$intent_file" | while read -r line; do
-    pattern=$(echo "$line" | cut -f 1 -d '%')
-    function=$(echo "$line" | cut -f 2 -d '%')
+  if test "$INTENT_A" != ''; then
+    pattern=$(echo "$INTENT_A" | cut -f 1 -d '%')
+    function=$(echo "$INTENT_A" | cut -f 2 -d '%')
 
     if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
       eval "$function"
+      INTENT_A="$INTENT_B"
+      INTENT_B="$INTENT_C"
+      INTENT_C=''
+
+    elif test "$INTENT_B" != ''; then
+      pattern=$(echo "$INTENT_B" | cut -f 1 -d '%')
+      function=$(echo "$INTENT_B" | cut -f 2 -d '%')
+
+      if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
+        eval "$function"
+        INTENT_B="$INTENT_C"
+        INTENT_C=''
+
+      elif test "$INTENT_C" != ''; then
+        pattern=$(echo "$INTENT_C" | cut -f 1 -d '%')
+        function=$(echo "$INTENT_C" | cut -f 2 -d '%')
+
+        if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
+          eval "$function"
+        else
+          INTENT_C=''
+        fi
+      fi
     fi
-  done
+  fi
 }
 
 function set_intent(){
   : ' string, function -> none
   '
-  local intent_file="$MEM_DIR"intent.list
-  echo "$1%$2" >> "$intent_file"
-}
+  if test "$INTENT_A" == ''; then
+    INTENT_A="$1%$2"
 
-function clear_intent(){
-  : ' string -> none
-  '
+  elif test "$INTENT_B" == ''; then
+    INTENT_B="$INTENT_A"
+    INTENT_A="$1%$2"
 
+  else
+    INTENT_C="$INTENT_B"
+    INTENT_B="$INTENT_A"
+    INTENT_A="$1%$2"
+  fi
 }
 
 # intentions
