@@ -53,6 +53,8 @@ source "$ins_dir""functions/memories.sh"
 source "$ins_dir""functions/chatting.sh"
 # shellcheck source=functions/teleport.sh
 source "$ins_dir""functions/teleport.sh"
+# shellcheck source=functions/intent.sh
+source "$ins_dir""functions/intent.sh"
 
 echo 'Hal starting up'
 say "I'm alive!"
@@ -103,9 +105,9 @@ while inotifywait -e modify "$log_file"; do
       exit
     fi
 
-    if hc 'be QUIET'; then
-      say "Oh... Okay. I'll still do as you say but stay QUIET for a while"
-      QUIET=1
+    if hc 'be quiet'; then
+      say 'Oh... Are you sure?'
+      set_intent 'yes' 'intent_be_quiet'
       RCOMMAND=0
     fi
 

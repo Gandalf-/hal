@@ -17,19 +17,19 @@ function check_intent(){
     function=$(echo "$INTENT_A" | cut -f 2 -d '%')
 
     if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
-      eval "$function"
       INTENT_A="$INTENT_B"
       INTENT_B="$INTENT_C"
       INTENT_C=''
+      eval "$function"
 
     elif test "$INTENT_B" != ''; then
       pattern=$(echo "$INTENT_B" | cut -f 1 -d '%')
       function=$(echo "$INTENT_B" | cut -f 2 -d '%')
 
       if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
-        eval "$function"
         INTENT_B="$INTENT_C"
         INTENT_C=''
+        eval "$function"
 
       elif test "$INTENT_C" != ''; then
         pattern=$(echo "$INTENT_C" | cut -f 1 -d '%')
@@ -64,8 +64,18 @@ function set_intent(){
 
 # intentions
 #==================
-function intent_simple_response(){
+function intent_if_yes_do(){
   : '
   '
-  echo 'hello'
+  local regex='yes\|sure\|okay'
+  if test "$(echo "$CLINE" | grep -ioh "$regex")" != ''; then
+    eval "$@"
+  fi
+}
+
+function intent_be_quiet(){
+  : ' none -> none
+  '
+  say "Oh... Okay. I'll still do as you say but stay quiet for a while"
+  QUIET=1
 }

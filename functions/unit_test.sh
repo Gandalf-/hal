@@ -294,24 +294,69 @@ function test_forget_phrase(){
 
 function test_check_intent(){
   : ' none -> none
+  ensure that intents are triggered if the condition is met
   '
   echo -n 'check_intent    '
   CLINE='yes hal'
-  set_intent 'yes\|no' intent_simple_response
-  scpass "$(check_intent)" 'hello'
+  scpass "$INTENT_A" ''
+  set_intent 'yes\|no' 'intent_if_yes_do echo hello'
+  check_intent >/dev/null
+  scpass "$INTENT_A" ''
 
+  CLINE='whatever hal'
+  set_intent 'yes\|no' 'intent_if_yes_do echo hello'
+  scpass "$INTENT_A" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_B" ''
+  check_intent >/dev/null
+  scpass "$INTENT_A" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_B" ''
+  set_intent 'whatever' 'echo sure'
+  scpass "$INTENT_A" 'whatever%echo sure'
+  scpass "$INTENT_B" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_C" ''
+  echo
+  echo -n '...             '
+  check_intent >/dev/null
+  scpass "$INTENT_A" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_B" ''
+  CLINE='yes hal'
+  check_intent >/dev/null
+  scpass "$INTENT_A" ''
+
+  set_intent 'hiccup' 'echo wow'
+  scpass "$INTENT_A" 'hiccup%echo wow'
+  scpass "$INTENT_B" ''
+  set_intent 'whatever' 'echo sure'
+  scpass "$INTENT_A" 'whatever%echo sure'
+  scpass "$INTENT_B" 'hiccup%echo wow'
+  scpass "$INTENT_C" ''
+  CLINE='hiccup hal'
+  check_intent >/dev/null
+  scpass "$INTENT_A" 'whatever%echo sure'
+  echo
+  echo -n '...             '
+  scpass "$INTENT_B" ''
+  CLINE='whatever hal'
+  check_intent >/dev/null
+  scpass "$INTENT_A" ''
+
+  CLINE='yes hal'
+  set_intent 'yes\|no' 'intent_if_yes_do echo hello'
+  scpass "$(check_intent)" 'hello'
   test_cleanup
 }
 
 function test_set_intent(){
   : ' none -> none
+  make sure the intents can be set and are cycled correctly
+  newer intents push older ones down the list, dropping the last
+  if necessary
   '
   echo -n 'set_intent      '
   CLINE='yes hal'
   set_intent 'yes\|no' functionA
   scpass "$INTENT_A" 'yes\|no%functionA'
   scpass "$INTENT_B" ''
-  scpass "$INTENT_C" ''
 
   set_intent 'yes\|no' functionB
   scpass "$INTENT_A" 'yes\|no%functionB'
@@ -345,6 +390,10 @@ function test_clear_intent(){
 # run
 #==================
 test_cleanup
+test_check_intent
+test_set_intent
+exit
+
 test_test
 test_requirements
 
@@ -370,5 +419,3 @@ test_remember_phrase
 test_recall_phrase
 test_forget_phrase
 
-test_check_intent
-test_set_intent
