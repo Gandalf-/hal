@@ -7,6 +7,44 @@
 
 # chatting.sh
 
+function random_chat(){
+  : 'string -> string
+  requires a file with word : word %, word %, ...
+  '
+
+  : '
+  attempts to match the current line to an output
+  recursively calls itself on all subsets of the input until a match is found
+
+  hey there hal whats up
+    there hal whats up
+      hal whats up
+        whats up
+          whats
+          up
+        hal whats
+          hal
+          whats
+      there hal whats
+        hal whats
+          hal
+          whats
+        there hal
+          there
+          hal
+    hey there hal whats
+      there hal whats
+      hey there hal
+
+  if RC_FOUND=0 && no_match
+    random_chat currline - first_word
+    random_chat currline - last_word
+  else
+    RC_FOUND=1
+    say match
+  '
+}
+
 function random_okay(){
   : ' string -> string
   returns a random affirmative
@@ -17,6 +55,23 @@ function random_okay(){
   else
     random \
       "$1" 'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
+  fi
+}
+
+function tell_player(){
+  : ' none -> none
+  attempts to tell a player a message, if the player isnt in the game,
+  store it until the log in again
+  '
+  player="$(echo $CLINE | cut -f 3 -d ' ')"
+  message="$(echo $CLINE | cut -f 4- -d ' ')"
+
+  if test "$player" != "" || test "$message" != ""; then
+    set_intent \
+      'That player cannot be found' \
+      "intent_tell_player $USER $player $message"
+    run "/tell $player $message"
+    RCOMMAND=0
   fi
 }
 

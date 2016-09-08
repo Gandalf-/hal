@@ -132,18 +132,20 @@ while inotifywait -e modify "$log_file"; do
       RCOMMAND=0
     fi
 
-    hcsr 'hello' "Hey there $USER!"
-    hcsr 'hey' "Hello there $USER!"
-    hcsr 'yes' 'Ah... okay'
-    hcsr 'no' 'Oh... okay'
+    hcsr 'hello'    "Hey there $USER!"
+    hcsr 'hey'      "Hello there $USER!"
+    hcsr 'hi'       "Howdy $USER!"
+    hcsr 'yes'      'Ah... okay'
+    hcsr 'no'       'Oh... okay'
     hcsr 'whatever' 'Well. If you say so'
-    hcsr 'thanks' "You're quite welcome $USER!"
+    hcsr 'thanks'   "You're quite welcome $USER!"
 
     hcsr "what's up" \
       "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
 
     if hc 'tell me a joke'; then tell_joke; fi
     if hc 'tell a joke'   ; then tell_joke; fi
+    if hc 'tell '; then tell_player; fi
 
     # memory
     if hc 'remember'; then remember_phrase; fi
@@ -239,6 +241,11 @@ while inotifywait -e modify "$log_file"; do
       say "Goodbye $USER! See you again soon I hope!"
       num_players=$(( num_players - 1 ))
       RCOMMAND=0
+
+      if [[ $num_players -le 0 ]]; then
+        say "I seem to have gotten confused..."
+        num_players=0
+      fi
 
       if [[ $num_players -eq 0 ]]; then
         say "All alone..."

@@ -79,3 +79,14 @@ function intent_be_quiet(){
   say "Oh... Okay. I'll still do as you say but stay quiet for a while"
   QUIET=1
 }
+
+function intent_tell_player(){
+ : ' string -> none
+ stores a message for a player
+ '
+ say "I'll tell them when they show up again!"
+ sender="$(echo "$@" | cut -f 1 -d ' ')"
+ target="$(echo "$@" | cut -f 2 -d ' ')"
+ message="$(echo "$@" | cut -f 3- -d ' ')"
+ echo "$sender: $message" >> "$MEM_DIR""$target".mail
+}

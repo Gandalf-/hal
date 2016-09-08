@@ -15,7 +15,7 @@ function show_help(){
   say "Here are somethings I understand:"
   say "- hello, hey, how are you, what's up, tell a joke"
   say "- thanks, yes, no, whatever"
-  say "- help, restart, be quiet, you can talk, status update"
+  say "- help, restart, be quiet, you can talk"
   say "- make it (day, night, clear, rainy)"
   say "- make me (healthy, invisible, fast)"
   say "- take me to (the telehub, <player>)"

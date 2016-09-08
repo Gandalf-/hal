@@ -9,6 +9,7 @@
 
 function remember_phrase(){
   : ' none -> none
+  "hal remember that apples are nice"
   parse out note to remember and write to user file
   '
   local regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
@@ -25,6 +26,7 @@ function remember_phrase(){
 
 function recall_phrase(){
   : ' none -> none
+  "hal recall apples"
   search through user memories for related information
   '
   local regex='s/\(recall\ \|hal$\)//gI'
@@ -48,6 +50,7 @@ function recall_phrase(){
 
 function forget_phrase(){
   : ' none -> none
+  "hal forget about apples" 
   remove all related phrases from user file
   '
   local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'

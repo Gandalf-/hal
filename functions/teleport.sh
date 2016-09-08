@@ -9,6 +9,7 @@
 
 function go_to_dest(){
   : ' none -> none
+  "hal take me to notch"
   attempts to teleport the current user to the destination user
   '
   local where=$(\
@@ -38,6 +39,7 @@ function go_to_dest(){
 
 function go_home(){
   : ' none -> none
+  "hal take me home"
   attempts to teleport the current user to their home destination
   '
   local homeline=$(cat "$MEM_DIR""$USER".home) || ''
@@ -56,6 +58,7 @@ function go_home(){
 
 function set_home(){
   : ' none -> none
+  "hal set home as <x> <y> <z>"
   attempts to set the current users home destination
   '
   local homeline=$(echo "$CLINE" | grep -ioh 'set home as .*$') || ''
