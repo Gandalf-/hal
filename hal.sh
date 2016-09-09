@@ -234,6 +234,20 @@ while inotifywait -e modify "$log_file"; do
       elif [[ $num_players -ge 3 ]]; then
         say "Things sure are busy today!"
       fi
+
+      # check for messages
+      mfile="$MEM_DIR""$USER".mail
+      if [[ -e "$mfile" ]]; then
+        if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') -ge 2 ]] ; then
+          say "Looks like you have some messages!"
+        else
+          say "Looks like you have a message!"
+        fi
+        while read -r line || [[ -n "$line" ]]; do
+          say "$line"
+        done < "$mfile"
+        rm -f "$mfile"
+      fi
     fi
 
     # player leaves
