@@ -63,13 +63,11 @@ function tell_player(){
   attempts to tell a player a message, if the player isnt in the game,
   store it until the log in again
   '
-  player="$(echo $CLINE | cut -f 3 -d ' ')"
-  message="$(echo $CLINE | cut -f 4- -d ' ')"
-
+  player="$(echo "$CLINE" | cut -f 7 -d ' ')"
+  message="$(echo "$CLINE" | cut -f 8- -d ' ' | sed -e 's/[;\|{}'"'"'"&$()]/\\&/g')"
   if test "$player" != "" || test "$message" != ""; then
-    set_intent \
-      'That player cannot be found' \
-      "intent_tell_player $USER $player $message"
+    set_intent 'cannot' "intent_tell_player $USER $player $message"
+    say "Sure thing $USER!"
     run "/tell $player $message"
     RCOMMAND=0
   fi

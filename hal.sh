@@ -63,7 +63,9 @@ sleep 1
 
 # main
 while true; do
-while inotifywait -e modify "$log_file"; do
+inotifywait -m -q -e modify "$log_file" |
+while read -r unused; do
+#while inotifywait -q -e modify -e access "$log_file"; do
 
   # preparation
   RCOMMAND=1
@@ -95,8 +97,7 @@ while inotifywait -e modify "$log_file"; do
   check_intent
 
   if test "$prevline" != "$CLINE" && not_repeat; then
-    echo "prev: $prevline"
-    echo "curr: $CLINE"
+    echo "prev: $prevline"; echo "curr: $CLINE"; echo
 
     # administrative
     if hc 'help'; then show_help; fi
@@ -132,20 +133,26 @@ while inotifywait -e modify "$log_file"; do
       RCOMMAND=0
     fi
 
-    hcsr 'hello'    "Hey there $USER!"
-    hcsr 'hey'      "Hello there $USER!"
-    hcsr 'hi'       "Howdy $USER!"
-    hcsr 'yes'      'Ah... okay'
-    hcsr 'no'       'Oh... okay'
-    hcsr 'whatever' 'Well. If you say so'
-    hcsr 'thanks'   "You're quite welcome $USER!"
+    if hc 'tell me a joke'; then 
+      tell_joke
+
+    elif hc 'tell a joke' ; then 
+      tell_joke
+
+    elif hc 'tell '; then 
+      tell_player
+    fi
+
+    hcsr 'hello hal' "Hey there $USER!"
+    hcsr 'hey hal'   "Hello there $USER!"
+    hcsr 'hi hal'    "Howdy $USER!"
+    hcsr 'yes '      'Ah... okay'
+    hcsr 'no '       'Oh... okay'
+    hcsr 'whatever ' 'Well. If you say so'
+    hcsr 'thanks '   "You're quite welcome $USER!"
 
     hcsr "what's up" \
       "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
-
-    if hc 'tell me a joke'; then tell_joke; fi
-    if hc 'tell a joke'   ; then tell_joke; fi
-    if hc 'tell '; then tell_player; fi
 
     # memory
     if hc 'remember'; then remember_phrase; fi
@@ -236,7 +243,7 @@ while inotifywait -e modify "$log_file"; do
       fi
 
       # check for messages
-      mfile="$MEM_DIR""$USER".mail
+      mfile="$MEM_DIR""${USER,,}".mail
       if [[ -e "$mfile" ]]; then
         if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') -ge 2 ]] ; then
           say "Looks like you have some messages!"

@@ -12,12 +12,12 @@ function show_help(){
   print in game usage information
   '
   say "I'm Hal, a teenie tiny AI that will try to help you!"
-  say "Here are somethings I understand:"
-  say "- hello, hey, how are you, what's up, tell a joke"
-  say "- thanks, yes, no, whatever"
+  say "Here are some of the things I understand:"
+  say "- thanks, yes, no, whatever, tell a joke"
   say "- help, restart, be quiet, you can talk"
   say "- make it (day, night, clear, rainy)"
   say "- make me (healthy, invisible, fast)"
+  say "- tell <player> <message>"
   say "- take me to (the telehub, <player>)"
   say "- take me home, set home as <x> <y> <z>"
   say "- (remember, recall, forget) <phrase>"
@@ -118,6 +118,7 @@ function shut_down(){
   : ' none -> none
   interrupt handler
   '
+  echo
   echo 'Hal shutting down'
   say 'I died!'
   if test "$DEBUG" == "0"; then

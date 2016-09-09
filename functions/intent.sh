@@ -20,7 +20,7 @@ function check_intent(){
       INTENT_A="$INTENT_B"
       INTENT_B="$INTENT_C"
       INTENT_C=''
-      eval "$function"
+      eval "${function}"
 
     elif test "$INTENT_B" != ''; then
       pattern=$(echo "$INTENT_B" | cut -f 1 -d '%')
@@ -49,16 +49,16 @@ function set_intent(){
   : ' string, function -> none
   '
   if test "$INTENT_A" == ''; then
-    INTENT_A="$1%$2"
+    INTENT_A="$1%${@:2}"
 
   elif test "$INTENT_B" == ''; then
     INTENT_B="$INTENT_A"
-    INTENT_A="$1%$2"
+    INTENT_A="$1%${@:2}"
 
   else
     INTENT_C="$INTENT_B"
     INTENT_B="$INTENT_A"
-    INTENT_A="$1%$2"
+    INTENT_A="$1%${@:2}"
   fi
 }
 
@@ -88,5 +88,5 @@ function intent_tell_player(){
  sender="$(echo "$@" | cut -f 1 -d ' ')"
  target="$(echo "$@" | cut -f 2 -d ' ')"
  message="$(echo "$@" | cut -f 3- -d ' ')"
- echo "$sender: $message" >> "$MEM_DIR""$target".mail
+ echo "$sender: $message" >> "$MEM_DIR""${target,,}".mail
 }
