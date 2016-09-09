@@ -27,7 +27,7 @@ install:
 	@cp ./hal.sh $(install_loc)/
 	@cp ./functions/* $(install_loc)/functions/
 	@chmod +x $(install_loc)/hal.sh
-	@ln -s $(install_loc)/hal.sh $(exec_file)
+	@ln -fs $(install_loc)/hal.sh $(exec_file)
 	@echo "Done"
 	@echo "Executable : $(exec_file)"
 	@echo "Config file: $(install_loc)/halrc"
