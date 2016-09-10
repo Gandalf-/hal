@@ -31,8 +31,8 @@ if [[ -e ~/.halrc ]]; then
   inst_dir=$(grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
   MEM_DIR=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
 
-  for conf_file in "$inst_dir" "$log_file" "$MEM_DIR"; do
-    if test "$conf_file" == ''; then
+  for conf_file in "${inst_dir}" "${log_file}" "${MEM_DIR}"; do
+    if test "${conf_file}" == ''; then
       echo "error: Configuration file is incomplete" 
       exit
     fi
@@ -43,58 +43,58 @@ else
 fi
 
 for req_prog in "tmux" "inotifywait"; do
-  if test "$(which $req_prog)" == ''; then
+  if test "$(which ${req_prog})" == ''; then
     echo "error: hal.sh requires tmux and inotify-tools to run"
     exit
   fi
 done
 
 # load modules
-eval inst_dir="$inst_dir"
+eval inst_dir="${inst_dir}"
 # shellcheck source=functions/utility.sh
 # shellcheck source=functions/memories.sh
 # shellcheck source=functions/chatting.sh
 # shellcheck source=functions/teleport.sh
 # shellcheck source=functions/intent.sh
-for file in \
-  "utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh"; do
-  source "$inst_dir""functions/$file"
+for file in "utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh"; do
+  source "${inst_dir}""functions/""${file}"
 done
 
 # startup messages
 echo 'Hal starting up'
 say "I'm alive!"
 trap shut_down INT
-mkdir -p "$MEM_DIR"
+mkdir -p "${MEM_DIR}"
 sleep 1
 
 # main
 while true; do
-inotifywait -m -q -e modify "$log_file" | while read -r _; do
+inotifywait -m -q -e modify "${log_file}" | 
+while read -r _; do
 
   # preparation
   RCOMMAND=1
-  CLINE=$(tail -n 3 "$log_file" | grep -v 'Keeping entity' | tail -n 1)
-  USER=$(echo "$CLINE" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
-  lifetime=$(( $(date +%s) - starttime ))
+  CLINE=$(tail -n 3 "${log_file}" | grep -v 'Keeping entity' | tail -n 1)
+  USER=$(echo "${CLINE}" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
+  LIFETIME=$(( $(date +%s) - starttime ))
 
-  if test "$USER" == ''; then
+  if test "${USER}" == ''; then
     if contains 'User Authenticator'; then
-      USER=$(echo "$CLINE" | cut -f 8 -d ' ')
+      USER=$(echo "${CLINE}" | cut -f 8 -d ' ')
     else
-      USER=$(echo "$CLINE" | cut -f 4 -d ' ')
+      USER=$(echo "${CLINE}" | cut -f 4 -d ' ')
     fi
   fi
 
   # time based actions
-  if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ $num_players -ne 0 ]]; then
+  if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ ${num_players} -ne 0 ]]; then
     say "$(random_musing)"
     sleep 2
   fi
 
-  if [[ $QUIET -ge 300 ]]; then
+  if [[ ${QUIET} -ge 300 ]]; then
     QUIET=0
-  elif [[ $QUIET -ne 0 ]]; then
+  elif [[ ${QUIET} -ne 0 ]]; then
     QUIET=$(( QUIET + 1 ))
   fi
 
@@ -102,8 +102,8 @@ inotifywait -m -q -e modify "$log_file" | while read -r _; do
   check_intent
 
   # user initiated actions
-  if test "$prevline" != "$CLINE" && not_repeat; then
-    echo "prev: $prevline"; echo "curr: $CLINE"; echo
+  if test "${prevline}" != "${CLINE}" && not_repeat; then
+    echo "prev: ${prevline}"; echo "curr: ${CLINE}"; echo
 
     # administrative
     if hc 'help'; then show_help; fi
@@ -127,7 +127,7 @@ inotifywait -m -q -e modify "$log_file" | while read -r _; do
     fi
 
     if hc 'status update'; then
-      say "Active players: $num_players"
+      say "Active players: ${num_players}"
       RCOMMAND=0
     fi
 
@@ -153,22 +153,22 @@ inotifywait -m -q -e modify "$log_file" | while read -r _; do
 
     # teleportation
     # player joins or leaves
-    if contains "UUID of player";      then player_joined fi
-    if contains "$USER left the game"; then player_left   fi
+    if contains "UUID of player";      then player_joined; fi
+    if contains "${USER} left the game"; then player_left  ; fi
 
     # misc server triggered
-    if contains "$USER moved too quickly"; then
-      say "Woah there $USER! Maybe slow down a little?!"
+    if contains "${USER} moved too quickly"; then
+      say "Woah there ${USER}! Maybe slow down a little?!"
       RCOMMAND=0
     fi
 
     # not sure what to do
-    if ! test "$RCOMMAND" == 0 && contains "hal"; then
+    if ! test "${RCOMMAND}" == 0 && contains "hal"; then
       say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...' '*Blank stare*')"
     fi
 
   fi
-  prevline="$CLINE"
+  prevline="${CLINE}"
 done
 sleep 1
 done

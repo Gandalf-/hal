@@ -14,7 +14,7 @@ function check_chatting_actions(){
   if hc 'how are you'; then
     adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
     adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
-    say "I'm feeling $adverb $adjective! I've been alive for $lifetime seconds."
+    say "I'm feeling $adverb $adjective! I've been alive for $LIFETIME seconds."
     RCOMMAND=0
   fi
 
