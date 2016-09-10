@@ -7,6 +7,39 @@
 
 # chatting.sh
 
+function check_chatting_actions(){
+  : ' none -> none
+  chatting actions
+  '
+  if hc 'how are you'; then
+    adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
+    adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
+    say "I'm feeling $adverb $adjective! I've been alive for $lifetime seconds."
+    RCOMMAND=0
+  fi
+
+  if hc 'tell me a joke'; then 
+    tell_joke
+
+  elif hc 'tell a joke' ; then 
+    tell_joke
+
+  elif hc 'tell '; then 
+    tell_player
+  fi
+
+  hcsr 'hello hal' "Hey there $USER!"
+  hcsr 'hey hal'   "Hello there $USER!"
+  hcsr 'hi hal'    "Howdy $USER!"
+  hcsr 'yes '      'Ah... okay'
+  hcsr 'no '       'Oh... okay'
+  hcsr 'whatever ' 'Well. If you say so'
+  hcsr 'thanks '   "You're quite welcome $USER!"
+
+  hcsr "what's up" \
+    "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+}
+
 function random_chat(){
   : 'string -> string
   requires a file with word : word %, word %, ...

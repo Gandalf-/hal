@@ -101,7 +101,7 @@ inotifywait -m -q -e modify "$log_file" | while read -r _; do
   # intention checks
   check_intent
 
-  # user initated actions
+  # user initiated actions
   if test "$prevline" != "$CLINE" && not_repeat; then
     echo "prev: $prevline"; echo "curr: $CLINE"; echo
 
@@ -132,166 +132,39 @@ inotifywait -m -q -e modify "$log_file" | while read -r _; do
     fi
 
     # chatting
-    if hc 'how are you'; then
-      adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
-      adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
-      say "I'm feeling $adverb $adjective! I've been alive for $lifetime seconds."
-      RCOMMAND=0
-    fi
-
-    if hc 'tell me a joke'; then 
-      tell_joke
-
-    elif hc 'tell a joke' ; then 
-      tell_joke
-
-    elif hc 'tell '; then 
-      tell_player
-    fi
-
-    hcsr 'hello hal' "Hey there $USER!"
-    hcsr 'hey hal'   "Hello there $USER!"
-    hcsr 'hi hal'    "Howdy $USER!"
-    hcsr 'yes '      'Ah... okay'
-    hcsr 'no '       'Oh... okay'
-    hcsr 'whatever ' 'Well. If you say so'
-    hcsr 'thanks '   "You're quite welcome $USER!"
-
-    hcsr "what's up" \
-      "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+    check_chatting_actions
 
     # memory
-    if hc 'remember'; then remember_phrase; fi
-
-    if hc 'recall everything'; then
-      say "Okay $USER, here's everything I know for you!"
-      cat "$MEM_DIR""$USER".memories | while read -r line; do
-        say "$line"
-      done
-      RCOMMAND=0
-
-    elif hc 'recall'; then
-      recall_phrase
-    fi
-    
-    if hc 'forget everything'; then
-      say "Done $USER, I forgot everything!"
-      echo '' > "$MEM_DIR""$USER".memories
-      RCOMMAND=0
-
-    elif hc 'forget'; then
-      forget_phrase
-    fi
-
-    # effects
-    hcsr 'make me healthy' \
-      "$(random_okay 'This should help you feel better')" \
-      "/effect $USER minecraft:instant_health 1 10"
-
-    hcsr 'make me invisible' \
-      "$(random_okay 'Not even I know where you are now!')" \
-      "/effect $USER minecraft:invisibility 60 5"
-
-    hcsr 'make me fast' \
-      "$(random_okay 'Gotta go fast!')" \
-      "/effect $USER minecraft:speed 60 5"
+    check_memory_actions
 
     # teleportation
     if hc 'take me home'; then go_home   ; fi
-    if hc 'set home as ' ; then set_home  ; fi
-    if hc 'take me to '  ; then go_to_dest; fi
+    if hc 'set home as '; then set_home  ; fi
+    if hc 'take me to ' ; then go_to_dest; fi
 
     # gamemode
-    hcsr 'put me in survival mode' \
-      "$(random_okay 'Remember to eat!')" \
-      "/gamemode surival $USER"
-
-    hcsr 'put me in creative mode' \
-      "$(random_okay)" \
-      "/gamemode creative $USER"
-
-    hcsr 'put me in spectator mode' \
-      "$(random_okay)" \
-      "/gamemode spectator $USER"
+    check_gamemode_actions
 
     # weather
-    hcsr 'make it clear' \
-      "$(random_okay 'Rain clouds begone!')" \
-      "/weather clear 600"
+    check_weather_actions
 
-    hcsr 'make it rainy' \
-      "$(random_okay 'Rain clouds inbound!')" \
-      "/weather rain 600"
+    # effects
+    check_effect_actions
 
-    hcsr 'make it day' \
-      "$(random_okay 'Sunshine on the way!')" \
-      "/time set day"
-
-    hcsr 'make it night' \
-      "$(random_okay 'Be careful!')" \
-      "/time set night"
-
-    # player joins
-    if contains "UUID of player"; then
-      sleep 0.1
-      say "Hey there $USER! Try saying \"Hal help\""
-      num_players=$(( num_players + 1 ))
-      RCOMMAND=0
-
-      if [[ $num_players -eq 1 ]]; then
-        say "You're the first one here!"
-
-      elif [[ $num_players -eq 2 ]]; then
-        say "Three makes a party!"
-
-      elif [[ $num_players -ge 3 ]]; then
-        say "Things sure are busy today!"
-      fi
-
-      # check for messages
-      mfile="$MEM_DIR""${USER,,}".mail
-      if [[ -e "$mfile" ]]; then
-        if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') -ge 2 ]] ; then
-          say "Looks like you have some messages!"
-        else
-          say "Looks like you have a message!"
-        fi
-        while read -r line || [[ -n "$line" ]]; do
-          say "$line"
-        done < "$mfile"
-        rm -f "$mfile"
-      fi
-    fi
-
-    # player leaves
-    if contains "$USER left the game"; then
-      say "Goodbye $USER! See you again soon I hope!"
-      num_players=$(( num_players - 1 ))
-      RCOMMAND=0
-
-      if [[ $num_players -le 0 ]]; then
-        say "I seem to have gotten confused..."
-        num_players=0
-      fi
-
-      if [[ $num_players -eq 0 ]]; then
-        say "All alone..."
-        QUIET=0
-
-      elif [[ $num_players -eq 1 ]]; then
-        say "I guess it's just you and me now!"
-      fi
-    fi
+    # teleportation
+    # player joins or leaves
+    if contains "UUID of player";      then player_joined fi
+    if contains "$USER left the game"; then player_left   fi
 
     # misc server triggered
     if contains "$USER moved too quickly"; then
-      RCOMMAND=0
       say "Woah there $USER! Maybe slow down a little?!"
+      RCOMMAND=0
     fi
 
-    # not sure
+    # not sure what to do
     if ! test "$RCOMMAND" == 0 && contains "hal"; then
-      say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
+      say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...' '*Blank stare*')"
     fi
 
   fi

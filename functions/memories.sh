@@ -7,6 +7,27 @@
 
 # memories.sh
 
+function check_memory_actions(){
+  : ' none -> none
+  check memory actions
+  '
+  if hc 'remember'; then 
+    remember_phrase; 
+  fi
+
+  if hc 'recall everything'; then 
+    recall_everything
+  elif hc 'recall'; then 
+    recall_phrase
+  fi
+  
+  if hc 'forget everything'; then 
+    forget_everything
+  elif hc 'forget'; then 
+    forget_phrase
+  fi
+}
+
 function remember_phrase(){
   : ' none -> none
   "hal remember that apples are nice"
@@ -48,6 +69,18 @@ function recall_phrase(){
   RCOMMAND=0
 }
 
+function recall_everything(){
+  : ' none -> none
+  "hal recall everything"
+  tell user everything in memory file
+  '
+  say "Okay $USER, here's everything I know for you!"
+  cat "$MEM_DIR""$USER".memories | while read -r line; do
+    say "$line"
+  done
+  RCOMMAND=0
+}
+
 function forget_phrase(){
   : ' none -> none
   "hal forget about apples" 
@@ -65,5 +98,15 @@ function forget_phrase(){
   else
     say "Sorry $USER, I'm not sure what to do"
   fi
+  RCOMMAND=0
+}
+
+function forget_everything(){
+  : ' none -> none
+  "hal forget everything" 
+  remove all phrases from user file
+  '
+  say "Done $USER, I forgot everything!"
+  echo '' > "$MEM_DIR""$USER".memories
   RCOMMAND=0
 }
