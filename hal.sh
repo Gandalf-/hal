@@ -23,38 +23,45 @@ INTENT_C=''
 prevline=''
 num_players=0
 starttime=$(date +%s)
-ins_dir=''
+inst_dir=''
 log_file=''
 
 if [[ -e ~/.halrc ]]; then
   log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
-  ins_dir=$( grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
+  inst_dir=$(grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
   MEM_DIR=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
 
-  if test "$ins_dir" == ""|| test "$log_file" == ""|| test "$MEM_DIR" == ""; then
-    echo "error: Configuration file is incomplete"; exit
-  fi
+  for conf_file in "$inst_dir" "$log_file" "$MEM_DIR"; do
+    if test "$conf_file" == ''; then
+      echo "error: Configuration file is incomplete" 
+      exit
+    fi
+  done
 
 else
   echo "error: Cannot find ~/.halrc"; exit
 fi
 
-if test "$(which tmux)" == '' || test "$(which inotifywait)" == ''; then
-  echo "error: hal.sh requires tmux and inotify-tools to run"; exit
-fi
+for req_prog in "tmux" "inotifywait"; do
+  if test "$(which $req_prog)" == ''; then
+    echo "error: hal.sh requires tmux and inotify-tools to run"
+    exit
+  fi
+done
 
-eval ins_dir="$ins_dir"
+# load modules
+eval inst_dir="$inst_dir"
 # shellcheck source=functions/utility.sh
-source "$ins_dir""functions/utility.sh"
 # shellcheck source=functions/memories.sh
-source "$ins_dir""functions/memories.sh"
 # shellcheck source=functions/chatting.sh
-source "$ins_dir""functions/chatting.sh"
 # shellcheck source=functions/teleport.sh
-source "$ins_dir""functions/teleport.sh"
 # shellcheck source=functions/intent.sh
-source "$ins_dir""functions/intent.sh"
+for file in \
+  "utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh"; do
+  source "$inst_dir""functions/$file"
+done
 
+# startup messages
 echo 'Hal starting up'
 say "I'm alive!"
 trap shut_down INT
@@ -63,25 +70,23 @@ sleep 1
 
 # main
 while true; do
-inotifywait -m -q -e modify "$log_file" |
-while read -r unused; do
-#while inotifywait -q -e modify -e access "$log_file"; do
+inotifywait -m -q -e modify "$log_file" | while read -r _; do
 
   # preparation
   RCOMMAND=1
   CLINE=$(tail -n 3 "$log_file" | grep -v 'Keeping entity' | tail -n 1)
+  USER=$(echo "$CLINE" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
   lifetime=$(( $(date +%s) - starttime ))
 
-  USER=$(echo "$CLINE" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
-  if test "$USER" == ""; then
-    if test "$(echo "$CLINE" | grep -oih 'User Authenticator')" == ''; then
-      USER=$(echo "$CLINE" | cut -f 4 -d ' ')
-    else
+  if test "$USER" == ''; then
+    if contains 'User Authenticator'; then
       USER=$(echo "$CLINE" | cut -f 8 -d ' ')
+    else
+      USER=$(echo "$CLINE" | cut -f 4 -d ' ')
     fi
   fi
 
-  # time based
+  # time based actions
   if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ $num_players -ne 0 ]]; then
     say "$(random_musing)"
     sleep 2
@@ -96,6 +101,7 @@ while read -r unused; do
   # intention checks
   check_intent
 
+  # user initated actions
   if test "$prevline" != "$CLINE" && not_repeat; then
     echo "prev: $prevline"; echo "curr: $CLINE"; echo
 
