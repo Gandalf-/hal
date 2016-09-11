@@ -28,53 +28,42 @@ function check_chatting_actions(){
     tell_player
   fi
 
-  hcsr 'hello hal' "Hey there $USER!"
-  hcsr 'hey hal'   "Hello there $USER!"
-  hcsr 'hi hal'    "Howdy $USER!"
-  hcsr 'yes '      'Ah... okay'
-  hcsr 'no '       'Oh... okay'
-  hcsr 'whatever ' 'Well. If you say so'
-  hcsr 'thanks '   "You're quite welcome $USER!"
+  hcsr 'hello hal'    "Hey there $USER!"
+  hcsr 'hey hal'      "Hello there $USER!"
+  hcsr 'hi hal'       "Howdy $USER!"
+  hcsr 'sup hal'      "Yo, what's good $USER?"
+  hcsr 'yes hal'      'Ah... okay'
+  hcsr 'no hal'       'Oh... okay'
+  hcsr 'whatever hal' 'Well. If you say so'
+  hcsr 'thanks hal'   "You're quite welcome $USER!"
 
-  hcsr "what's up" \
-    "Not too much $USER! Just $(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+  hcsr 'turn down for what' "Nothing! Order another round of shots!"
+
+  comment="$(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+  hcsr "what's up" "Not too much $USER! Just $comment"
+  hcsr "whats up" "Not too much $USER! Just $comment"
+
+  if hc 'what do you know about'; then
+    # search the internet?
+    if contains 'zombie'; then
+      say "They're wannabe Frankensteins as far as I can tell!"
+
+    elif contains 'skeleton'; then
+      say "They're spooky! Watch out for arrows!"
+
+    elif contains 'spider'; then
+      say "Too many legs for my sensibilities"
+
+    else 
+      say "Hmm... Not much"
+    fi
+  fi
+
 }
 
 function random_chat(){
   : 'string -> string
   requires a file with word : word %, word %, ...
-  '
-
-  : '
-  attempts to match the current line to an output
-  recursively calls itself on all subsets of the input until a match is found
-
-  hey there hal whats up
-    there hal whats up
-      hal whats up
-        whats up
-          whats
-          up
-        hal whats
-          hal
-          whats
-      there hal whats
-        hal whats
-          hal
-          whats
-        there hal
-          there
-          hal
-    hey there hal whats
-      there hal whats
-      hey there hal
-
-  if RC_FOUND=0 && no_match
-    random_chat currline - first_word
-    random_chat currline - last_word
-  else
-    RC_FOUND=1
-    say match
   '
 }
 
