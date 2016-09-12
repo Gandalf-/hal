@@ -14,6 +14,7 @@ DEBUG=0
 QUIET=0
 CLINE=''
 MEM_DIR=''
+OUT_FILE=''
 RCOMMAND=0
 
 INTENT_A=''
@@ -26,7 +27,11 @@ starttime=$(date +%s)
 inst_dir=''
 log_file=''
 
-if [[ -e ~/.halrc ]]; then
+if test "$1" != '' && test "$2" != '' && 
+  test "$3" != '' && test "$4" != ''; then
+  log_file="$1"; inst_dir="$2"; MEM_DIR="$3"; OUT_FILE="$4"; DEBUG=1
+
+elif [[ -e ~/.halrc ]]; then
   log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
   inst_dir=$(grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
   MEM_DIR=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
@@ -39,7 +44,8 @@ if [[ -e ~/.halrc ]]; then
   done
 
 else
-  echo "error: Cannot find ~/.halrc"; exit
+  echo "error: Cannot find ~/.halrc"
+  exit
 fi
 
 for req_prog in "tmux" "inotifywait"; do
@@ -61,7 +67,9 @@ for file in "utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh"; 
 done
 
 # startup messages
-echo 'Hal starting up'
+if ! test $DEBUG ; then
+  echo 'Hal starting up'
+fi
 say "I'm alive!"
 trap shut_down INT
 mkdir -p "${MEM_DIR}"
@@ -103,15 +111,16 @@ while read -r _; do
 
   # user initiated actions
   if test "${prevline}" != "${CLINE}" && not_repeat; then
-    echo "prev: ${prevline}"; echo "curr: ${CLINE}"; echo
 
     # administrative
     if hc 'help'; then show_help; fi
 
     if hc 'restart'; then
       say 'Okay, restarting!'
-      bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0")" &
-      exit
+      if test ! $DEBUG; then
+        bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
+        exit
+      fi
     fi
 
     if hc 'be quiet'; then

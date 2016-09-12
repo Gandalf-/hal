@@ -21,6 +21,11 @@ clean:
 	@rm -r $(install_loc) $(exec_file) $(conf_file)
 	@echo "Done"
 
+live_demo:
+	@echo "Live demo available at http://localhost:8000"
+	@echo "Stop with ctrl-c"
+	@cd demo && python server.py
+
 install:
 	@mkdir -p $(install_loc)/functions/
 	@cp -n ./halrc $(conf_file)

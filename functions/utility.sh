@@ -169,6 +169,17 @@ function contains(){
   fi
 }
 
+function debug_output(){
+  : ' string -> none
+  sends output to correct location
+  '
+  if [[ -e "$OUT_FILE" ]]; then
+    echo "$@" >> "$OUT_FILE"
+  else
+    echo "$@"
+  fi
+}
+
 function say(){
   : ' string -> none
   say a phrase in the server
@@ -177,7 +188,7 @@ function say(){
     if test "$DEBUG" == "0"; then
       tmux send-keys -t minecraft "/say [Hal] $1" Enter
     else
-      echo "/say [Hal] $1"
+      debug_output "/say [Hal] $1"
     fi
   fi
 }
@@ -190,7 +201,7 @@ function tell(){
     if test "$DEBUG" == "0"; then
       tmux send-keys -t minecraft "/tell $USER $1" Enter
     else
-      echo "/tell $USER $1"
+      debug_output "/tell $USER $1"
     fi
   fi
 }
@@ -203,7 +214,7 @@ function run(){
     if test "$DEBUG" == "0"; then
       tmux send-keys -t minecraft "$@" Enter
     else
-      echo "$@"
+      debug_output "$@"
     fi
   fi
 }
@@ -236,8 +247,8 @@ function shut_down(){
   : ' none -> none
   interrupt handler
   '
-  echo
-  echo 'Hal shutting down'
+  debug_output ""
+  debug_output 'Hal shutting down'
   say 'I died!'
   if test "$DEBUG" == "0"; then
     exit

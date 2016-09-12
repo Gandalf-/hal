@@ -18,16 +18,14 @@ function check_chatting_actions(){
     RCOMMAND=0
   fi
 
-  if hc 'tell me a joke'; then 
-    tell_joke
-
-  elif hc 'tell a joke' ; then 
+  if hc 'tell .* joke'; then 
     tell_joke
 
   elif hc 'tell '; then 
     tell_player
   fi
 
+  hcsr 'hal?'         "$USER?"
   hcsr 'hello hal'    "Hey there $USER!"
   hcsr 'hey hal'      "Hello there $USER!"
   hcsr 'hi hal'       "Howdy $USER!"
@@ -57,6 +55,7 @@ function check_chatting_actions(){
     else 
       say "Hmm... Not much"
     fi
+    RCOMMAND=0
   fi
 
 }
