@@ -57,7 +57,7 @@ function recall_phrase(){
   if test "$phrase" != ""; then
     if test "$(grep -i "$phrase" "$mem_file")" != ""; then
       say "Okay $USER, here's what I know about \"$phrase\":"
-      grep "$phrase" "$mem_file" | while read -r line; do
+      grep -i "$phrase" "$mem_file" | while read -r line; do
         say "\"$line\""
       done
     else
@@ -93,7 +93,7 @@ function forget_phrase(){
   local file_contents=$(cat "$mem_file")
 
   if test "$phrase" != ""; then
-    echo "$file_contents" | grep -v "$phrase" > "$mem_file"
+    echo "$file_contents" | grep -iv "$phrase" > "$mem_file"
     say "Okay $USER, I've forgetten everything about \"$phrase!\""
   else
     say "Sorry $USER, I'm not sure what to do"
