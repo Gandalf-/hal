@@ -15,7 +15,7 @@ function check_memory_actions(){
     remember_phrase; 
   fi
 
-  if hc 'recall everything'; then 
+  if hc 'tell me about everything'; then 
     recall_everything
   elif hc 'recall'; then 
     recall_phrase
@@ -47,15 +47,15 @@ function remember_phrase(){
 
 function recall_phrase(){
   : ' none -> none
-  "hal recall apples"
+  "hal tell me about apples"
   search through user memories for related information
   '
-  local regex='s/\(recall\ \|hal$\)//gI'
-  local phrase=$(echo "$CLINE" | grep -oih 'recall .*$' | sed -e "$regex")
+  local regex='s/\(about\ \|hal$\)//gI'
+  local phrase=$(echo "$CLINE" | grep -oih 'about .*$' | sed -e "$regex")
   local mem_file="$MEM_DIR""$USER".memories
 
   if test "$phrase" != ""; then
-    if test "$(grep "$phrase" "$mem_file")" != ""; then
+    if test "$(grep -i "$phrase" "$mem_file")" != ""; then
       say "Okay $USER, here's what I know about \"$phrase\":"
       grep "$phrase" "$mem_file" | while read -r line; do
         say "\"$line\""

@@ -21,6 +21,12 @@ function check_chatting_actions(){
   if hc 'tell .* joke'; then 
     tell_joke
 
+  elif hc 'tell .* about everything'; then
+    recall_everything
+
+  elif hc 'tell .* about .*'; then
+    recall_phrase
+
   elif hc 'tell '; then 
     tell_player
   fi
