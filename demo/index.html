@@ -2,7 +2,7 @@
 <head>
   <title> Hal Demo </title>
 </head>
-<body style="width:70%;margin:auto;padding:0">
+<body style="width:70%; margin:auto; padding:0;">
 
 <script type="text/javascript">
   function xml_http_post(url, data, callback) {
@@ -30,16 +30,19 @@
     document.getElementById("demo_id").value = "";
   }
   function demo_handle(req) {
-    var elem = document.getElementById('demo_result');
-    elem.innerHTML += req.responseText;
+    document.getElementById('demo_result').innerHTML += req.responseText;
+    var scroller = document.getElementById('div_id');
+    scroller.scrollTop = scroller.scrollHeight;
   }
 </script>
 
-<div style="font-family: 'Courier New', Courier, monospace;font-size:12px;"> 
+<div style="font-family:'Courier New',Courier,monospace;font-size:12px;">
   <br>
-  <h2> Hal Live Demo </h2>
-  <div style="
-    height:70%; overflow:auto; overflow-x:hidden; overflow-y:scroll">
+  <h2>
+    Hal Live Demo
+  </h2>
+  <div id="div_id"
+    style="height:70%;overflow:auto;overflow-x:scroll;overflow-y:scroll">
     <span id="demo_result"> 
       [Hal] Hey there Steve! Try saying "Hal help"<br>
     </span>

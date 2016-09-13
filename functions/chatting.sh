@@ -25,7 +25,6 @@ function check_chatting_actions(){
     tell_player
   fi
 
-  hcsr 'hal?'         "$USER?"
   hcsr 'hello hal'    "Hey there $USER!"
   hcsr 'hey hal'      "Hello there $USER!"
   hcsr 'hi hal'       "Howdy $USER!"

@@ -172,8 +172,11 @@ while read -r _; do
     fi
 
     # not sure what to do
+    if ! test "${RCOMMAND}" == 0; then
+      hcsr 'hal?' "$USER?"
+    fi
     if ! test "${RCOMMAND}" == 0 && contains "hal"; then
-      say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...' '*Blank stare*')"
+      say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
     fi
 
   fi
