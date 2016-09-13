@@ -3,7 +3,7 @@ import sys, time, re, os
 import BaseHTTPServer, SimpleHTTPServer
 
 FILE = 'index.html'
-PORT = 8000
+PORT = 48000
 
 root_dir = '/tmp/hal/demo/'
 hal_output_file = root_dir + 'hal_output.log'
@@ -22,6 +22,11 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.path = "/index.html"
       self.send_response(200)
       self.send_header('Content-Type', 'text/html')
+      self.end_headers()
+      self.wfile.write(open(os.curdir + os.sep + self.path).read())
+    elif self.path == "/favicon.ico":
+      self.send_response(200)
+      self.send_header('Content-Type', 'image/x-icon')
       self.end_headers()
       self.wfile.write(open(os.curdir + os.sep + self.path).read())
     else:
