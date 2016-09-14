@@ -7,6 +7,7 @@ Minecraft AI in Shell
 
 ## Description
 - Hal is a lightweight AI for Minecraft servers. He is intended to make running a server more fun!
+- **[Live Demo](http://hal-demo.anardil.net:48000/)**
 
 ### Example
 ```
@@ -18,15 +19,15 @@ Minecraft AI in Shell
   Hal runs /weather set clear
   <player> show help Hal
   [Server] [Hal] I'm Hal, a teenie tiny AI that will try to help you!
-  [Server] [Hal] Here are somethings I understand:
-  [Server] [Hal] - hello, hey, how are you, what's up, tell a joke
-  [Server] [Hal] - thanks, yes, no, whatever
-  [Server] [Hal] - help, restart, be quiet, you can talk, status update
+  [Server] [Hal] Here are some of the things I understand:
+  [Server] [Hal] - thanks, yes, no, whatever, tell a joke
+  [Server] [Hal] - help, restart, be quiet, you can talk
   [Server] [Hal] - make it (day, night, clear, rainy)
   [Server] [Hal] - make me (healthy, invisible, fast)
+  [Server] [Hal] - tell <player> <message>
   [Server] [Hal] - take me to (the telehub, <player>)
   [Server] [Hal] - take me home, set home as <x> <y> <z>
-  [Server] [Hal] - (remember, recall, forget) <phrase>
+  [Server] [Hal] - (remember, tell me about, forget) <phrase>
   [Server] [Hal] - put me in (creative, survival, spectator) mode
 ```
 
