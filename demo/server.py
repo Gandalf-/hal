@@ -18,7 +18,7 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   '''The dynamic part, maybe'''
 
   def do_GET(self):
-    if self.path == "/" or self.path == "/index.html":
+    if self.path == "/" or self.path == "/index.html" or self.path == "http://hal-demo.anardil.net:48000/":
       self.path = "/index.html"
       self.send_response(200)
       self.send_header('Content-Type', 'text/html')
