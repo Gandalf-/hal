@@ -58,7 +58,7 @@ function check_chatting_actions(){
       say "Too many legs for my sensibilities"
 
     else 
-      say "Hmm... Not much"
+      recall_phrase
     fi
     RCOMMAND=0
   fi

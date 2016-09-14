@@ -14,12 +14,6 @@ function check_memory_actions(){
   if hc 'remember'; then 
     remember_phrase; 
   fi
-
-  if hc 'tell me about everything'; then 
-    recall_everything
-  elif hc 'recall'; then 
-    recall_phrase
-  fi
   
   if hc 'forget everything'; then 
     forget_everything
