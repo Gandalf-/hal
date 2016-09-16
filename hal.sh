@@ -67,7 +67,7 @@ for file in "utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh"; 
 done
 
 # startup messages
-if ! test $DEBUG ; then
+if test "$DEBUG" == "0" ; then
   echo 'Hal starting up'
 fi
 say "I'm alive!"
@@ -112,12 +112,16 @@ while read -r _; do
   # user initiated actions
   if test "${prevline}" != "${CLINE}" && not_repeat; then
 
+    if test "$DEBUG" == "0" ; then
+      echo "CLINE: $CLINE"
+    fi
+
     # administrative
     if hc 'help'; then show_help; fi
 
     if hc 'restart'; then
       say 'Okay, restarting!'
-      if test ! $DEBUG; then
+      if test "$DEBUG" == "0"; then
         bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
         exit
       fi

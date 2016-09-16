@@ -1,64 +1,57 @@
 <html>
-<head>
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <title> Hal Demo </title>
-</head>
-<body style="width:70%; margin:auto; padding:0;">
-
-<script type="text/javascript">
-  function xml_http_post(url, data, callback) {
-    var req = false;
-    try { 
-      req = new XMLHttpRequest(); }
-    catch (e) {
-      try { 
-        req = new ActiveXObject("Msxml2.XMLHTTP"); }
-      catch (e) { 
-        alert("Sorry, your browser isn't supported"); 
-        return false; }
-    }
-    req.open("POST", url, true);
-    req.onreadystatechange = function() {
-      if (req.readyState == 4) { callback(req); }
-    }
-    req.send(data);
-  }
-  function demo_button() {
-    var data = document.getElementById("demo_id").value;
-    var elem = document.getElementById('demo_result');
-    elem.innerHTML += '&ltSteve&gt ' + data + '<br>';
-    xml_http_post("index.html", data, demo_handle);
-    document.getElementById("demo_id").value = "";
-  }
-  function demo_handle(req) {
-    document.getElementById('demo_result').innerHTML += req.responseText;
-    var scroller = document.getElementById('div_id');
-    scroller.scrollTop = scroller.scrollHeight;
-  }
-</script>
-
-<div style="font-family:'Courier New',Courier,monospace;font-size:16px;">
-  <br>
-  <h2>
-    Hal Live Demo
-  </h2>
-  <div id="div_id"
-    style="
-    height:40%;border:1px solid black;
-    overflow:auto;overflow-x:auto;overflow-y:scroll">
-    <span id="demo_result"> 
-      [Hal] Hey there Steve! Try saying "Hal help"<br>
-    </span>
-    <br>
-  </div>
-
-  <form name="demo_form">
-    &ltSteve&gt
-    <input name="demo_text" id="demo_id" value="" size="40" autofocus
-      onkeydown="if(event.keyCode==13){
-      event.preventDefault();demo_button();}"/>
-  </form>
-</div>
-
-</body>
+  <head>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <title> Hal Demo </title>
+  </head>
+  <body style="width:70%; margin:auto; padding:0;">
+    <script type="text/javascript">
+      function xml_http_post(url, data, callback) {
+        var req = false;
+        try { req = new XMLHttpRequest(); }
+        catch (e) {
+          try { req = new ActiveXObject("Msxml2.XMLHTTP"); }
+          catch (e) { 
+            alert("Sorry, your browser isn't supported"); return false; }
+        }
+        req.open("POST", url, true);
+        req.onreadystatechange=function(){if(req.readyState==4){callback(req);}}
+        req.send(data);
+      }
+      function send_req() {
+        var demoId = document.getElementById("demo_id");
+        var demoResult = document.getElementById('demo_result');
+        demoResult.innerHTML += '&ltSteve&gt ' + demoId.value + '<br>';
+        xml_http_post("index.html", demoId.value, recv_resp);
+        demoId.placeholder = "";
+        demoId.value = "";
+      }
+      function recv_resp(req) {
+        var demoResult = document.getElementById('demo_result');
+        var scroller = document.getElementById('div_id');
+        var helpMessage = '<i>Hal only responds when you include his name</i>';
+        if (req.responseText){ demoResult.innerHTML += req.responseText; }
+        else { demoResult.innerHTML += helpMessage; }
+        scroller.scrollTop = scroller.scrollHeight;
+      }
+    </script>
+    <div 
+      style="font-family:'Courier New',Courier,monospace;font-size:16px;">
+      <br> <h2> Hal Live Demo </h2>
+      <div id="div_id" 
+        style="height:40%;border:1px solid black;
+               overflow:auto;overflow-x:auto;overflow-y:scroll">
+        <span id="demo_result"> 
+          [Hal] Hey there Steve! Try saying "Hal help"<br>
+        </span>
+        <br>
+      </div>
+      <form>
+        &ltSteve&gt
+        <input 
+          id="demo_id" value="" size="40" 
+          autofocus placeholder="how are you Hal?"
+          onkeydown="if(event.keyCode==13){event.preventDefault();send_req();}"/>
+      </form>
+    </div>
+  </body>
 </html>
