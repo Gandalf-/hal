@@ -49,8 +49,10 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     '''
     length = int(self.headers.getheader('content-length'))
     data_string = self.rfile.read(length)[:64]
+    name, message = data_string.split('%%%')
     data_string = str(
-        strftime("[%H:%M:%S]", gmtime()) + ' [Server thread/INFO]: <Steve>' + data_string)
+        strftime("[%H:%M:%S]", gmtime()) + 
+        ' [Server thread/INFO]: <' + name + '>' + message)
     result = 'error'
 
     # provide hal user input, hal will pick it up
@@ -58,7 +60,7 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       in_file.write(data_string + '\n')
 
     # wait for hal to work
-    sleep(0.2)
+    sleep(0.35)
 
     # return hal's response to the user, clear output file
     with open(hal_output_file, 'r+') as out_file:
