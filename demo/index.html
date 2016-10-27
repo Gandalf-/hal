@@ -18,17 +18,18 @@
         req.send(data);
       }
       function send_req() {
-        var demoId = document.getElementById("demo_id");
+        var demoId = document.getElementById('demo_id');
         var demoResult = document.getElementById('demo_result');
-        demoResult.innerHTML += '&ltSteve&gt ' + demoId.value + '<br>';
-        xml_http_post("index.html", demoId.value, recv_resp);
+        var name = document.getElementById('name_id').value;
+        demoResult.innerHTML += '&lt' + name + '&gt ' + demoId.value + '<br>';
+        xml_http_post("index.html", name + '%%%' + demoId.value, recv_resp);
         demoId.placeholder = "";
         demoId.value = "";
       }
       function recv_resp(req) {
         var demoResult = document.getElementById('demo_result');
         var scroller = document.getElementById('div_id');
-        var helpMessage = '<i>Hal only responds when you include his name</i>';
+        var helpMessage = '<i>Hal only responds when you include his name</i><br>';
         if (req.responseText){ demoResult.innerHTML += req.responseText; }
         else { demoResult.innerHTML += helpMessage; }
         scroller.scrollTop = scroller.scrollHeight;
@@ -46,9 +47,12 @@
         <br>
       </div>
       <form>
-        &ltSteve&gt
+        &lt<input id="name_id" value="Steve" size="5" 
+            style="font-family:'Courier New',Courier,monospace;font-size:16px;"
+            onkeydown="this.size=(this.value.length >5) ? this.value.length : 5;"/>&gt
         <input 
           id="demo_id" value="" size="40" 
+          style="font-family:'Courier New',Courier,monospace;font-size:16px;"
           autofocus placeholder="how are you Hal?"
           onkeydown="if(event.keyCode==13){event.preventDefault();send_req();}"/>
       </form>
