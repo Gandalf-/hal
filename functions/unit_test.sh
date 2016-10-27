@@ -43,6 +43,22 @@ function test_tell_joke(){
   test_cleanup
 }
 
+function test_check_simple_math(){
+  : ' none -> none
+  make sure hc() only accepts inputs that match "hal" and $1
+  '
+  echo -n 'simple_math     '
+  CLINE="hal what is 5 + 5"
+  scpass "$(check_simple_math)" "/say [Hal] I think that's 10"
+  CLINE="hal what is 5 * 6"
+  scpass "$(check_simple_math)" "/say [Hal] I think that's 30"
+  CLINE="hal what is 5 # 6"
+  scpass "$(check_simple_math)" "/say [Hal] I'm not sure..."
+  CLINE="hal what is garbage"
+  scpass "$(check_simple_math)" "/say [Hal] I'm not sure..."
+  test_cleanup
+}
+
 function test_hc(){
   : ' none -> none
   make sure hc() only accepts inputs that match "hal" and $1
@@ -261,6 +277,13 @@ function test_go_home(){
   : ' none -> none
   '
   echo -n 'go_home         '
+  failure="Sorry $USER, either you never told me where home was or I forgot!"
+
+  CLINE='take me home hal'
+  rcpass "$(go_home)" "$failure"
+  CLINE='take me home hal'
+  rcpass "$(go_home)" "$failure"
+
   test_cleanup
 }
 
@@ -395,6 +418,7 @@ test_test
 test_requirements
 
 test_tell_joke
+test_check_simple_math
 test_random_okay
 test_random_musing
 

@@ -42,7 +42,7 @@ function go_home(){
   "hal take me home"
   attempts to teleport the current user to their home destination
   '
-  local homeline=$(cat "$MEM_DIR""$USER".home) || ''
+  local homeline=$(cat "$MEM_DIR""$USER".home 2>/dev/null) || ''
   local xcoord=$(echo "$homeline" | cut -f 1 -d ' ') || ''
   local ycoord=$(echo "$homeline" | cut -f 2 -d ' ') || ''
   local zcoord=$(echo "$homeline" | cut -f 3 -d ' ') || ''
