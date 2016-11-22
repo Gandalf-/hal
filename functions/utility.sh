@@ -142,32 +142,6 @@ function check_effect_actions(){
     "/effect $USER minecraft:speed 60 5"
 }
 
-function check_simple_math(){
-  : ' none -> none
-  simple math solutions of the form
-  hal what is (expr)
-  '
-  regex='[0-9\+\-\/\*]'
-
-  if hc 'what is'; then
-    if contains "$regex"; then
-
-      expression="$(echo "$CLINE" | grep -ioh "$regex" | xargs)"
-      value="$(echo "$expression" | bc 2>/dev/null)"
-
-      if test "$value" != ""; then
-        say "I think that's $value"
-      else
-        say "I'm not sure..."
-      fi
-    else
-      say "I'm not sure..."
-    fi
-
-    RCOMMAND=0
-  fi
-}
-
 # UTILITY FUNCTIONS
 function hc(){
   : ' string -> int

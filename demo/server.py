@@ -60,8 +60,9 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     name, message = data_string.split('%%%')
     data_string = str(
         strftime("[%H:%M:%S]", gmtime()) + 
-        ' [Server thread/INFO]: <' + name + '>' + message)
+        ' [Server thread/INFO]: <' + name + '> ' + message)
     result = 'error'
+    print "Received:", data_string
 
     # provide hal user input, hal will pick it up
     with open(hal_input_file, 'a') as in_file:
@@ -76,7 +77,10 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     open(hal_output_file, 'w').close()
 
     result = hal_pretty_print(result)
-    print "Sending:", result
+    if result:
+      print "Sending:", result
+    else:
+      print "Ignoring:", data_string
     self.wfile.write(result)
     return
 

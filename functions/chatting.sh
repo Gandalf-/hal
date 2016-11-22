@@ -31,6 +31,9 @@ function check_chatting_actions(){
     tell_player
   fi
 
+  # check_simple_math
+  check_simple_math
+
   hcsr 'hello hal'    "Hey there $USER!"
   hcsr 'hey hal'      "Hello there $USER!"
   hcsr 'hi hal'       "Howdy $USER!"
@@ -63,6 +66,32 @@ function check_chatting_actions(){
     RCOMMAND=0
   fi
 
+}
+
+function check_simple_math(){
+  : ' none -> none
+  simple math solutions of the form
+  hal what is (expr)
+  '
+  regex='[0-9\+\-\/\*\.]*'
+
+  if hc 'what is'; then
+    if contains "$regex"; then
+
+      expression="$(echo "$CLINE" | cut -d' ' -f5- | grep -ioh "$regex" | xargs)"
+      value="$(echo "$expression" | bc -l 2>/dev/null)"
+
+      if test "$value" != ""; then
+        say "I think that's $value"
+      else
+        say "I'm not sure...."
+      fi
+    else
+      say "I'm not sure..."
+    fi
+
+    RCOMMAND=0
+  fi
 }
 
 function random_chat(){
