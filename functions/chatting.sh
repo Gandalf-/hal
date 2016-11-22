@@ -73,13 +73,14 @@ function check_simple_math(){
   simple math solutions of the form
   hal what is (expr)
   '
-  regex="[0-9\+\/\*\.]\|[-]*"
+  base_regex="[\(\)0-9\+\/\*\.\^\%]*"
+  regex="$base_regex\|-$base_regex"
 
   if hc 'what is'; then
     if contains "$regex"; then
 
       expression="$(echo "$CLINE" | cut -d' ' -f5- | grep -ioh "$regex" | xargs)"
-      value="$(echo "$expression" | bc -l 2>/dev/null)"
+      value="$(echo "$expression" | timeout 1 bc -l 2>/dev/null)"
 
       if test "$value" != ""; then
         say "I think that's $value"
