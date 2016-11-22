@@ -75,7 +75,7 @@ function check_simple_math(){
   base_regex="[\(\)0-9\+\/\*\.\^\%]*"
   regex="$base_regex\|-$base_regex"
 
-  if hc "what['s]\|[s]\|[ is]"; then
+  if hc "what's\|whats\|what is"; then
     if contains "$regex"; then
 
       exp="$(echo "$CLINE" | cut -d' ' -f5- | grep -ioh "$regex" | xargs)"

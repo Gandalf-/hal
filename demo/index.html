@@ -22,17 +22,37 @@
         var demoResult = document.getElementById('demo_result');
         var name = document.getElementById('name_id').value;
         demoResult.innerHTML += '&lt' + name + '&gt ' + demoId.value + '<br>';
-        xml_http_post("index.html", name + '%%%' + demoId.value, recv_resp);
+        xml_http_post( "index.html", name + '%%%' + demoId.value, recv_resp);
         demoId.placeholder = "";
         demoId.value = "";
       }
+      function LogIn() {
+        var demoId = document.getElementById('demo_id');
+        demoId.disabled = false;
+        var name = document.getElementById('name_id').value;
+        xml_http_post(
+            "index.html", 
+            "UUID of player "+ name + " is DEMO", 
+            recv_resp);
+      }
+      function LogOut(){
+        var demoId = document.getElementById('demo_id');
+        var name = document.getElementById('name_id').value;
+        xml_http_post(
+            "index.html", 
+            name + " left the game", 
+            recv_resp);
+        return true;
+      }
       function recv_resp(req) {
+        var demoId = document.getElementById('demo_id');
         var demoResult = document.getElementById('demo_result');
         var scroller = document.getElementById('div_id');
-        var helpMessage = '<i>Hal only responds when you include his name</i><br>';
+        var helpMsg = '<i>Hal only responds when you include his name</i><br>';
         if (req.responseText){ demoResult.innerHTML += req.responseText; }
-        else { demoResult.innerHTML += helpMessage; }
+        else { demoResult.innerHTML += helpMsg; }
         scroller.scrollTop = scroller.scrollHeight;
+        demoId.focus();
       }
     </script>
     <div 
@@ -42,7 +62,7 @@
         style="height:40%;border:1px solid black;
                overflow:auto;overflow-x:auto;overflow-y:scroll">
         <span id="demo_result"> 
-          [Hal] Hey there Steve! Try saying "Hal help"<br>
+          <i>Log in and you're ready to go!</i><br>
         </span>
         <br>
       </div>
@@ -54,7 +74,16 @@
           id="demo_id" value="" size="40" 
           style="font-family:'Courier New',Courier,monospace;font-size:16px;"
           autofocus placeholder="how are you Hal?"
-          onkeydown="if(event.keyCode==13){event.preventDefault();send_req();}"/>
+          onkeydown="if(event.keyCode==13){event.preventDefault();send_req();}"
+          disabled
+          />
+
+          <input type="button" value="Log in" onclick="LogIn();" 
+          style="float: right;font-family:'Courier New',Courier,monospace;font-size:16px;"
+          />
+          <input type="button" value="Log out" onclick="LogOut();" 
+          style="float:right;font-family:'Courier New',Courier,monospace;font-size:16px;"
+          />
       </form>
     </div>
   </body>

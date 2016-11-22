@@ -57,10 +57,23 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     '''
     length = int(self.headers.getheader('content-length'))
     data_string = self.rfile.read(length)[:64]
-    name, message = data_string.split('%%%')
-    data_string = str(
-        strftime("[%H:%M:%S]", gmtime()) + 
-        ' [Server thread/INFO]: <' + name + '> ' + message)
+    try:
+      name, message = data_string.split('%%%')
+      data_string = str(
+          strftime("[%H:%M:%S]", gmtime()) + 
+          ' [Server thread/INFO]: <' + name + '> ' + message)
+    except ValueError:
+      # log in
+      if data_string[:4] == "UUID":
+        data_string = str(
+            strftime("[%H:%M:%S]", gmtime()) + 
+            ' [User Authenticator #8/INFO]: ' + data_string)
+      # log out
+      elif data_string[-4:] == "game":
+        data_string = str(
+            strftime("[%H:%M:%S]", gmtime()) + 
+            ' [Server thread/INFO]: ' + data_string)
+
     result = 'error'
     print "Received:", data_string
 

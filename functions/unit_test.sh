@@ -297,6 +297,15 @@ function test_set_home(){
   : ' none -> none
   '
   echo -n 'set_home        '
+  failure="Sorry $USER, something doesn't look right with those coordinates"
+
+  CLINE='hal set home as junk'
+  rcpass "$(set_home)" "$failure"
+  CLINE='hal set home as junk junk'
+  rcpass "$(set_home)" "$failure"
+  CLINE='set home as a b c hal'
+  rcpass "$(set_home)" "Okay $USER, I've set your home to be a b c!"
+
   test_cleanup
 }
 
@@ -304,6 +313,15 @@ function test_remember_phrase(){
   : ' none -> none
   '
   echo -n 'remember_phrase '
+  pass="Okay $USER, I'll remember!"
+
+  CLINE='hal remember a is b'
+  rcpass "$(remember_phrase)" "$pass"
+  CLINE='hal remember'
+  rcpass "$(remember_phrase)" "Remember what?"
+  CLINE='hal remember that a is b'
+  rcpass "$(remember_phrase)" "$pass"
+
   test_cleanup
 }
 
