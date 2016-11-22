@@ -82,7 +82,11 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       in_file.write(data_string + '\n')
 
     # wait for hal to work
-    sleep(0.35)
+    hal_start_time = os.stat(hal_output_file).st_mtime
+    current_time   = hal_start_time
+    while hal_start_time == current_time:
+      sleep(0.1)
+      current_time = os.stat(hal_output_file).st_mtime
 
     # return hal's response to the user, clear output file
     with open(hal_output_file, 'r+') as out_file:

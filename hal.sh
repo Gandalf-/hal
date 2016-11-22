@@ -5,7 +5,12 @@
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
-# hal.sh
+# hal.sh [log_file install_dir memory_dir output_file]
+#
+# log_file    : path to the minecraft server's latest.log
+# install_dir : folder where hal is installed
+# memory_dir  : folder where user memories and other data is kept
+# output_file : file where debugging information is written
 
 set -o pipefail
 

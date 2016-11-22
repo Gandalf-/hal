@@ -31,9 +31,6 @@ function check_chatting_actions(){
     tell_player
   fi
 
-  # check_simple_math
-  check_simple_math
-
   hcsr 'hello hal'    "Hey there $USER!"
   hcsr 'hey hal'      "Hello there $USER!"
   hcsr 'hi hal'       "Howdy $USER!"
@@ -64,6 +61,10 @@ function check_chatting_actions(){
       recall_phrase
     fi
     RCOMMAND=0
+  fi
+
+  if test "$RCOMMAND" != 0; then
+    check_simple_math
   fi
 }
 
