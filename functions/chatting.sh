@@ -73,7 +73,7 @@ function check_simple_math(){
   simple math solutions of the form
   hal what is (expr)
   '
-  regex='[0-9\+\-\/\*\.]*'
+  regex="[0-9\+\/\*\.]\|[-]*"
 
   if hc 'what is'; then
     if contains "$regex"; then
