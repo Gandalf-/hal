@@ -2,7 +2,7 @@ import threading, webbrowser
 import sys, time, re, os
 import BaseHTTPServer, SimpleHTTPServer
 
-from time import strftime, gmtime, sleep
+from time import strftime, gmtime, sleep, time
 from subprocess import Popen
 
 # globals
@@ -82,11 +82,15 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       in_file.write(data_string + '\n')
 
     # wait for hal to work
-    hal_start_time = os.stat(hal_output_file).st_mtime
-    current_time   = hal_start_time
-    while hal_start_time == current_time:
+    start_time = time()
+    before_time = current_time = os.stat(hal_output_file).st_mtime
+
+    while before_time == current_time:
       sleep(0.1)
       current_time = os.stat(hal_output_file).st_mtime
+
+      if time() > start_time + 1:
+        break;
 
     # return hal's response to the user, clear output file
     with open(hal_output_file, 'r+') as out_file:
