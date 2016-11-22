@@ -33,11 +33,19 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.send_header('Content-Type', 'text/html')
       self.end_headers()
       self.wfile.write(open(os.curdir + os.sep + self.path).read())
+
     elif self.path == '/favicon.ico':
       self.send_response(200)
       self.send_header('Content-Type', 'image/x-icon')
       self.end_headers()
       self.wfile.write(open(os.curdir + os.sep + self.path).read())
+
+    elif self.path == '/robots.txt':
+      self.send_response(200)
+      self.send_header('Content-Type', 'text/html')
+      self.end_headers()
+      self.wfile.write(open(os.curdir + os.sep + self.path).read())
+
     else:
       self.send_error(404)
 
