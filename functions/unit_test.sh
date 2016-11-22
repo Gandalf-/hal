@@ -47,14 +47,20 @@ function test_check_simple_math(){
   : ' none -> none
   make sure hc() only accepts inputs that match "hal" and $1
   '
+  header="[04:52:07] [Server thread/INFO]: <Steve>"
+
   echo -n 'simple_math     '
-  CLINE="hal what is 5 + 5"
+  CLINE="$header hal what is 5 + 5"
   scpass "$(check_simple_math)" "/say [Hal] I think that's 10"
-  CLINE="hal what is 5 * 6"
+  CLINE="$header hal whats is 5 * 6"
   scpass "$(check_simple_math)" "/say [Hal] I think that's 30"
-  CLINE="hal what is 5 # 6"
+  CLINE="$header hal what's 5.5 / 6"
+  scpass "$(check_simple_math)" "/say [Hal] I think that's .91666666666666666666"
+  CLINE="$header hal whats (1 + 2) * 3"
+  scpass "$(check_simple_math)" "/say [Hal] I think that's 9"
+  CLINE="$header hal what's 5 # 6"
   scpass "$(check_simple_math)" "/say [Hal] I'm not sure..."
-  CLINE="hal what is garbage"
+  CLINE="$header hal what is garbage"
   scpass "$(check_simple_math)" "/say [Hal] I'm not sure..."
   test_cleanup
 }

@@ -65,7 +65,6 @@ function check_chatting_actions(){
     fi
     RCOMMAND=0
   fi
-
 }
 
 function check_simple_math(){
@@ -76,16 +75,16 @@ function check_simple_math(){
   base_regex="[\(\)0-9\+\/\*\.\^\%]*"
   regex="$base_regex\|-$base_regex"
 
-  if hc 'what is'; then
+  if hc "what['s]\|[s]\|[ is]"; then
     if contains "$regex"; then
 
-      expression="$(echo "$CLINE" | cut -d' ' -f5- | grep -ioh "$regex" | xargs)"
-      value="$(echo "$expression" | timeout 1 bc -l 2>/dev/null)"
+      exp="$(echo "$CLINE" | cut -d' ' -f5- | grep -ioh "$regex" | xargs)"
+      value="$(echo "$exp" | timeout 1 bc -l 2>/dev/null)"
 
       if test "$value" != ""; then
         say "I think that's $value"
       else
-        say "I'm not sure...."
+        say "I'm not sure..."
       fi
     else
       say "I'm not sure..."
@@ -119,12 +118,13 @@ function tell_player(){
   attempts to tell a player a message, if the player isnt in the game,
   store it until the log in again
   '
-  player="$(echo "$CLINE" | cut -f 7 -d ' ')"
-  message="$(echo "$CLINE" | cut -f 8- -d ' ' | sed -e 's/[;\|{}'"'"'"&$()]/\\&/g')"
-  if test "$player" != "" || test "$message" != ""; then
-    set_intent 'cannot' "intent_tell_player $USER $player $message"
+  player="$(echo "$CLINE" | cut -f 7 -d' ')"
+  msg="$(echo "$CLINE" | cut -f 8- -d' ' | sed -e 's/[;\|{}'"'"'"&$()]/\\&/g')"
+
+  if test "$player" != "" || test "$msg" != ""; then
+    set_intent 'cannot' "intent_tell_player $USER $player $msg"
     say "Sure thing $USER!"
-    run "/tell $player $message"
+    run "/tell $player $msg"
     RCOMMAND=0
   fi
 }
