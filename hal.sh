@@ -69,7 +69,8 @@ eval inst_dir="${inst_dir}"
 # shellcheck source=functions/chatting.sh
 # shellcheck source=functions/teleport.sh
 # shellcheck source=functions/intent.sh
-for file in "utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh"; do
+srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
+for file in ${srcs[@]}; do
   source "${inst_dir}""functions/""${file}"
 done
 

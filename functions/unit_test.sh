@@ -19,6 +19,8 @@ DEBUG=1
 QUIET=0
 USER='<player1>'
 MEM_DIR='/tmp/haltest/'
+MAX_MEM_SIZE=1024
+MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
 
 # tests
 #==================

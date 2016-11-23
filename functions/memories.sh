@@ -35,19 +35,25 @@ function remember_phrase(){
     say "Okay $USER, I'll remember!"
 
     # check total disk usage
-    total_memory_size=$(du -c "$MEM_DIR"\*.memories | tail -n 1 | head -c 1)
+    dir_size=$(du -c "$MEM_DIR"*.memories 2>/dev/null | tail -n 1 | cut -f 1)
 
-    if [ "$total_memory_size" -ge "$MAX_MEM_DIR_SIZE" ]; then
-      files=("$MEM_DIR"\*.memories)
-      new_size=$(($MAX_MEM_DIR_SIZE / ${#files[@]}))
+    if [[ "$dir_size" -ge "$MAX_MEM_DIR_SIZE" ]]; then
+      memory_files=( $MEM_DIR*.memories )
+      new_size=$(( $MAX_MEM_DIR_SIZE / ${#files[@]} ))
 
-      for file in $files; do
-        truncate -s $new_size $file
+      for file in ${memory_files[@]}; do
+        if [[ $(wc -c $file) -ge $new_size ]]; then
+          truncate -s $new_size $file
+        fi
       done
 
     # otherwise, max sure this user isn't going over the quota
     else
-      truncate -s "$MAX_MEM_SIZE" "$MEM_DIR""$USER".memories
+      file="$MEM_DIR""$USER"".memories"
+      file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
+      if [[ "$file_size" -ge $MAX_MEM_SIZE ]]; then
+        truncate -s "$MAX_MEM_SIZE" "$file"
+      fi
     fi
   else
     say "Remember what?"
