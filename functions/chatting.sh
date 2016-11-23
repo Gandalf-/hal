@@ -7,7 +7,7 @@
 
 # chatting.sh
 
-function check_chatting_actions(){
+check_chatting_actions(){
   : ' none -> none
   chatting actions
   '
@@ -68,7 +68,7 @@ function check_chatting_actions(){
   fi
 }
 
-function check_simple_math(){
+check_simple_math(){
   : ' none -> none
   simple math solutions of the form
   hal what is (expr)
@@ -95,13 +95,13 @@ function check_simple_math(){
   fi
 }
 
-function random_chat(){
+random_chat(){
   : 'string -> string
   requires a file with word : word %, word %, ...
   '
 }
 
-function random_okay(){
+random_okay(){
   : ' string -> string
   returns a random affirmative
   '
@@ -114,7 +114,7 @@ function random_okay(){
   fi
 }
 
-function tell_player(){
+tell_player(){
   : ' none -> none
   attempts to tell a player a message, if the player isnt in the game,
   store it until the log in again
@@ -131,7 +131,7 @@ function tell_player(){
   fi
 }
 
-function random_musing(){
+random_musing(){
   : ' none -> string
   returns a random musing
   '
@@ -143,7 +143,7 @@ function random_musing(){
     'Did you know about overviewer.anardil.net?'
 }
 
-function tell_joke(){
+tell_joke(){
   : ' none -> none
   tell a random joke
   '

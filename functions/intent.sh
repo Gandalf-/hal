@@ -7,7 +7,7 @@
 
 # intent.sh
 
-function check_intent(){
+check_intent(){
   : ' none -> none
   checks if the current line satisfies each of the intents. If a match is
   found, evaluate it and move the subsequent intents up the list
@@ -45,7 +45,7 @@ function check_intent(){
   fi
 }
 
-function set_intent(){
+set_intent(){
   : ' string, function -> none
   '
   if test "$INTENT_A" == ''; then
@@ -64,7 +64,7 @@ function set_intent(){
 
 # intentions
 #==================
-function intent_if_yes_do(){
+intent_if_yes_do(){
   : '
   '
   local regex='yes\|sure\|okay'
@@ -73,14 +73,14 @@ function intent_if_yes_do(){
   fi
 }
 
-function intent_be_quiet(){
+intent_be_quiet(){
   : ' none -> none
   '
   say "Oh... Okay. I'll still do as you say but stay quiet for a while"
   QUIET=1
 }
 
-function intent_tell_player(){
+intent_tell_player(){
  : ' string -> none
  stores a message for a player
  '

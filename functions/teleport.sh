@@ -7,7 +7,7 @@
 
 # teleport.sh
 
-function go_to_dest(){
+go_to_dest(){
   : ' none -> none
   "hal take me to notch"
   attempts to teleport the current user to the destination user
@@ -37,7 +37,7 @@ function go_to_dest(){
   RCOMMAND=0
 }
 
-function go_home(){
+go_home(){
   : ' none -> none
   "hal take me home"
   attempts to teleport the current user to their home destination
@@ -56,7 +56,7 @@ function go_home(){
   RCOMMAND=0
 }
 
-function set_home(){
+set_home(){
   : ' none -> none
   "hal set home as <x> <y> <z>"
   attempts to set the current users home destination

@@ -7,7 +7,7 @@
 
 # memories.sh
 
-function check_memory_actions(){
+check_memory_actions(){
   : ' none -> none
   check memory actions
   '
@@ -22,7 +22,7 @@ function check_memory_actions(){
   fi
 }
 
-function remember_phrase(){
+remember_phrase(){
   : ' none -> none
   "hal remember that apples are nice"
   parse out note to remember and write to user file
@@ -61,7 +61,7 @@ function remember_phrase(){
   RCOMMAND=0
 }
 
-function recall_phrase(){
+recall_phrase(){
   : ' none -> none
   "hal tell me about apples"
   search through user memories for related information
@@ -85,7 +85,7 @@ function recall_phrase(){
   RCOMMAND=0
 }
 
-function recall_everything(){
+recall_everything(){
   : ' none -> none
   "hal recall everything"
   tell user everything in memory file
@@ -97,7 +97,7 @@ function recall_everything(){
   RCOMMAND=0
 }
 
-function forget_phrase(){
+forget_phrase(){
   : ' none -> none
   "hal forget about apples" 
   remove all related phrases from user file
@@ -117,7 +117,7 @@ function forget_phrase(){
   RCOMMAND=0
 }
 
-function forget_everything(){
+forget_everything(){
   : ' none -> none
   "hal forget everything" 
   remove all phrases from user file

@@ -9,18 +9,18 @@
 
 # boilerplate
 #==================
-function test_cleanup(){
+test_cleanup(){
   DEBUG=1 ; QUIET=0 ; USER='<player1>'
   MEM_DIR='/tmp/haltest/'; rm -rf "$MEM_DIR"; mkdir -p "$MEM_DIR"
   INTENT_A=''; INTENT_B=''; INTENT_C=''
   echo
 }
 
-function pass(){ echo -n " pass"; }
+pass(){ echo -n " pass"; }
 
-function fail(){ echo " fail"; }
+fail(){ echo " fail"; }
 
-function scpass(){
+scpass(){
   : ' string, string -> string
   direct string comparision, pass if equal
   '
@@ -31,7 +31,7 @@ function scpass(){
   fi
 }
 
-function scfail(){
+scfail(){
   : ' string, string -> string
   direct string comparision, pass if different
   '
@@ -42,7 +42,7 @@ function scfail(){
   fi
 }
 
-function rcpass(){
+rcpass(){
   : ' string, string -> string
   loose string comparison which ignores newlines, pass if equal
   '
@@ -53,7 +53,7 @@ function rcpass(){
   fi
 }
 
-function rcfail(){
+rcfail(){
   : ' string, string -> string
   loose string comparison which ignores newlines, pass if different
   '
@@ -62,7 +62,7 @@ function rcfail(){
   else pass; fi
 }
 
-function ocpass(){
+ocpass(){
   #: ' none -> string
   #return code comparison, pass if command succeded
   #'
@@ -73,7 +73,7 @@ function ocpass(){
   fi
 }
 
-function ocfail(){
+ocfail(){
   #': ' none -> string
   #return code comparison, pass if command failed
   #'
@@ -84,7 +84,7 @@ function ocfail(){
   fi
 }
 
-function test_test(){
+test_test(){
   echo -n 'test            '
   scpass 'a' 'a'
   rcpass 'apple blueberry watermelon' 'blue'

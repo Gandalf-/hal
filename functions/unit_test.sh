@@ -24,7 +24,7 @@ MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
 
 # tests
 #==================
-function test_requirements(){
+test_requirements(){
   : ' none -> none
   make sure all the required external programs are present
   '
@@ -36,7 +36,7 @@ function test_requirements(){
   test_cleanup
 }
 
-function test_tell_joke(){
+test_tell_joke(){
   : ' none -> none
   make sure tell_joke() returns a string
   '
@@ -45,7 +45,7 @@ function test_tell_joke(){
   test_cleanup
 }
 
-function test_check_simple_math(){
+test_check_simple_math(){
   : ' none -> none
   make sure hc() only accepts inputs that match "hal" and $1
   '
@@ -67,7 +67,7 @@ function test_check_simple_math(){
   test_cleanup
 }
 
-function test_hc(){
+test_hc(){
   : ' none -> none
   make sure hc() only accepts inputs that match "hal" and $1
   '
@@ -86,7 +86,7 @@ function test_hc(){
   test_cleanup
 }
 
-function test_contains(){
+test_contains(){
   : ' none -> none
   make sure that contains() succeeds when $1 is present in $CLINE
   '
@@ -105,7 +105,7 @@ function test_contains(){
   test_cleanup
 }
 
-function test_say(){
+test_say(){
   : ' none -> none
   make sure say() builds "/say [Hal] <phrase>" commands correctly
   '
@@ -116,7 +116,7 @@ function test_say(){
   test_cleanup
 }
 
-function test_tell(){
+test_tell(){
   : ' none -> none
   make sure tell() builds "/tell $USER <phrase>" commands correctly
   '
@@ -131,7 +131,7 @@ function test_tell(){
   test_cleanup
 }
 
-function test_run(){
+test_run(){
   : ' none -> none
   make sure run() builds "/<command>" commands correctly
   '
@@ -143,7 +143,7 @@ function test_run(){
   test_cleanup
 }
 
-function test_not_repeat(){
+test_not_repeat(){
   : ' none -> none
   make sure that not_repeat() returns 0 if $CLINE contains output from hal.sh
   '
@@ -162,7 +162,7 @@ function test_not_repeat(){
   test_cleanup
 }
 
-function test_random(){
+test_random(){
   : ' none -> none
   make sure random() returns a selection out of the arguments
   '
@@ -175,7 +175,7 @@ function test_random(){
   test_cleanup
 }
 
-function test_random_okay(){
+test_random_okay(){
   : ' none -> none
   make sure random_okay() always returns a string
   '
@@ -185,7 +185,7 @@ function test_random_okay(){
   test_cleanup
 }
 
-function test_random_musing(){
+test_random_musing(){
   : ' none -> none
   make sure random_musing() always returns a string
   '
@@ -194,7 +194,7 @@ function test_random_musing(){
   test_cleanup
 }
 
-function test_tell_player() {
+test_tell_player() {
   : ' none -> none
   make sure random_musing() always returns a string
   '
@@ -202,7 +202,7 @@ function test_tell_player() {
   test_cleanup
 }
 
-function test_shut_down(){
+test_shut_down(){
   : ' none -> none
   make sure shut_down() reports to the users that hal.sh is shutting down
   '
@@ -211,7 +211,7 @@ function test_shut_down(){
   test_cleanup
 }
 
-function test_hcsr(){
+test_hcsr(){
   : ' none -> none
   make sure hcsr() says $2 and runs $3 if "hal" is present in $CLINE
   '
@@ -238,7 +238,7 @@ function test_hcsr(){
   test_cleanup
 }
 
-function test_go_to_dest(){
+test_go_to_dest(){
   : ' none -> none
   make sure that go_to_dest() can handle the following cases:
     - hal take me to <dest in config>
@@ -289,7 +289,7 @@ function test_go_to_dest(){
   test_cleanup
 }
 
-function test_go_home(){
+test_go_home(){
   : ' none -> none
   '
   echo -n 'go_home         '
@@ -303,7 +303,7 @@ function test_go_home(){
   test_cleanup
 }
 
-function test_set_home(){
+test_set_home(){
   : ' none -> none
   '
   echo -n 'set_home        '
@@ -319,7 +319,7 @@ function test_set_home(){
   test_cleanup
 }
 
-function test_remember_phrase(){
+test_remember_phrase(){
   : ' none -> none
   '
   echo -n 'remember_phrase '
@@ -335,21 +335,21 @@ function test_remember_phrase(){
   test_cleanup
 }
 
-function test_recall_phrase(){
+test_recall_phrase(){
   : ' none -> none
   '
   echo -n 'recall_phrase   '
   test_cleanup
 }
 
-function test_forget_phrase(){
+test_forget_phrase(){
   : ' none -> none
   '
   echo -n 'forget_phrase   '
   test_cleanup
 }
 
-function test_check_intent(){
+test_check_intent(){
   : ' none -> none
   ensure that intents are triggered if the condition is met
   '
@@ -403,7 +403,7 @@ function test_check_intent(){
   test_cleanup
 }
 
-function test_set_intent(){
+test_set_intent(){
   : ' none -> none
   make sure the intents can be set and are cycled correctly
   newer intents push older ones down the list, dropping the last
@@ -436,7 +436,7 @@ function test_set_intent(){
   test_cleanup
 }
 
-function test_clear_intent(){
+test_clear_intent(){
   : ' none -> none
   '
   echo -n 'clear_intent      '

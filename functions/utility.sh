@@ -8,7 +8,7 @@
 # utility.sh
 
 # AGGLOMERATIVE FUNCTIONS
-function show_help(){
+show_help(){
   : ' none -> none
   print in game usage information
   '
@@ -26,7 +26,7 @@ function show_help(){
   RCOMMAND=0
 }
 
-function player_joined(){
+player_joined(){
   : ' string -> int
   greet player, make comment on number of active players,
   and check for messages
@@ -61,7 +61,7 @@ function player_joined(){
   fi
 }
 
-function player_left(){
+player_left(){
   : ' none -> none
   Say goodbye, comment on player count
   '
@@ -83,7 +83,7 @@ function player_left(){
   fi
 }
 
-function check_gamemode_actions(){
+check_gamemode_actions(){
   : ' none -> none
   gamemode modifing actions
   '
@@ -100,7 +100,7 @@ function check_gamemode_actions(){
     "/gamemode spectator $USER"
 }
 
-function check_weather_actions(){
+check_weather_actions(){
   : ' none -> none
   weather modifing actions
   '
@@ -125,7 +125,7 @@ function check_weather_actions(){
     "/time set night"
 }
 
-function check_effect_actions(){
+check_effect_actions(){
   : ' none -> none
   player effect modifing actions
   '
@@ -143,7 +143,7 @@ function check_effect_actions(){
 }
 
 # UTILITY FUNCTIONS
-function hc(){
+hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
@@ -158,7 +158,7 @@ function hc(){
   fi
 }
 
-function contains(){
+contains(){
   : ' string -> int
   check if the current line contains the required text
   '
@@ -169,7 +169,7 @@ function contains(){
   fi
 }
 
-function debug_output(){
+debug_output(){
   : ' string -> none
   sends output to correct location
   '
@@ -180,7 +180,7 @@ function debug_output(){
   fi
 }
 
-function say(){
+say(){
   : ' string -> none
   say a phrase in the server
   '
@@ -193,7 +193,7 @@ function say(){
   fi
 }
 
-function tell(){
+tell(){
   : ' string -> none
   say a phrase in the server
   '
@@ -206,7 +206,7 @@ function tell(){
   fi
 }
 
-function run(){
+run(){
   : ' string -> none
   run a command in the server
   '
@@ -219,7 +219,7 @@ function run(){
   fi
 }
 
-function not_repeat(){
+not_repeat(){
   : ' none -> int
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
@@ -231,7 +231,7 @@ function not_repeat(){
   fi
 }
 
-function random(){
+random(){
   : ' any, ... -> any
   returns a randomly chosen element out of the arguments
   '
@@ -243,7 +243,7 @@ function random(){
   fi
 }
 
-function shut_down(){
+shut_down(){
   : ' none -> none
   interrupt handler
   '
@@ -255,7 +255,7 @@ function shut_down(){
   fi
 }
 
-function hcsr(){
+hcsr(){
   : ' string, string, string -> none
   wrapper around check $1, say $2, run $3 logic
   '
