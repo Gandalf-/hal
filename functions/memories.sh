@@ -33,6 +33,22 @@ function remember_phrase(){
   if test "$note" != ""; then
     echo "$note" >> "$MEM_DIR""$USER".memories
     say "Okay $USER, I'll remember!"
+
+    # check total disk usage
+    total_memory_size=$(du -c "$MEM_DIR"\*.memories | tail -n 1 | head -c 1)
+
+    if [ "$total_memory_size" -ge "$MAX_MEM_DIR_SIZE" ]; then
+      files=("$MEM_DIR"\*.memories)
+      new_size=$(($MAX_MEM_DIR_SIZE / ${#files[@]}))
+
+      for file in $files; do
+        truncate -s $new_size $file
+      done
+
+    # otherwise, max sure this user isn't going over the quota
+    else
+      truncate -s "$MAX_MEM_SIZE" "$MEM_DIR""$USER".memories
+    fi
   else
     say "Remember what?"
   fi
@@ -87,7 +103,7 @@ function forget_phrase(){
   local file_contents=$(cat "$mem_file")
 
   if test "$phrase" != ""; then
-    echo "$file_contents" | grep -iv "$phrase" > "$mem_file"
+    echo "$file_contents" | grep -iv "$phrase\|^$" > "$mem_file"
     say "Okay $USER, I've forgetten everything about \"$phrase!\""
   else
     say "Sorry $USER, I'm not sure what to do"

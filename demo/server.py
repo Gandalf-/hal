@@ -62,12 +62,14 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       data_string = str(
           strftime("[%H:%M:%S]", gmtime()) + 
           ' [Server thread/INFO]: <' + name + '> ' + message)
+
     except ValueError:
       # log in
       if data_string[:4] == "UUID":
         data_string = str(
             strftime("[%H:%M:%S]", gmtime()) + 
             ' [User Authenticator #8/INFO]: ' + data_string)
+
       # log out
       elif data_string[-4:] == "game":
         data_string = str(
@@ -81,7 +83,7 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     with open(hal_input_file, 'a') as in_file:
       in_file.write(data_string + '\n')
 
-    # wait for hal to work
+    # wait for hal to work, timeout after 1 second
     start_time = time()
     before_time = current_time = os.stat(hal_output_file).st_mtime
 
