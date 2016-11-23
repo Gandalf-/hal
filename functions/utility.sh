@@ -33,7 +33,7 @@ function player_joined(){
   '
   sleep 0.1
   say "Hey there $USER! Try saying \"Hal help\""
-  num_players=$(( num_players + 1 ))
+  local num_players=$(( num_players + 1 ))
   RCOMMAND=0
 
   if [[ $num_players -eq 1 ]]; then
@@ -47,7 +47,7 @@ function player_joined(){
   fi
 
   # check for messages
-  mfile="$MEM_DIR""${USER,,}".mail
+  local mfile="$MEM_DIR""${USER,,}".mail
   if [[ -e "$mfile" ]]; then
     if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') -ge 2 ]] ; then
       say "Looks like you have some messages!"
@@ -66,7 +66,7 @@ function player_left(){
   Say goodbye, comment on player count
   '
   say "Goodbye $USER! See you again soon I hope!"
-  num_players=$(( num_players - 1 ))
+  local num_players=$(( num_players - 1 ))
   RCOMMAND=0
 
   if [[ $num_players -le 0 ]]; then
@@ -265,4 +265,3 @@ function hcsr(){
     RCOMMAND=0
   fi
 }
-

@@ -74,4 +74,3 @@ function set_home(){
   fi
   RCOMMAND=0
 }
-

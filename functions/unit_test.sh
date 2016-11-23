@@ -49,7 +49,7 @@ function test_check_simple_math(){
   : ' none -> none
   make sure hc() only accepts inputs that match "hal" and $1
   '
-  header="[04:52:07] [Server thread/INFO]: <Steve>"
+  local header="[04:52:07] [Server thread/INFO]: <Steve>"
 
   echo -n 'simple_math     '
   CLINE="$header hal what is 5 + 5"
@@ -194,6 +194,14 @@ function test_random_musing(){
   test_cleanup
 }
 
+function test_tell_player() {
+  : ' none -> none
+  make sure random_musing() always returns a string
+  '
+  echo -n 'tell_player     '
+  test_cleanup
+}
+
 function test_shut_down(){
   : ' none -> none
   make sure shut_down() reports to the users that hal.sh is shutting down
@@ -285,7 +293,7 @@ function test_go_home(){
   : ' none -> none
   '
   echo -n 'go_home         '
-  failure="Sorry $USER, either you never told me where home was or I forgot!"
+  local failure="Sorry $USER, either you never told me where home was or I forgot!"
 
   CLINE='take me home hal'
   rcpass "$(go_home)" "$failure"
@@ -299,7 +307,7 @@ function test_set_home(){
   : ' none -> none
   '
   echo -n 'set_home        '
-  failure="Sorry $USER, something doesn't look right with those coordinates"
+  local failure="Sorry $USER, something doesn't look right with those coordinates"
 
   CLINE='hal set home as junk'
   rcpass "$(set_home)" "$failure"
@@ -315,7 +323,7 @@ function test_remember_phrase(){
   : ' none -> none
   '
   echo -n 'remember_phrase '
-  pass="Okay $USER, I'll remember!"
+  local pass="Okay $USER, I'll remember!"
 
   CLINE='hal remember a is b'
   rcpass "$(remember_phrase)" "$pass"
@@ -447,6 +455,7 @@ test_tell_joke
 test_check_simple_math
 test_random_okay
 test_random_musing
+test_tell_player
 
 test_hc
 test_contains

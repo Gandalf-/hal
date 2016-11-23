@@ -13,8 +13,8 @@ function check_intent(){
   found, evaluate it and move the subsequent intents up the list
   '
   if test "$INTENT_A" != ''; then
-    pattern=$(echo "$INTENT_A" | cut -f 1 -d '%')
-    function=$(echo "$INTENT_A" | cut -f 2 -d '%')
+    local pattern=$(echo "$INTENT_A" | cut -f 1 -d '%')
+    local function=$(echo "$INTENT_A" | cut -f 2 -d '%')
 
     if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
       INTENT_A="$INTENT_B"
@@ -23,8 +23,8 @@ function check_intent(){
       eval "${function}"
 
     elif test "$INTENT_B" != ''; then
-      pattern=$(echo "$INTENT_B" | cut -f 1 -d '%')
-      function=$(echo "$INTENT_B" | cut -f 2 -d '%')
+      local pattern=$(echo "$INTENT_B" | cut -f 1 -d '%')
+      local function=$(echo "$INTENT_B" | cut -f 2 -d '%')
 
       if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
         INTENT_B="$INTENT_C"
@@ -32,8 +32,8 @@ function check_intent(){
         eval "$function"
 
       elif test "$INTENT_C" != ''; then
-        pattern=$(echo "$INTENT_C" | cut -f 1 -d '%')
-        function=$(echo "$INTENT_C" | cut -f 2 -d '%')
+        local pattern=$(echo "$INTENT_C" | cut -f 1 -d '%')
+        local function=$(echo "$INTENT_C" | cut -f 2 -d '%')
 
         if test "$(echo "$CLINE" | grep -i "$pattern")" != ""; then
           eval "$function"
@@ -85,8 +85,8 @@ function intent_tell_player(){
  stores a message for a player
  '
  say "I'll tell them when they show up again!"
- sender="$(echo "$@" | cut -f 1 -d ' ')"
- target="$(echo "$@" | cut -f 2 -d ' ')"
- message="$(echo "$@" | cut -f 3- -d ' ')"
+ local sender="$(echo "$@" | cut -f 1 -d ' ')"
+ local target="$(echo "$@" | cut -f 2 -d ' ')"
+ local message="$(echo "$@" | cut -f 3- -d ' ')"
  echo "$sender: $message" >> "$MEM_DIR""${target,,}".mail
 }

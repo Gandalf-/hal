@@ -12,8 +12,8 @@ function check_chatting_actions(){
   chatting actions
   '
   if hc 'how are you'; then
-    adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
-    adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
+    local adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
+    local adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
     say "I'm feeling $adverb $adjective! I've been alive for $LIFETIME seconds."
     RCOMMAND=0
   fi
@@ -42,7 +42,7 @@ function check_chatting_actions(){
 
   hcsr 'turn down for what' "Nothing! Order another round of shots!"
 
-  comment="$(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+  local comment="$(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
   hcsr "what's up" "Not too much $USER! Just $comment"
   hcsr "whats up" "Not too much $USER! Just $comment"
 
@@ -73,14 +73,14 @@ function check_simple_math(){
   simple math solutions of the form
   hal what is (expr)
   '
-  base_regex="[\(\)0-9\+\/\*\.\^\%]*"
-  regex="$base_regex\|-$base_regex"
+  local base_regex="[\(\)0-9\+\/\*\.\^\%]*"
+  local regex="$base_regex\|-$base_regex"
 
   if hc "what's\|whats\|what is"; then
     if contains "$regex"; then
 
-      exp="$(echo "$CLINE" | cut -d' ' -f5- | grep -ioh "$regex" | xargs)"
-      value="$(echo "$exp" | timeout 1 bc -l 2>/dev/null)"
+      local exp="$(echo "$CLINE" | cut -d' ' -f5- | grep -io "$regex" | xargs)"
+      local value="$(echo "$exp" | timeout 1 bc -l 2>/dev/null)"
 
       if test "$value" != ""; then
         say "I think that's $value"
@@ -119,8 +119,9 @@ function tell_player(){
   attempts to tell a player a message, if the player isnt in the game,
   store it until the log in again
   '
-  player="$(echo "$CLINE" | cut -f 7 -d' ')"
-  msg="$(echo "$CLINE" | cut -f 8- -d' ' | sed -e 's/[;\|{}'"'"'"&$()]/\\&/g')"
+  local player="$(echo "$CLINE" | cut -f 7 -d' ')"
+  local regex='s/[;\|{}'"'"'"&$()]/\\&/g'
+  local msg="$(echo "$CLINE" | cut -f 8- -d' ' | sed -e "$regex" )"
 
   if test "$player" != "" || test "$msg" != ""; then
     set_intent 'cannot' "intent_tell_player $USER $player $msg"
@@ -153,7 +154,7 @@ function tell_joke(){
   'Why did the Creeper cross the road?  To get to the other Sssssssside!' \
   'Why did the sailor bring iron and gold into his boat?  He needed oars.' \
   'If there will ever be a Minecraft movie, then it would be a blockbuster.' \
-  'Why cant the Ender Dragon read a book?  Because he always starts at the End.' \
+  'Why cant the Ender Dragon read a book? Because he always starts at the End.' \
   'Why dont blazes ever make businesses?  They keep firing people! ' \
   'What is the national sport of Minecraft?  Boxing.' \
   'What did Steve say to his girlfriend?  I dig you.' \
@@ -161,7 +162,7 @@ function tell_joke(){
   'A creeper walks into a bar. Everyone dies.' \
   'When I saw the guy with a potion I knew there was trouble brewing.' \
   'Id tell you a joke about the end, but it will just dragon.' \
-  'How do you make people change direction in Minecraft?  You Block their path.' \
+  'How do you make people change direction in Minecraft? You Block their path.' \
   'Why would a mushroom make a good roommate?  Its a real fungi.' \
   'Whats Cobblestones favorite music?  Rock music.' \
   'What did the chicken say to the cow? Pleased to meat you.' \
