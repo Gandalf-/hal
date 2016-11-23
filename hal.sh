@@ -90,8 +90,8 @@ while read -r _; do
 
   # preparation
   RCOMMAND=1
-  CLINE=$(tail -n 3 "${log_file}" | grep -v 'Keeping entity' | tail -n 1)
-  USER=$(echo "${CLINE}" | grep -oi '<[^ ]*>' | grep -oi '[^<>]*')
+  CLINE="$(tail -n 1 "${log_file}" )"
+  USER="$(echo "${CLINE}" | grep -oi '<[^ ]*>' | grep -oi '[^<>]*')"
   LIFETIME=$(( $(date +%s) - starttime ))
 
   if test "${USER}" == ''; then
