@@ -147,10 +147,10 @@ hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
-  if test "$(echo "$CLINE" | grep -ioh "$1")" == ""; then
+  if test "$(echo "$CLINE" | grep -io "$1")" == ""; then
     return 1
   else
-    if test "$(echo "$CLINE" | grep -ioh "Hal")" == ""; then
+    if test "$(echo "$CLINE" | grep -io "Hal")" == ""; then
       return 1
     else
       return 0
@@ -162,7 +162,7 @@ contains(){
   : ' string -> int
   check if the current line contains the required text
   '
-  if test "$(echo "$CLINE" | grep -ioh "$1")" == ""; then
+  if test "$(echo "$CLINE" | grep -io "$1")" == ""; then
     return 1
   else
     return 0

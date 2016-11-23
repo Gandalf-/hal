@@ -91,7 +91,7 @@ while read -r _; do
   # preparation
   RCOMMAND=1
   CLINE=$(tail -n 3 "${log_file}" | grep -v 'Keeping entity' | tail -n 1)
-  USER=$(echo "${CLINE}" | grep -oih '<[^ ]*>' | grep -oih '[^<>]*')
+  USER=$(echo "${CLINE}" | grep -oi '<[^ ]*>' | grep -oi '[^<>]*')
   LIFETIME=$(( $(date +%s) - starttime ))
 
   if test "${USER}" == ''; then

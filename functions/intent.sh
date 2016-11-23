@@ -68,7 +68,7 @@ intent_if_yes_do(){
   : '
   '
   local regex='yes\|sure\|okay'
-  if test "$(echo "$CLINE" | grep -ioh "$regex")" != ''; then
+  if test "$(echo "$CLINE" | grep -io "$regex")" != ''; then
     eval "$@"
   fi
 }

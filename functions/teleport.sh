@@ -61,7 +61,7 @@ set_home(){
   "hal set home as <x> <y> <z>"
   attempts to set the current users home destination
   '
-  local homeline=$(echo "$CLINE" | grep -ioh 'set home as .*$') || ''
+  local homeline=$(echo "$CLINE" | grep -io 'set home as .*$') || ''
   local xcoord=$(echo "$homeline" | cut -f 4 -d ' ') || ''
   local ycoord=$(echo "$homeline" | cut -f 5 -d ' ') || ''
   local zcoord=$(echo "$homeline" | cut -f 6 -d ' ') || ''
