@@ -93,6 +93,7 @@ class DemoHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
       if time() > start_time + 1:
         break;
+    sleep(0.1)
 
     # return hal's response to the user, clear output file
     with open(hal_output_file, 'r+') as out_file:

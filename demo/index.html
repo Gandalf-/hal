@@ -47,12 +47,27 @@
         xml_http_post("index.html", name + " left the game", recvResp);
       }
       function recvResp(req) {
-        var help   = '<i>Hal only responds when you include his name</i><br>';
         var input  = document.getElementById('demo_id');
         var chat   = document.getElementById('chat');
         var result = document.getElementById('demo_result');
-        if (req.responseText){ result.innerHTML += req.responseText; }
-        else { result.innerHTML += help; }
+        var help   = '<i>Hal only responds when you include his name</i><br>';
+        var text   = '<span style="color:#3445DB">' + req.responseText + '</span>';
+        var grey   = '<span style="color:grey">';
+        var s_ix = text.indexOf('<br>/', 0);
+        var e_ix = 0;
+
+        if (req.responseText){
+          while (s_ix != -1) {
+            text = text.slice(0, s_ix + 4) + grey + text.slice(s_ix + 4);
+            e_ix = text.indexOf('<br>', s_ix + 4);
+            text = text.slice(0, e_ix + 4) + '</span>' + text.slice(e_ix + 4);
+            s_ix = text.indexOf('<br>/', s_ix + 4);
+          }
+          result.innerHTML += text;
+        }
+        else { 
+          result.innerHTML += '<span style="color:grey">' + help + '</span>'; 
+        }
         chat.scrollTop = chat.scrollHeight;
         input.focus();
       }

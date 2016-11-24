@@ -12,9 +12,36 @@ check_chatting_actions(){
   chatting actions
   '
   if hc 'how are you'; then
-    local adverb=$(random "fairly" "quite" "exceptionally" "modestly" "adequately")
+    local adverb=$(random "fairly" "quite" "extremely" "modestly" "adequately")
     local adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
-    say "I'm feeling $adverb $adjective! I've been alive for $LIFETIME seconds."
+    local label=$(random "millennium" "years" "days" "hours" "seconds" "milliseconds" "nanoseconds")
+    local time="scale=6; $LIFETIME"
+
+    case "$label" in
+      "millennium")
+        time=$( echo "$time / 60 / 24 / 365 / 1000"| bc -l)
+        ;;
+      "years")
+        time=$( echo "$time / 60 / 24 / 365"| bc -l)
+        ;;
+      "days")
+        time=$( echo "$time / 60 / 24"| bc -l)
+        ;;
+      "hours")
+        time=$( echo "$time / 60"| bc -l)
+        ;;
+      "seconds")
+        time=$( echo "$time * 1"| bc -l)
+        ;;
+      "milliseconds")
+        time=$( echo "$time * 100"| bc -l)
+        ;;
+      "nanoseconds")
+        time=$( echo "$time * 1000000000"| bc -l)
+        ;;
+    esac
+
+    say "I'm feeling $adverb $adjective! I've been alive for $time $label"
     RCOMMAND=0
   fi
 
