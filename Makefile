@@ -22,7 +22,7 @@ clean:
 	@echo "Done"
 
 live_demo:
-	@echo "Live demo available at http://localhost:8000"
+	@echo "Live demo available at http://localhost:48000"
 	@echo "Stop with ctrl-c"
 	@cd demo && python server.py
 
