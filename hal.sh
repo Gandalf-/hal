@@ -85,7 +85,14 @@ sleep 1
 
 # main
 while true; do
-inotifywait -m -q -e modify "${log_file}" | 
+  while ! [ -e "${log_file}" ]; do
+    echo "No log file!"
+    sleep 1
+  done
+
+  $(inotifywait -q -e delete_self "${log_file}"; killall inotifywait) &
+
+  inotifywait -m -q -e modify "${log_file}" | 
 while read -r _; do
 
   # preparation
