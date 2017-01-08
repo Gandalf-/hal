@@ -90,7 +90,7 @@ while true; do
     sleep 1
   done
 
-  $(inotifywait -q -e delete_self "${log_file}"; killall inotifywait) &
+  $(inotifywait -q -e delete_self "${log_file}"; killall inotifywait; sleep 1; say "Hmm...") &
 
   inotifywait -m -q -e modify "${log_file}" | 
 while read -r _; do
