@@ -32,17 +32,17 @@ player_joined(){
   and check for messages
   '
   sleep 0.1
-  say "Hey there $USER! Try saying \"Hal help\""
-  local num_players=$(( num_players + 1 ))
+  say "Hey there ${USER}! Try saying \"Hal help\""
+  local num_players=$(( ${num_players} + 1 ))
   RCOMMAND=0
 
-  if [[ $num_players -eq 1 ]]; then
+  if [[ ${num_players} -eq 1 ]]; then
     say "You're the first one here!"
 
-  elif [[ $num_players -eq 2 ]]; then
-    say "Three makes a party!"
+  elif [[ ${num_players} -eq 2 ]]; then
+    say "Two makes a party!"
 
-  elif [[ $num_players -ge 3 ]]; then
+  elif [[ ${num_players} -ge 3 ]]; then
     say "Things sure are busy today!"
   fi
 
@@ -65,20 +65,20 @@ player_left(){
   : ' none -> none
   Say goodbye, comment on player count
   '
-  say "Goodbye $USER! See you again soon I hope!"
-  local num_players=$(( num_players - 1 ))
+  say "Goodbye ${USER}! See you again soon I hope!"
+  local num_players=$(( ${num_players} - 1 ))
   RCOMMAND=0
 
-  if [[ $num_players -le 0 ]]; then
+  if [[ ${num_players} -le 0 ]]; then
     say "I seem to have gotten confused..."
     num_players=0
   fi
 
-  if [[ $num_players -eq 0 ]]; then
+  if [[ ${num_players} -eq 0 ]]; then
     say "All alone..."
     QUIET=0
 
-  elif [[ $num_players -eq 1 ]]; then
+  elif [[ ${num_players} -eq 1 ]]; then
     say "I guess it's just you and me now!"
   fi
 }
@@ -89,15 +89,15 @@ check_gamemode_actions(){
   '
   hcsr 'put me in survival mode' \
     "$(random_okay 'Remember to eat!')" \
-    "/gamemode surival $USER"
+    "/gamemode surival ${USER}"
 
   hcsr 'put me in creative mode' \
     "$(random_okay)" \
-    "/gamemode creative $USER"
+    "/gamemode creative ${USER}"
 
   hcsr 'put me in spectator mode' \
     "$(random_okay)" \
-    "/gamemode spectator $USER"
+    "/gamemode spectator ${USER}"
 }
 
 check_weather_actions(){
@@ -131,15 +131,15 @@ check_effect_actions(){
   '
   hcsr 'make me healthy' \
     "$(random_okay 'This should help you feel better')" \
-    "/effect $USER minecraft:instant_health 1 10"
+    "/effect ${USER} minecraft:instant_health 1 10"
 
   hcsr 'make me invisible' \
     "$(random_okay 'Not even I know where you are now!')" \
-    "/effect $USER minecraft:invisibility 60 5"
+    "/effect ${USER} minecraft:invisibility 60 5"
 
   hcsr 'make me fast' \
     "$(random_okay 'Gotta go fast!')" \
-    "/effect $USER minecraft:speed 60 5"
+    "/effect ${USER} minecraft:speed 60 5"
 }
 
 # UTILITY FUNCTIONS
@@ -147,14 +147,10 @@ hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
-  if test "$(echo "$CLINE" | grep -io "$1")" == ""; then
+  if test "$(echo "${CLINE}" | grep -io "${1}.*Hal\|Hal.*${1}" )" == ""; then
     return 1
   else
-    if test "$(echo "$CLINE" | grep -io "Hal")" == ""; then
-      return 1
-    else
-      return 0
-    fi
+    return 0
   fi
 }
 
@@ -162,7 +158,7 @@ contains(){
   : ' string -> int
   check if the current line contains the required text
   '
-  if test "$(echo "$CLINE" | grep -io "$1")" == ""; then
+  if test "$(echo "${CLINE}" | grep -io "${1}")" == ""; then
     return 1
   else
     return 0
@@ -173,10 +169,10 @@ debug_output(){
   : ' string -> none
   sends output to correct location
   '
-  if [[ -e "$OUT_FILE" ]]; then
-    echo "$@" >> "$OUT_FILE"
+  if [[ -e "${OUT_FILE}" ]]; then
+    echo "${@}" >> "${OUT_FILE}"
   else
-    echo "$@"
+    echo "${@}"
   fi
 }
 
@@ -184,11 +180,11 @@ say(){
   : ' string -> none
   say a phrase in the server
   '
-  if test "$QUIET" == "0" ; then
-    if test "$DEBUG" == "0"; then
-      tmux send-keys -t minecraft "/say [Hal] $1" Enter
+  if test "${QUIET}" == "0" ; then
+    if test "${DEBUG}" == "0"; then
+      tmux send-keys -t minecraft "/say [Hal] ${1}" Enter
     else
-      debug_output "/say [Hal] $1"
+      debug_output "/say [Hal] ${1}"
     fi
   fi
 }
@@ -197,11 +193,11 @@ tell(){
   : ' string -> none
   say a phrase in the server
   '
-  if test "$QUIET" == "0" ; then
-    if test "$DEBUG" == "0"; then
-      tmux send-keys -t minecraft "/tell $USER $1" Enter
+  if test "${QUIET}" == "0" ; then
+    if test "${DEBUG}" == "0"; then
+      tmux send-keys -t minecraft "/tell ${USER} ${1}" Enter
     else
-      debug_output "/tell $USER $1"
+      debug_output "/tell ${USER} ${1}"
     fi
   fi
 }
@@ -210,8 +206,8 @@ run(){
   : ' string -> none
   run a command in the server
   '
-  if test "$1" != ""; then
-    if test "$DEBUG" == "0"; then
+  if test "${1}" != ""; then
+    if test "${DEBUG}" == "0"; then
       tmux send-keys -t minecraft "$@" Enter
     else
       debug_output "$@"
@@ -224,7 +220,7 @@ not_repeat(){
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
   '
-  if test "$(echo "$CLINE" | grep -oih '\[Hal\]' )" == ''; then
+  if test "$(echo "${CLINE}" | grep -oih '\[Hal\]' )" == ''; then
     return 0
   else
     return 1
@@ -235,7 +231,7 @@ random(){
   : ' any, ... -> any
   returns a randomly chosen element out of the arguments
   '
-  if test "$1" == ""; then
+  if test "${1}" == ""; then
     echo ''
   else
     local array=("$@")
@@ -250,18 +246,18 @@ shut_down(){
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
-  if test "$DEBUG" == "0"; then
+  if test "${DEBUG}" == "0"; then
     exit
   fi
 }
 
 hcsr(){
   : ' string, string, string -> none
-  wrapper around check $1, say $2, run $3 logic
+  wrapper around check ${1}, say ${2}, run ${3} logic
   '
-  if hc "$1"; then
-    say "$2"
-    run "$3"
+  if hc "${1}"; then
+    say "${2}"
+    run "${3}"
     RCOMMAND=0
   fi
 }
