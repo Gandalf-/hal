@@ -58,14 +58,14 @@ check_chatting_actions(){
     tell_player
   fi
 
-  hcsr 'hello hal'    "Hey there $USER!"
-  hcsr 'hey hal'      "Hello there $USER!"
-  hcsr 'hi hal'       "Howdy $USER!"
-  hcsr 'sup hal'      "Yo, what's good $USER?"
-  hcsr 'yes hal'      'Ah... okay'
-  hcsr 'no hal'       'Oh... okay'
-  hcsr 'whatever hal' 'Well. If you say so'
-  hcsr 'thanks hal'   "You're quite welcome $USER!"
+  hcsr 'hello'    "Hey there $USER!"
+  hcsr 'hey'      "Hello there $USER!"
+  hcsr 'hi'       "Howdy $USER!"
+  hcsr 'sup'      "Yo, what's good $USER?"
+  hcsr 'yes'      'Ah... okay'
+  hcsr 'no'       'Oh... okay'
+  hcsr 'whatever' 'Well. If you say so'
+  hcsr 'thanks'   "You're quite welcome $USER!"
 
   hcsr 'turn down for what' "Nothing! Order another round of shots!"
 

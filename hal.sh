@@ -199,4 +199,5 @@ while true; do
   else
     old_hash="$new_hash"
     sleep 0.1
+  fi
 done
