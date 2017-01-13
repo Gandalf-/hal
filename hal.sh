@@ -29,11 +29,14 @@ INTENT_B=''
 INTENT_C=''
 
 prevline=''
-num_players=0
-starttime=$(date +%s)
 inst_dir=''
 log_file=''
+new_hash=''
+old_hash=''
+starttime=$(date +%s)
+num_players=0
 
+# verify validity of arguments and/or configuration file
 if test "$1" != '' && test "$2" != '' && 
   test "$3" != '' && test "$4" != ''; then
   log_file="$1"; inst_dir="$2"; MEM_DIR="$3"; OUT_FILE="$4"; DEBUG=1
@@ -55,6 +58,7 @@ else
   exit
 fi
 
+# check for required programs
 for req_prog in "tmux" "inotifywait"; do
   if test "$(which ${req_prog})" == ''; then
     echo "error: hal.sh requires tmux and inotify-tools to run"
@@ -62,7 +66,7 @@ for req_prog in "tmux" "inotifywait"; do
   fi
 done
 
-# load modules
+# load hal modules
 eval inst_dir="${inst_dir}"
 # shellcheck source=functions/utility.sh
 # shellcheck source=functions/memories.sh
@@ -74,132 +78,125 @@ for file in ${srcs[@]}; do
   source "${inst_dir}""functions/""${file}"
 done
 
-# startup messages
+# startup messages and preparation
 if test "$DEBUG" == "0" ; then
   echo 'Hal starting up'
 fi
-say "I'm alive!"
+
 trap shut_down INT
 mkdir -p "${MEM_DIR}"
-sleep 1
+sleep 0.5
+say "I'm alive!"
 
 # main
 while true; do
-  while ! [ -e "${log_file}" ]; do
-    echo "No log file!"
-    sleep 1
-  done
+  new_hash="$(sha1sum $log_file)"
 
-  $(inotifywait -q -e delete_self "${log_file}"; killall inotifywait; sleep 1; say "Hmm...") &
+  # only run when log file changes
+  if test "$new_hash" != "$old_hash"; then
 
-  inotifywait -m -q -e modify "${log_file}" | 
-while read -r _; do
+    # preparation
+    RCOMMAND=1
+    CLINE="$(tail -n 1 "${log_file}" )"
+    USER="$(echo "${CLINE}" | grep -oi '<[^ ]*>' | grep -oi '[^<>]*')"
+    LIFETIME=$(( $(date +%s) - starttime ))
 
-  # preparation
-  RCOMMAND=1
-  CLINE="$(tail -n 1 "${log_file}" )"
-  USER="$(echo "${CLINE}" | grep -oi '<[^ ]*>' | grep -oi '[^<>]*')"
-  LIFETIME=$(( $(date +%s) - starttime ))
-
-  if test "${USER}" == ''; then
-    if contains 'User Authenticator'; then
-      USER=$(echo "${CLINE}" | cut -f 8 -d ' ')
-    else
-      USER=$(echo "${CLINE}" | cut -f 4 -d ' ')
-    fi
-  fi
-
-  # time based actions
-  if [[ $(( $(date +%s) % 900)) -le 2 ]] && [[ ${num_players} -ne 0 ]]; then
-    say "$(random_musing)"
-    sleep 2
-  fi
-
-  if [[ ${QUIET} -ge 300 ]]; then
-    QUIET=0
-  elif [[ ${QUIET} -ne 0 ]]; then
-    QUIET=$(( QUIET + 1 ))
-  fi
-
-  # intention checks
-  check_intent
-
-  # user initiated actions
-  if test "${prevline}" != "${CLINE}" && not_repeat; then
-
-    if test "$DEBUG" == "0" ; then
-      echo "CLINE: $CLINE"
-    fi
-
-    # administrative
-    if hc 'help'; then show_help; fi
-
-    if hc 'restart'; then
-      say 'Okay, restarting!'
-      if test "$DEBUG" == "0"; then
-        bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
-        exit
+    # interpret user log in
+    if test "${USER}" == ''; then
+      if contains 'User Authenticator'; then
+        USER=$(echo "${CLINE}" | cut -f 8 -d ' ')
+      else
+        USER=$(echo "${CLINE}" | cut -f 4 -d ' ')
       fi
     fi
 
-    if hc 'be quiet'; then
-      say 'Oh... Are you sure?'
-      set_intent 'yes' 'intent_be_quiet'
-      RCOMMAND=0
-    fi
-
-    if hc 'you can talk'; then
+    # check for quiet timeout
+    if [[ ${QUIET} -ge 300 ]]; then
       QUIET=0
-      say "Hooray!"
-      RCOMMAND=0
+    elif [[ ${QUIET} -ne 0 ]]; then
+      QUIET=$(( QUIET + 1 ))
     fi
 
-    if hc 'status update'; then
-      say "Active players: ${num_players}"
-      RCOMMAND=0
+    # do all intention checks
+    check_intent
+
+    # user initiated actions
+    if test "${prevline}" != "${CLINE}" && not_repeat; then
+
+      if test "$DEBUG" == "0" ; then
+        echo "CLINE: $CLINE"
+      fi
+
+      # administrative
+      if hc 'help'; then show_help; fi
+
+      if hc 'restart'; then
+        say 'Okay, restarting!'
+        if test "$DEBUG" == "0"; then
+          bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
+          exit
+        fi
+      fi
+
+      # intent hooks
+      if hc 'be quiet'; then
+        say 'Oh... Are you sure?'
+        set_intent 'yes' 'intent_be_quiet'
+        RCOMMAND=0
+      fi
+
+      if hc 'you can talk'; then
+        QUIET=0
+        say "Hooray!"
+        RCOMMAND=0
+      fi
+
+      if hc 'status update'; then
+        say "Active players: ${num_players}"
+        RCOMMAND=0
+      fi
+
+      # chatting
+      check_chatting_actions
+
+      # memory
+      check_memory_actions
+
+      # teleportation
+      if hc 'take me home'; then go_home   ; fi
+      if hc 'set home as '; then set_home  ; fi
+      if hc 'take me to ' ; then go_to_dest; fi
+
+      # gamemode
+      check_gamemode_actions
+
+      # weather
+      check_weather_actions
+
+      # effects
+      check_effect_actions
+
+      # teleportation
+      # player joins or leaves
+      if contains "joined the game";       then player_joined; fi
+      if contains "${USER} left the game"; then player_left  ; fi
+
+      # misc server triggered
+      if contains "${USER} moved too quickly"; then
+        say "Woah there ${USER}! Maybe slow down a little?!"
+        RCOMMAND=0
+      fi
+
+      # not sure what to do
+      if ! test "${RCOMMAND}" == 0; then
+        hcsr 'hal?' "$USER?"
+      fi
+      if ! test "${RCOMMAND}" == 0 && contains "hal"; then
+        say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
+      fi
     fi
-
-    # chatting
-    check_chatting_actions
-
-    # memory
-    check_memory_actions
-
-    # teleportation
-    if hc 'take me home'; then go_home   ; fi
-    if hc 'set home as '; then set_home  ; fi
-    if hc 'take me to ' ; then go_to_dest; fi
-
-    # gamemode
-    check_gamemode_actions
-
-    # weather
-    check_weather_actions
-
-    # effects
-    check_effect_actions
-
-    # teleportation
-    # player joins or leaves
-    if contains "UUID of player";      then player_joined; fi
-    if contains "${USER} left the game"; then player_left  ; fi
-
-    # misc server triggered
-    if contains "${USER} moved too quickly"; then
-      say "Woah there ${USER}! Maybe slow down a little?!"
-      RCOMMAND=0
-    fi
-
-    # not sure what to do
-    if ! test "${RCOMMAND}" == 0; then
-      hcsr 'hal?' "$USER?"
-    fi
-    if ! test "${RCOMMAND}" == 0 && contains "hal"; then
-      say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
-    fi
-
-  fi
-  prevline="${CLINE}"
-done
-sleep 1
+    prevline="${CLINE}"
+  else
+    old_hash="$new_hash"
+    sleep 0.1
 done
