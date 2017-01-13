@@ -19,25 +19,25 @@ check_chatting_actions(){
 
     case "$label" in
       "millennium")
-        time=$( echo "$time / 60 / 24 / 365 / 1000"| bc -l)
+        time=$(bc -l <<< "$time / 60 / 24 / 365 / 1000")
         ;;
       "years")
-        time=$( echo "$time / 60 / 24 / 365"| bc -l)
+        time=$(bc -l <<< "$time / 60 / 24 / 365")
         ;;
       "days")
-        time=$( echo "$time / 60 / 24"| bc -l)
+        time=$(bc -l <<< "$time / 60 / 24")
         ;;
       "hours")
-        time=$( echo "$time / 60"| bc -l)
+        time=$(bc -l <<< "$time / 60")
         ;;
       "seconds")
-        time=$( echo "$time * 1"| bc -l)
+        time=$(bc -l <<< "$time * 1")
         ;;
       "milliseconds")
-        time=$( echo "$time * 100"| bc -l)
+        time=$(bc -l <<< "$time * 100")
         ;;
       "nanoseconds")
-        time=$( echo "$time * 1000000000"| bc -l)
+        time=$(bc -l <<< "$time * 1000000000")
         ;;
     esac
 
@@ -106,8 +106,8 @@ check_simple_math(){
   if hc "what's\|whats\|what is"; then
     if contains "$regex"; then
 
-      local exp="$(echo "$CLINE" | cut -d' ' -f5- | grep -io "$regex" | xargs)"
-      local value="$(echo "$exp" | timeout 1 bc -l 2>/dev/null)"
+      local exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"
+      local value="$(timeout 1 bc -l 2>/dev/null <<< "$exp")"
 
       if test "$value" != ""; then
         say "I think that's $value"
