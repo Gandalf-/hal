@@ -149,7 +149,7 @@ hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
-  if grep -oi "${1}.*Hal\|Hal.*${1}" <<< "${CLINE}"; then
+  if test "$(grep -io "${1}.*Hal\|Hal.*${1}" <<< "${CLINE}" )" == ""; then
     return 1
   else
     return 0
@@ -160,7 +160,7 @@ contains(){
   : ' string -> int
   check if the current line contains the required text
   '
-  if grep -io "${1}" <<< "${CLINE}"; then
+  if test "$(grep -io "${1}" <<< "${CLINE}" )" == ""; then
     return 1
   else
     return 0
@@ -222,7 +222,7 @@ not_repeat(){
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
   '
-  if grep -oih '\[Hal\]' <<< "${CLINE}"; then
+  if test "$(grep -oih '\[Hal\]' <<< "${CLINE}" )" == ''; then
     return 0
   else
     return 1

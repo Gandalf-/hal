@@ -188,7 +188,7 @@ while true; do
       fi
 
       # not sure what to do
-      if ! (( $RCOMMAND )); then
+      if (( $RCOMMAND )); then
         hcsr 'hal?' "$USER?"
 
         if contains "hal"; then
