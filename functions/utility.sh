@@ -174,8 +174,8 @@ say(){
   : ' string -> none
   say a phrase in the server
   '
-  if test "${QUIET}" == "0" ; then
-    if test "${DEBUG}" == "0"; then
+  if ! (( $QUIET )); then
+    if ! (( $DEBUG )); then
       tmux send-keys -t minecraft "/say [Hal] ${1}" Enter
     else
       debug_output "/say [Hal] ${1}"
@@ -187,8 +187,8 @@ tell(){
   : ' string -> none
   say a phrase in the server
   '
-  if test "${QUIET}" == "0" ; then
-    if test "${DEBUG}" == "0"; then
+  if ! (( $QUIET )); then
+    if ! (( $DEBUG )); then
       tmux send-keys -t minecraft "/tell ${USER} ${1}" Enter
     else
       debug_output "/tell ${USER} ${1}"
@@ -201,7 +201,7 @@ run(){
   run a command in the server
   '
   if test "${1}" != ""; then
-    if test "${DEBUG}" == "0"; then
+    if ! (( $DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
     else
       debug_output "$@"
