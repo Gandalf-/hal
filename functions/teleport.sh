@@ -7,6 +7,15 @@
 
 # teleport.sh
 
+check_teleport_actions(){
+  : ' none -> none
+  wrapper for teleportation actions
+  '
+  if hc 'take me home'; then go_home   ; fi
+  if hc 'set home as '; then set_home  ; fi
+  if hc 'take me to ' ; then go_to_dest; fi
+}
+
 go_to_dest(){
   : ' none -> none
   "hal take me to notch"

@@ -123,9 +123,7 @@ while true; do
     # user initiated actions
     if test "${prevline}" != "${CLINE}" && not_repeat; then
 
-      if ! (( $DEBUG )); then
-        echo "CLINE: $CLINE"
-      fi
+      if ! (( $DEBUG )); then echo "CLINE: $CLINE" fi
 
       # administrative
       if hc 'help'; then show_help; fi
@@ -138,27 +136,14 @@ while true; do
         fi
       fi
 
-      # chatting
+      # check actions
       check_chatting_actions
-
-      # memory
       check_memory_actions
-
-      # teleportation
-      if hc 'take me home'; then go_home   ; fi
-      if hc 'set home as '; then set_home  ; fi
-      if hc 'take me to ' ; then go_to_dest; fi
-
-      # gamemode
+      check_teleport_actions
       check_gamemode_actions
-
-      # weather
       check_weather_actions
-
-      # effects
       check_effect_actions
 
-      # teleportation
       # player joins or leaves
       if contains "joined the game";       then player_joined; fi
       if contains "${USER} left the game"; then player_left  ; fi
