@@ -149,22 +149,14 @@ hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
-  if test "$(grep -io "${1}.*Hal\|Hal.*${1}" <<< "${CLINE}" )" == ""; then
-    return 1
-  else
-    return 0
-  fi
+  grep -qi "${1}.*Hal\|Hal.*${1}" <<< ${CLINE}
 }
 
 contains(){
   : ' string -> int
   check if the current line contains the required text
   '
-  if test "$(grep -io "${1}" <<< "${CLINE}" )" == ""; then
-    return 1
-  else
-    return 0
-  fi
+  grep -qi "${1}" <<< "${CLINE}"
 }
 
 debug_output(){

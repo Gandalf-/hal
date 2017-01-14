@@ -11,6 +11,23 @@ check_chatting_actions(){
   : ' none -> none
   chatting actions
   '
+  if hc 'be quiet'; then
+    say 'Oh... Are you sure?'
+    set_intent 'yes' 'intent_be_quiet'
+    RCOMMAND=0
+  fi
+
+  if hc 'you can talk'; then
+    QUIET=0
+    say "Hooray!"
+    RCOMMAND=0
+  fi
+
+  if hc 'status update'; then
+    say "Active players: ${num_players}"
+    RCOMMAND=0
+  fi
+
   if hc 'how are you'; then
     local adverb=$(random "fairly" "quite" "extremely" "modestly" "adequately")
     local adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")

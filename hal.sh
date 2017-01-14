@@ -79,7 +79,7 @@ for file in ${srcs[@]}; do
 done
 
 # startup messages and preparation
-if (( $DEBUG )); then
+if ! (( $DEBUG )); then
   echo 'Hal starting up'
 fi
 
@@ -102,7 +102,7 @@ while true; do
     LIFETIME=$(( $(date +%s) - starttime ))
 
     # interpret user log in
-    if [ -z ${USER} ]; then
+    if [[ -z ${USER} ]]; then
       if contains 'User Authenticator'; then
         USER=$(cut -f 8 -d ' ' <<< "${CLINE}" )
       else
@@ -123,7 +123,7 @@ while true; do
     # user initiated actions
     if test "${prevline}" != "${CLINE}" && not_repeat; then
 
-      if (( $DEBUG )); then
+      if ! (( $DEBUG )); then
         echo "CLINE: $CLINE"
       fi
 
@@ -132,28 +132,10 @@ while true; do
 
       if hc 'restart'; then
         say 'Okay, restarting!'
-        if (( $DEBUG )); then
+        if ! (( $DEBUG )); then
           bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
           exit
         fi
-      fi
-
-      # intent hooks
-      if hc 'be quiet'; then
-        say 'Oh... Are you sure?'
-        set_intent 'yes' 'intent_be_quiet'
-        RCOMMAND=0
-      fi
-
-      if hc 'you can talk'; then
-        QUIET=0
-        say "Hooray!"
-        RCOMMAND=0
-      fi
-
-      if hc 'status update'; then
-        say "Active players: ${num_players}"
-        RCOMMAND=0
       fi
 
       # chatting
