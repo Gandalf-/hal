@@ -146,9 +146,9 @@ tell_player(){
   attempts to tell a player a message, if the player isnt in the game,
   store it until the log in again
   '
-  local player="$(echo "$CLINE" | cut -f 7 -d' ')"
+  local player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
   local regex='s/[;\|{}'"'"'"&$()]/\\&/g'
-  local msg="$(echo "$CLINE" | cut -f 8- -d' ' | sed -e "$regex" )"
+  local msg="$(cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
 
   if test "$player" != "" || test "$msg" != ""; then
     set_intent 'cannot' "intent_tell_player $USER $player $msg"

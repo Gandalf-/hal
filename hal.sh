@@ -79,7 +79,7 @@ for file in ${srcs[@]}; do
 done
 
 # startup messages and preparation
-if test "$DEBUG" == "0" ; then
+if (( $DEBUG )); then
   echo 'Hal starting up'
 fi
 
@@ -98,15 +98,15 @@ while true; do
     # preparation
     RCOMMAND=1
     CLINE="$(tail -n 1 "${log_file}" )"
-    USER="$(echo "${CLINE}" | grep -oi '<[^ ]*>' | grep -oi '[^<>]*')"
+    USER="$(grep -oi '<[^ ]*>' <<< "${CLINE}" | grep -oi '[^<>]*')"
     LIFETIME=$(( $(date +%s) - starttime ))
 
     # interpret user log in
-    if test "${USER}" == ''; then
+    if [ -z ${USER} ]; then
       if contains 'User Authenticator'; then
-        USER=$(echo "${CLINE}" | cut -f 8 -d ' ')
+        USER=$(cut -f 8 -d ' ' <<< "${CLINE}" )
       else
-        USER=$(echo "${CLINE}" | cut -f 4 -d ' ')
+        USER=$(cut -f 4 -d ' ' <<< "${CLINE}" )
       fi
     fi
 
@@ -123,7 +123,7 @@ while true; do
     # user initiated actions
     if test "${prevline}" != "${CLINE}" && not_repeat; then
 
-      if test "$DEBUG" == "0" ; then
+      if (( $DEBUG )); then
         echo "CLINE: $CLINE"
       fi
 
@@ -132,7 +132,7 @@ while true; do
 
       if hc 'restart'; then
         say 'Okay, restarting!'
-        if test "$DEBUG" == "0"; then
+        if (( $DEBUG )); then
           bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
           exit
         fi
@@ -188,12 +188,14 @@ while true; do
       fi
 
       # not sure what to do
-      if ! test "${RCOMMAND}" == 0; then
+      if ! (( $RCOMMAND )); then
         hcsr 'hal?' "$USER?"
+
+        if contains "hal"; then
+          say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
+        fi
       fi
-      if ! test "${RCOMMAND}" == 0 && contains "hal"; then
-        say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
-      fi
+
     fi
     prevline="${CLINE}"
   else

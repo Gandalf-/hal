@@ -13,7 +13,7 @@ go_to_dest(){
   attempts to teleport the current user to the destination user
   '
   local where=$(\
-    echo "$CLINE" | grep -oih 'take me to .*$' |
+    grep -oih 'take me to .*$' <<< "${CLINE}" |
     sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' |
     cut -f 4- -d ' ') || ''
 
@@ -43,9 +43,9 @@ go_home(){
   attempts to teleport the current user to their home destination
   '
   local homeline=$(cat "$MEM_DIR""$USER".home 2>/dev/null) || ''
-  local xcoord=$(echo "$homeline" | cut -f 1 -d ' ') || ''
-  local ycoord=$(echo "$homeline" | cut -f 2 -d ' ') || ''
-  local zcoord=$(echo "$homeline" | cut -f 3 -d ' ') || ''
+  local xcoord=$(cut -f 1 -d ' ' <<< "${CLINE}" ) || ''
+  local ycoord=$(cut -f 2 -d ' ' <<< "${CLINE}" ) || ''
+  local zcoord=$(cut -f 3 -d ' ' <<< "${CLINE}" ) || ''
 
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
     say "Sorry $USER, either you never told me where home was or I forgot!"
@@ -62,9 +62,9 @@ set_home(){
   attempts to set the current users home destination
   '
   local homeline=$(echo "$CLINE" | grep -io 'set home as .*$') || ''
-  local xcoord=$(echo "$homeline" | cut -f 4 -d ' ') || ''
-  local ycoord=$(echo "$homeline" | cut -f 5 -d ' ') || ''
-  local zcoord=$(echo "$homeline" | cut -f 6 -d ' ') || ''
+  local xcoord=$(cut -f 4 -d ' ' <<< "${CLINE}" ) || ''
+  local ycoord=$(cut -f 5 -d ' ' <<< "${CLINE}" ) || ''
+  local zcoord=$(cut -f 6 -d ' ' <<< "${CLINE}" ) || ''
 
   if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
     say "Sorry $USER, something doesn't look right with those coordinates"
