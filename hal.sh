@@ -181,7 +181,8 @@ while true; do
     fi
     prevline="${CLINE}"
   else
-    old_hash="$new_hash"
     sleep 0.1
   fi
+
+  old_hash="$new_hash"
 done
