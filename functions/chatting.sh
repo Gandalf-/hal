@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hal: Minecraft AI in Shell
-#   requires: bash, tmux, inotify-tools
+#   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 

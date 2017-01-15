@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hal: Minecraft AI in Shell
-#   requires: bash, tmux, inotify-tools
+#   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
@@ -59,9 +59,9 @@ else
 fi
 
 # check for required programs
-for req_prog in "tmux" "inotifywait"; do
+for req_prog in "tmux" "sha1sum"; do
   if test "$(which ${req_prog})" == ''; then
-    echo "error: hal.sh requires tmux and inotify-tools to run"
+    echo "error: hal.sh requires ${req_prog} to run"
     exit
   fi
 done

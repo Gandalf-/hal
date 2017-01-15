@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hal: Minecraft AI in Shell
-#   requires: bash, tmux, inotify-tools
+#   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
@@ -71,7 +71,7 @@ player_left(){
   local num_players=$(( ${num_players} - 1 ))
   RCOMMAND=0
 
-  if [[ ${num_players} -le 0 ]]; then
+  if [[ ${num_players} -lt 0 ]]; then
     say "I seem to have gotten confused..."
     num_players=0
   fi
