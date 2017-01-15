@@ -1,11 +1,20 @@
 #!/bin/bash
 
 # Hal: Minecraft AI in Shell
-#   requires: bash, tmux, inotify-tools
+#   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
 # teleport.sh
+
+check_teleport_actions(){
+  : ' none -> none
+  wrapper for teleportation actions
+  '
+  if hc 'take me home'; then go_home   ; fi
+  if hc 'set home as '; then set_home  ; fi
+  if hc 'take me to ' ; then go_to_dest; fi
+}
 
 go_to_dest(){
   : ' none -> none

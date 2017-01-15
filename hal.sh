@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hal: Minecraft AI in Shell
-#   requires: bash, tmux, inotify-tools
+#   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
@@ -59,27 +59,27 @@ else
 fi
 
 # check for required programs
-for req_prog in "tmux" "inotifywait"; do
+for req_prog in "tmux" "sha1sum"; do
   if test "$(which ${req_prog})" == ''; then
-    echo "error: hal.sh requires tmux and inotify-tools to run"
+    echo "error: hal.sh requires ${req_prog} to run"
     exit
   fi
 done
 
 # load hal modules
 eval inst_dir="${inst_dir}"
-# shellcheck source=functions/utility.sh
-# shellcheck source=functions/memories.sh
-# shellcheck source=functions/chatting.sh
-# shellcheck source=functions/teleport.sh
-# shellcheck source=functions/intent.sh
+# shellcheck source=modules/utility.sh
+# shellcheck source=modules/memories.sh
+# shellcheck source=modules/chatting.sh
+# shellcheck source=modules/teleport.sh
+# shellcheck source=modules/intent.sh
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
 for file in ${srcs[@]}; do
-  source "${inst_dir}""functions/""${file}"
+  source "${inst_dir}""modules/""${file}"
 done
 
-# startup messages and preparation
-if ! (( $DEBUG )); then
+# startup messages and moduleson
+if ! (( $DEBUG )); thenmodules
   echo 'Hal starting up'
 fi
 
@@ -123,9 +123,7 @@ while true; do
     # user initiated actions
     if test "${prevline}" != "${CLINE}" && not_repeat; then
 
-      if ! (( $DEBUG )); then
-        echo "CLINE: $CLINE"
-      fi
+      if ! (( $DEBUG )); then echo "CLINE: $CLINE" fi
 
       # administrative
       if hc 'help'; then show_help; fi
@@ -138,27 +136,14 @@ while true; do
         fi
       fi
 
-      # chatting
+      # check actions
       check_chatting_actions
-
-      # memory
       check_memory_actions
-
-      # teleportation
-      if hc 'take me home'; then go_home   ; fi
-      if hc 'set home as '; then set_home  ; fi
-      if hc 'take me to ' ; then go_to_dest; fi
-
-      # gamemode
+      check_teleport_actions
       check_gamemode_actions
-
-      # weather
       check_weather_actions
-
-      # effects
       check_effect_actions
 
-      # teleportation
       # player joins or leaves
       if contains "joined the game";       then player_joined; fi
       if contains "${USER} left the game"; then player_left  ; fi

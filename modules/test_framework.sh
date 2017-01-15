@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hal: Minecraft AI in Shell
-#   requires: bash, tmux, inotify-tools
+#   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
@@ -27,7 +27,10 @@ scpass(){
   if test "$1" == "$2"; then 
     pass
   else 
-    fail; echo "Expected: $2"; echo "Received: $1"; exit 1
+    fail
+    echo "Expected: $2"
+    echo "Received: $1"
+    exit 1
   fi
 }
 
@@ -36,7 +39,10 @@ scfail(){
   direct string comparision, pass if different
   '
   if test "$1" == "$2"; then 
-    fail; echo "Expected: $1"; echo "Received: $2"; exit 1
+    fail
+    echo "Expected: $1"
+    echo "Received: $2"
+    exit 1
   else 
     pass
   fi
@@ -49,7 +55,10 @@ rcpass(){
   if test "$(echo "$1" | grep -F "$2")" != ""; then 
     pass
   else 
-    fail; echo "Expected: $2"; echo "Received: $1"; exit 1
+    fail
+    echo "Expected: $2"
+    echo "Received: $1"
+    exit 1
   fi
 }
 
@@ -58,8 +67,13 @@ rcfail(){
   loose string comparison which ignores newlines, pass if different
   '
   if test "$(echo "$1" | grep "$2")" != ""; then 
-    fail; echo "Expected: $2"; echo "Received: $1"; exit 1
-  else pass; fi
+    fail
+    echo "Expected: $2"
+    echo "Received: $1"
+    exit 1
+  else 
+    pass
+  fi
 }
 
 ocpass(){
@@ -69,7 +83,9 @@ ocpass(){
   if [[ $? -eq 0 ]]; then 
     pass
   else 
-    fail; echo "Return value was non-zero"; exit 1
+    fail
+    echo "Return value was non-zero"
+    exit 1
   fi
 }
 
@@ -78,7 +94,9 @@ ocfail(){
   #return code comparison, pass if command failed
   #'
   if [[ $? -eq 0 ]]; then 
-    fail; echo "Return value was zero"; exit 1
+    fail
+    echo "Return value was zero"
+    exit 1
   else 
     pass
   fi
