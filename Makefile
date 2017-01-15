@@ -8,12 +8,12 @@ all:
 test:
 	@echo "Unit Tests"
 	@echo "====================="
-	cd functions && bash unit_test.sh
+	cd modules && bash unit_test.sh
 	@echo "====================="
 	@echo "Unit Tests Done";echo
 	@echo "Integration Tests"
 	@echo "====================="
-	cd functions && bash integration_test.sh
+	cd modules && bash integration_test.sh
 	@echo "====================="
 	@echo "Integration Tests Done"
 
@@ -27,10 +27,10 @@ live_demo:
 	@cd demo && python server.py
 
 install:
-	@mkdir -p $(install_loc)/functions/
+	@mkdir -p $(install_loc)/modules/
 	@cp -n ./halrc $(conf_file)
 	@cp ./hal.sh $(install_loc)/
-	@cp ./functions/* $(install_loc)/functions/
+	@cp ./modules/* $(install_loc)/modules/
 	@chmod +x $(install_loc)/hal.sh
 	@ln -fs $(install_loc)/hal.sh $(exec_file)
 	@echo "Done"

@@ -68,18 +68,18 @@ done
 
 # load hal modules
 eval inst_dir="${inst_dir}"
-# shellcheck source=functions/utility.sh
-# shellcheck source=functions/memories.sh
-# shellcheck source=functions/chatting.sh
-# shellcheck source=functions/teleport.sh
-# shellcheck source=functions/intent.sh
+# shellcheck source=modules/utility.sh
+# shellcheck source=modules/memories.sh
+# shellcheck source=modules/chatting.sh
+# shellcheck source=modules/teleport.sh
+# shellcheck source=modules/intent.sh
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
 for file in ${srcs[@]}; do
-  source "${inst_dir}""functions/""${file}"
+  source "${inst_dir}""modules/""${file}"
 done
 
-# startup messages and preparation
-if ! (( $DEBUG )); then
+# startup messages and moduleson
+if ! (( $DEBUG )); thenmodules
   echo 'Hal starting up'
 fi
 
