@@ -78,8 +78,8 @@ for file in ${srcs[@]}; do
   source "${inst_dir}""modules/""${file}"
 done
 
-# startup messages and moduleson
-if ! (( $DEBUG )); thenmodules
+# startup messages and set up
+if ! (( $DEBUG )); then
   echo 'Hal starting up'
 fi
 
@@ -123,7 +123,9 @@ while true; do
     # user initiated actions
     if test "${prevline}" != "${CLINE}" && not_repeat; then
 
-      if ! (( $DEBUG )); then echo "CLINE: $CLINE" fi
+      if ! (( $DEBUG )); then 
+        echo "CLINE: $CLINE" 
+      fi
 
       # administrative
       if hc 'help'; then show_help; fi
@@ -163,8 +165,11 @@ while true; do
         fi
       fi
 
-    fi
+    fi # user initiated actions
+
     prevline="${CLINE}"
+
+  # hashes are the same, sleep
   else
     sleep 0.1
   fi
