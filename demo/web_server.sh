@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Hal: Minecraft AI in Shell
+#   requires: bash, tmux
+#   author  : leaf@anardil.net
+#   license : See LICENSE file
+
 port="48000"
 root_dir='/tmp/hal/demo/'
 hal_output_file="${root_dir}hal_output.log"
@@ -7,6 +12,7 @@ hal_input_file="${root_dir}hal_input.log"
 
 hal_pretty_print() {
   : ' string -> string
+  Converts from hals Minecraft chat format to html format
   '
   if test "$@" != ""; then
     local message="$@"
@@ -22,6 +28,7 @@ hal_pretty_print() {
 
 do_get() {
   : ' none -> none
+  Handles GET requests, only the specified resources are returned
   '
   echo -n "GET: $resource"
   case $resource in
@@ -59,6 +66,8 @@ do_get() {
 
 do_post() {
   : ' none -> none
+  Handles POST requests and User -> Server -> Hal -> Server -> User formatting 
+  conversions
   '
   echo "POST"
   message=""
@@ -72,7 +81,7 @@ do_post() {
 
   # log out
   elif test "game" == $(tail -c 5 <<< ${content} ); then
-    message="[$(date +"%H:%M:%S")] [User Authenticator #8/INFO]: $content"
+    message="[$(date +"%H:%M:%S")] [Server thread/INFO]: $content"
 
   # chatting
   else
@@ -114,6 +123,7 @@ do_post() {
 
 cleanup() {
   : ' none -> none
+  kill the web server, hal instance and remove FIFOs and log files
   '
   echo ""
   echo "Stopping server"
