@@ -5,46 +5,85 @@ root_dir='/tmp/hal/demo/'
 hal_output_file="${root_dir}hal_output.log"
 hal_input_file="${root_dir}hal_input.log"
 
+hal_pretty_print() {
+  : ' string -> string
+  '
+  if test "$@" != ""; then
+    local message="$@"
+    message="$(sed 's/</\&lt/g' <<< "${message}")"
+    message="$(sed 's/>/\&gt/g' <<< "${message}")"
+    message="$(sed 's/\/say//g' <<< "${message}")"
+    message="$(sed ':a;N;$!ba;s/\n/<br>/g' <<< "${message}")"
+    echo "$message<br>"
+  else
+    echo ""
+  fi
+}
+
 do_get() {
   : ' none -> none
   '
-  echo "GET REQUEST START"
-
-  ( echo -e "HTTP/1.1 200 OK\n"
-    cat index.html
-  ) > outgoing
-
-  echo "GET REQUEST DONE"
+  echo -n "GET: $resource"
+  case $resource in
+    /)
+      ( echo -e "HTTP/1.1 200 OK\n"
+      cat index.html
+      ) > outgoing
+      echo " OK"
+      ;;
+    /index.html)
+      ( echo -e "HTTP/1.1 200 OK\n"
+      cat index.html
+      ) > outgoing
+      echo " OK"
+      ;;
+    /favicon.ico)
+      ( echo -e "HTTP/1.1 200 OK\n"
+      cat favicon.ico
+      ) > outgoing
+      echo " OK"
+      ;;
+    /robots.txt)
+      ( echo -e "HTTP/1.1 200 OK\n"
+      cat robots.txt
+      ) > outgoing
+      echo " OK"
+      ;;
+    *)
+      ( echo -e "HTTP/1.1 404 OK\n"
+      ) > outgoing
+      echo " FAIL"
+      ;;
+  esac
 }
 
 do_post() {
   : ' none -> none
   '
-  echo "POST REQUEST START"
-
+  echo "POST"
   message=""
   content="$(head -c $content_length incoming)"
-  echo "Recieved \"$content\""
+  echo "U -> S: \"$content\""
 
   # log in
   if test "UUID" == ${content::4}; then
-    echo "Player log in"
-    message="[$(date +"%H:%M:S")] [User Authenticator #8/INFO]: $content"
+    name="$(cut -f 4 -d ' ' <<< "${content}")"
+    message="[$(date +"%H:%M:%S")] [Server thread/INFO]: $name joined the game"
 
   # log out
   elif test "game" == $(tail -c 5 <<< ${content} ); then
-    echo "Player log out"
-    message="[$(date +"%H:%M:S")] [User Authenticator #8/INFO]: $content"
+    message="[$(date +"%H:%M:%S")] [User Authenticator #8/INFO]: $content"
 
   # chatting
   else
-    local name=""
-    local message=""
-    message="[$(date +"%H:%M:%S")] [Server thread/INFO]: <${name}> $message"
+    local name="$(grep -o '[^%%%]*' <<< "${content}" | head -n 1)"
+    local message="$(grep -o '[^%%%]*' <<< "${content}" | tail -n +2)"
+    message="[$(date +"%H:%M:%S")] [Server thread/INFO]: <${name}> ${message}"
   fi
 
   # provide hal user input, timeout after 1 second
-  echo $message >> $hal_input_file
+  echo "S -> H: ${message}"
+  echo "${message}" >> $hal_input_file
 
   # wait for hal to work, timeout after 1 second
   timeout=$(( $(date +'%s') + 1))
@@ -52,30 +91,31 @@ do_post() {
   current_time=$before_time
 
   while test $before_time -eq $current_time; do
-    sleep 0.1
     current_time=$(stat -c '%Z' $hal_output_file)
 
     if test $(date +'%s') -gt $timeout; then
       break
     fi
+    sleep 0.1
   done
-  sleep 0.1
 
   # return hal's response to user, clear output file
-  reply="$(cat $hal_output_file)"
-  echo "Sending: $reply"
+  reply="$(cat ${hal_output_file})"
+  echo "H -> S: ${reply}"
+  reply="$(hal_pretty_print "${reply}")"
+  echo -n "" > ${hal_output_file}
+  echo "S -> U: ${reply}"
 
-  ( 
-    echo -e "HTTP/1.1 200 OK\n"
+  ( echo -e "HTTP/1.1 200 OK\n"
     echo "${reply}"
     echo ""
   ) > outgoing
-  echo "POST REQUEST DONE"
 }
 
 cleanup() {
   : ' none -> none
   '
+  echo ""
   echo "Stopping server"
   kill $server_pid
   echo "Stopping hal"
@@ -95,10 +135,12 @@ rm -f outgoing incoming
 mkfifo outgoing incoming
 
 # start hal
+echo "Starting hal..."
 bash ../hal.sh $hal_input_file ../ $root_dir $hal_output_file &
 hal_pid=$!
 
 # start http server
+echo "Starting server..."
 while true; do
   cat outgoing | nc -l ${port} > incoming &
   server_pid=$!
@@ -112,6 +154,7 @@ while true; do
     case "$line" in
       GET*)
         method="GET"
+        resource="$(cut -f 2 -d ' ' <<< ${line})"
         ;;
       POST*)
         method="POST"
