@@ -38,7 +38,7 @@
         var input = document.getElementById('demo_id');
         input.disabled = false;
         xml_http_post(
-            "index.html", "UUID of player " + name + " is DEMO", recvResp);
+            "index.html", name + " has joined the game", recvResp);
       }
       function logOut(){
         var name  = document.getElementById('name_id').value;
