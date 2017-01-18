@@ -124,9 +124,9 @@ check_simple_math(){
     if contains "$regex"; then
 
       local exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"
-      local value="$(timeout 1 bc -l 2>/dev/null <<< "$exp")"
+      local value="$(timeout 0.5 bc -l 2>/dev/null <<< "$exp")"
 
-      if test "$value" != ""; then
+      if ! [[ -z "$value" ]]; then
         say "I think that's $value"
       else
         say "I'm not sure..."

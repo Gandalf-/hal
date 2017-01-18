@@ -81,7 +81,7 @@ do_post() {
   content="$(head -c ${CONTENT_LENGTH} incoming_fifo)"
   header="$(echo "[$(date +"%H:%M:%S")] [Server thread/INFO]:")"
   user_regex='[A-Za-z]'
-  message_regex='[A-Za-z0-9:\-\ \(\)\n]'
+  message_regex='[A-Za-z0-9:\+\/\%\*\-\ \(\)\n]'
   echo "U -> S: \"${content}\""
 
   # log in

@@ -12,7 +12,7 @@
 # memory_dir  : folder where user memories and other data is kept
 # output_file : file where debugging information is written
 
-set -u -o pipefail
+set -o pipefail
 
 # globals
 USER=''
