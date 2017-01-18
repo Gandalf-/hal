@@ -149,7 +149,7 @@ random_okay(){
   : ' string -> string
   returns a random affirmative
   '
-  if test "$1" == ''; then
+  if [[ -z "${1:-}" ]]; then
     random \
       'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
   else
