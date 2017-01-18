@@ -33,23 +33,23 @@ player_joined(){
   '
   sleep 0.1
   say "Hey there ${USER}! Try saying \"Hal help\""
-  local num_players=$(( ${num_players} + 1 ))
+  NUM_PLAYERS=$(( ${NUM_PLAYERS} + 1 ))
   RCOMMAND=0
 
-  if [[ ${num_players} -eq 1 ]]; then
+  if [[ ${NUM_PLAYERS} == 1 ]]; then
     say "You're the first one here!"
 
-  elif [[ ${num_players} -eq 2 ]]; then
+  elif [[ ${NUM_PLAYERS} == 2 ]]; then
     say "Two makes a party!"
 
-  elif [[ ${num_players} -ge 3 ]]; then
+  elif [[ ${NUM_PLAYERS} > 2 ]]; then
     say "Things sure are busy today!"
   fi
 
   # check for messages
   local mfile="$MEM_DIR""${USER,,}".mail
   if [[ -e "$mfile" ]]; then
-    if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') -ge 2 ]] ; then
+    if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') > 1 ]] ; then
       say "Looks like you have some messages!"
     else
       say "Looks like you have a message!"
@@ -68,19 +68,18 @@ player_left(){
   Say goodbye, comment on player count
   '
   say "Goodbye ${USER}! See you again soon I hope!"
-  local num_players=$(( ${num_players} - 1 ))
+  NUM_PLAYERS=$(( ${NUM_PLAYERS} - 1 ))
   RCOMMAND=0
 
-  if [[ ${num_players} -lt 0 ]]; then
+  if [[ ${NUM_PLAYERS} < 0 ]]; then
     say "I seem to have gotten confused..."
-    num_players=0
-  fi
+    NUM_PLAYERS=0
 
-  if [[ ${num_players} -eq 0 ]]; then
+  elif [[ ${NUM_PLAYERS} == 0 ]]; then
     say "All alone..."
     QUIET=0
 
-  elif [[ ${num_players} -eq 1 ]]; then
+  elif [[ ${NUM_PLAYERS} == 1 ]]; then
     say "I guess it's just you and me now!"
   fi
 }
@@ -200,7 +199,7 @@ run(){
   : ' string -> none
   run a command in the server
   '
-  if test "${1}" != ""; then
+  if ! [[ -z "${1}" ]]; then
     if ! (( $DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
     else
@@ -214,18 +213,14 @@ not_repeat(){
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
   '
-  if test "$(grep -oih '\[Hal\]' <<< "${CLINE}" )" == ''; then
-    return 0
-  else
-    return 1
-  fi
+  ! grep -qi '\[Hal\]' <<< "${CLINE}"
 }
 
 random(){
   : ' any, ... -> any
   returns a randomly chosen element out of the arguments
   '
-  if test "${1}" == ""; then
+  if [[ -z "${1}" ]]; then
     echo ''
   else
     local array=("$@")
@@ -240,7 +235,7 @@ shut_down(){
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
-  if test "${DEBUG}" == "0"; then
+  if ! (( $DEBUG )); then
     exit
   fi
 }

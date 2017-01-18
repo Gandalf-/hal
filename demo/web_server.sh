@@ -93,9 +93,9 @@ do_post() {
     output="${header} ${name} joined the game"
 
   # log out
-  elif grep -qi "has left the game" <<< "${content}"; then
-    name="$(tr -cd "${user_regex}" <<< "${content// has left the game/}")"
-    output="${header} ${name} has left the game"
+  elif grep -qi "left the game" <<< "${content}"; then
+    name="$(tr -cd "${user_regex}" <<< "${content// left the game/}")"
+    output="${header} ${name} left the game"
 
   # chatting
   else
@@ -118,10 +118,10 @@ do_post() {
   before_time=$(stat -c '%Z' "${HAL_OUTPUT_FILE}")
   current_time=$before_time
 
-  while test $before_time -eq $current_time; do
+  while [[ $before_time == $current_time ]]; do
     current_time=$(stat -c '%Z' $HAL_OUTPUT_FILE)
 
-    if test $(date +'%s') -gt $timeout; then
+    if (( $(date +'%s') > $timeout )); then
       break
     fi
     sleep 0.1

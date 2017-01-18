@@ -107,7 +107,7 @@ check_chatting_actions(){
     RCOMMAND=0
   fi
 
-  if test "$RCOMMAND" != 0; then
+  if (( $RCOMMAND )); then
     check_simple_math
   fi
 }
@@ -167,7 +167,7 @@ tell_player(){
   local regex='s/[;\|{}'"'"'"&$()]/\\&/g'
   local msg="$(cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
 
-  if test "$player" != "" || test "$msg" != ""; then
+  if ! [[ -z "$player" || -z "$msg" ]]; then
     set_intent 'cannot' "intent_tell_player $USER $player $msg"
     say "Sure thing $USER!"
     run "/tell $player $msg"

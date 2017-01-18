@@ -22,6 +22,7 @@ CLINE=''
 MEM_DIR=''
 OUT_FILE=''
 RCOMMAND=0
+NUM_PLAYERS=0
 MAX_MEM_SIZE=1024
 MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
 
@@ -34,7 +35,6 @@ inst_dir=''
 log_file=''
 new_hash=''
 old_hash=''
-num_players=0
 starttime=$(date +%s)
 readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
@@ -70,7 +70,7 @@ fi
 
 # check for required programs
 for req_prog in "tmux" "sha1sum"; do
-  if test "$(which ${req_prog})" == ''; then
+  if [[ -z "$(which ${req_prog})" ]]; then
     echo "error: hal.sh requires ${req_prog} to run"
     exit
   fi
