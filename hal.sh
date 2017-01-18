@@ -12,17 +12,18 @@
 # memory_dir  : folder where user memories and other data is kept
 # output_file : file where debugging information is written
 
-set -o pipefail
+set -u -o pipefail
 
+# globals
 USER=''
 DEBUG=0
 QUIET=0
 CLINE=''
 MEM_DIR=''
-MAX_MEM_SIZE=1024
-MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
 OUT_FILE=''
 RCOMMAND=0
+MAX_MEM_SIZE=1024
+MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
 
 INTENT_A=''
 INTENT_B=''
@@ -33,21 +34,30 @@ inst_dir=''
 log_file=''
 new_hash=''
 old_hash=''
-starttime=$(date +%s)
 num_players=0
+starttime=$(date +%s)
+readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
 # verify validity of arguments and/or configuration file
-if test "$1" != '' && test "$2" != '' && 
-  test "$3" != '' && test "$4" != ''; then
-  log_file="$1"; inst_dir="$2"; MEM_DIR="$3"; OUT_FILE="$4"; DEBUG=1
+if ! [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
+  log_file="$1"
+  inst_dir="$2"
+  MEM_DIR="$3"
+  OUT_FILE="$4"
+  DEBUG=1
+  eval inst_dir="${inst_dir}"
+  readonly log_file inst_dir MEM_DIR OUT_FILE DEBUG
 
+# no arguments mode, parse halrc
 elif [[ -e ~/.halrc ]]; then
   log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
   inst_dir=$(grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
   MEM_DIR=$( grep "MEMDIR "     ~/.halrc | cut -f 2- -d ' ')
+  eval inst_dir="${inst_dir}"
+  readonly log_file inst_dir MEM_DIR OUT_FILE DEBUG
 
-  for conf_file in "${inst_dir}" "${log_file}" "${MEM_DIR}"; do
-    if test "${conf_file}" == ''; then
+  for configuration in "${inst_dir}" "${log_file}" "${MEM_DIR}"; do
+    if [[ -z "${configuration}" ]]; then
       echo "error: Configuration file is incomplete" 
       exit
     fi
@@ -67,7 +77,6 @@ for req_prog in "tmux" "sha1sum"; do
 done
 
 # load hal modules
-eval inst_dir="${inst_dir}"
 # shellcheck source=modules/utility.sh
 # shellcheck source=modules/memories.sh
 # shellcheck source=modules/chatting.sh
@@ -85,7 +94,6 @@ fi
 
 trap shut_down INT
 mkdir -p "${MEM_DIR}"
-sleep 0.5
 say "I'm alive!"
 
 # main
@@ -93,15 +101,16 @@ while true; do
   new_hash="$(sha1sum $log_file)"
 
   # only run when log file changes
-  if test "$new_hash" != "$old_hash"; then
+  if [[ "$new_hash" != "$old_hash" ]]; then
 
     # preparation
     RCOMMAND=1
     CLINE="$(tail -n 1 "${log_file}" )"
-    USER="$(grep -oi '<[^ ]*>' <<< "${CLINE}" | grep -oi '[^<>]*')"
     LIFETIME=$(( $(date +%s) - starttime ))
 
-    # interpret user log in
+    # parse user name
+    USER="$(grep -oi '<[^ ]*>' <<< "${CLINE}" | grep -oi '[^<>]*')"
+
     if [[ -z ${USER} ]]; then
       if contains 'User Authenticator'; then
         USER=$(cut -f 8 -d ' ' <<< "${CLINE}" )
@@ -121,7 +130,7 @@ while true; do
     check_intent
 
     # user initiated actions
-    if test "${prevline}" != "${CLINE}" && not_repeat; then
+    if [[ "${prevline}" != "${CLINE}" ]] && not_repeat; then
 
       if ! (( $DEBUG )); then 
         echo "CLINE: $CLINE" 
