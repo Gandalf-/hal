@@ -17,6 +17,7 @@ check_memory_actions(){
   
   if hc 'forget everything'; then 
     forget_everything
+
   elif hc 'forget'; then 
     forget_phrase
   fi
@@ -56,6 +57,7 @@ remember_phrase(){
         truncate -s "$MAX_MEM_SIZE" "$file"
       fi
     fi
+
   else
     say "Remember what?"
   fi
@@ -71,9 +73,10 @@ recall_phrase(){
   local phrase=$(echo "$CLINE" | grep -oih 'about .*$' | sed -e "$regex")
   local mem_file="$MEM_DIR""$USER".memories
 
-  if test "$phrase" != ""; then
-    if test "$(grep -i "$phrase" "$mem_file")" != ""; then
+  if ! [[ -z "$phrase" ]]; then
+    if grep -qi "$phrase" "$mem_file"; then
       say "Okay $USER, here's what I know about \"$phrase\":"
+
       grep -i "$phrase" "$mem_file" | while read -r line; do
         say "\"$line\""
       done
@@ -104,14 +107,15 @@ forget_phrase(){
   remove all related phrases from user file
   '
   local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
-  local phrase=$(echo "$CLINE" | sed -e "$regex" | grep -oih 'forget .*$' | 
-                 cut -f 2- -d ' ')
+  local phrase=$(\
+    sed -e "$regex" <<< "${CLINE}" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
   local mem_file="$MEM_DIR""$USER".memories
   local file_contents=$(cat "$mem_file")
 
-  if test "$phrase" != ""; then
+  if ! [[ -z "$phrase" ]]; then
     echo "$file_contents" | grep -iv "$phrase\|^$" > "$mem_file"
     say "Okay $USER, I've forgetten everything about \"$phrase!\""
+
   else
     say "Sorry $USER, I'm not sure what to do"
   fi

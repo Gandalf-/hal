@@ -26,7 +26,7 @@ go_to_dest(){
     sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' |
     cut -f 4- -d ' ') || ''
 
-  if test "$where" == ''; then
+  if [[ -z "$where" ]]; then
     say "Sorry $USER, I don't know where that is!"
 
   else
@@ -34,7 +34,7 @@ go_to_dest(){
       grep '\->' ~/.halrc | grep -i "$where" | grep -oih '\->.*$' |
       cut -f 2- -d ' ')
 
-    if test "$dest" == '' ; then
+    if [[ -z "$dest" ]]; then
       say "Okay $USER, I'll try!"
       run "/tp $USER $where"
 
@@ -56,8 +56,9 @@ go_home(){
   local ycoord=$(cut -f 2 -d ' ' <<< "${homeline}" ) || ''
   local zcoord=$(cut -f 3 -d ' ' <<< "${homeline}" ) || ''
 
-  if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
+  if [[ -z "$xcoord" || -z "$ycoord" || -z "$zcoord" ]]; then
     say "Sorry $USER, either you never told me where home was or I forgot!"
+
   else
     say "Off you go $USER!"
     run "/tp $USER $xcoord $ycoord $zcoord"
@@ -70,13 +71,14 @@ set_home(){
   "hal set home as <x> <y> <z>"
   attempts to set the current users home destination
   '
-  local homeline=$(echo "$CLINE" | grep -io 'set home as .*$') || ''
+  local homeline=$(grep -io 'set home as .*$' <<< "${CLINE}" ) || ''
   local xcoord=$(cut -f 4 -d ' ' <<< "${homeline}" ) || ''
   local ycoord=$(cut -f 5 -d ' ' <<< "${homeline}" ) || ''
   local zcoord=$(cut -f 6 -d ' ' <<< "${homeline}" ) || ''
 
-  if test "$xcoord" == '' || test "$ycoord" == '' || test "$zcoord" == ''; then
+  if [[ -z "$xcoord" || -z "$ycoord" || -z "$zcoord" ]]; then
     say "Sorry $USER, something doesn't look right with those coordinates"
+
   else
     echo "$xcoord $ycoord $zcoord" > "$MEM_DIR""$USER".home
     say "Okay $USER, I've set your home to be $xcoord $ycoord $zcoord!"

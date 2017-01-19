@@ -24,8 +24,9 @@ scpass(){
   : ' string, string -> string
   direct string comparision, pass if equal
   '
-  if test "$1" == "$2"; then 
+  if [[ "$1" == "$2" ]]; then 
     pass
+
   else 
     fail
     echo "Expected: $2"
@@ -38,11 +39,12 @@ scfail(){
   : ' string, string -> string
   direct string comparision, pass if different
   '
-  if test "$1" == "$2"; then 
+  if [[ "$1" == "$2" ]]; then 
     fail
     echo "Expected: $1"
     echo "Received: $2"
     exit 1
+
   else 
     pass
   fi
@@ -52,8 +54,9 @@ rcpass(){
   : ' string, string -> string
   loose string comparison which ignores newlines, pass if equal
   '
-  if test "$(echo "$1" | grep -F "$2")" != ""; then 
+  if grep -qF "$2" <<< "$1"; then 
     pass
+
   else 
     fail
     echo "Expected: $2"
@@ -66,11 +69,12 @@ rcfail(){
   : ' string, string -> string
   loose string comparison which ignores newlines, pass if different
   '
-  if test "$(echo "$1" | grep "$2")" != ""; then 
+  if grep -qF "$2" <<< "$1"; then 
     fail
     echo "Expected: $2"
     echo "Received: $1"
     exit 1
+
   else 
     pass
   fi
