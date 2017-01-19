@@ -1,6 +1,6 @@
 install_loc = ~/.hal
-exec_file = ~/hal.sh
-conf_file = ~/.halrc
+exec_file   = ~/hal.sh
+conf_file   = ~/.halrc
 
 all:
 	@echo "Nothing to build. Ready for make install"
@@ -8,12 +8,12 @@ all:
 test:
 	@echo "Unit Tests"
 	@echo "====================="
-	cd modules && bash unit_test.sh
+	cd tests && bash unit_test.sh
 	@echo "====================="
 	@echo "Unit Tests Done";echo
 	@echo "Integration Tests"
 	@echo "====================="
-	cd modules && bash integration_test.sh
+	cd tests && bash integration_test.sh
 	@echo "====================="
 	@echo "Integration Tests Done"
 

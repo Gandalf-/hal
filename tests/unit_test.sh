@@ -9,11 +9,11 @@
 
 source "./test_framework.sh"
 
-source "./utility.sh"
-source "./memories.sh"
-source "./chatting.sh"
-source "./teleport.sh"
-source "./intent.sh"
+source "../modules/utility.sh"
+source "../modules/memories.sh"
+source "../modules/chatting.sh"
+source "../modules/teleport.sh"
+source "../modules/intent.sh"
 
 DEBUG=1
 QUIET=0

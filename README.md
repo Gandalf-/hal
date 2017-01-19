@@ -34,7 +34,7 @@ Minecraft AI in Shell
 ```
 
 ## Setup
-- **Requirements**: `tmux`, `bash`, `inotify-tools`, `git`, Linux Minecraft server
+- **Requirements**: `tmux`, `bash`, `git`, Linux Minecraft server
 - Clone this repository: `git clone https://github.com/Gandalf-/hal.git`
 - Run `make install` in the new hal directory
 - Check out `~/.halrc` to make sure it reflects your system configuration
