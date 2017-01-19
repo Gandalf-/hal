@@ -23,7 +23,7 @@ show_help(){
   say "- take me home, set home as <x> <y> <z>"
   say "- (remember, recall, forget) <phrase>"
   say "- put me in (creative, survival, spectator) mode"
-  RCOMMAND=0
+  ran_command
 }
 
 player_joined(){
@@ -34,22 +34,22 @@ player_joined(){
   sleep 0.1
   say "Hey there ${USER}! Try saying \"Hal help\""
   NUM_PLAYERS=$(( ${NUM_PLAYERS} + 1 ))
-  RCOMMAND=0
+  ran_command
 
-  if [[ ${NUM_PLAYERS} == 1 ]]; then
+  if (( ${NUM_PLAYERS} == 1 )); then
     say "You're the first one here!"
 
-  elif [[ ${NUM_PLAYERS} == 2 ]]; then
+  elif (( ${NUM_PLAYERS} == 2 )); then
     say "Two makes a party!"
 
-  elif [[ ${NUM_PLAYERS} > 2 ]]; then
+  elif (( ${NUM_PLAYERS} > 2 )); then
     say "Things sure are busy today!"
   fi
 
   # check for messages
   local mfile="$MEM_DIR""${USER,,}".mail
   if [[ -e "$mfile" ]]; then
-    if [[ $(wc -l "$mfile" | cut -f 1 -d ' ') > 1 ]] ; then
+    if (( $(wc -l "$mfile" | cut -f 1 -d ' ') > 1 )); then
       say "Looks like you have some messages!"
     else
       say "Looks like you have a message!"
@@ -69,19 +69,20 @@ player_left(){
   '
   say "Goodbye ${USER}! See you again soon I hope!"
   NUM_PLAYERS=$(( ${NUM_PLAYERS} - 1 ))
-  RCOMMAND=0
 
-  if [[ ${NUM_PLAYERS} < 0 ]]; then
+  if (( ${NUM_PLAYERS} < 0 )); then
     say "I seem to have gotten confused..."
     NUM_PLAYERS=0
 
-  elif [[ ${NUM_PLAYERS} == 0 ]]; then
+  elif (( ${NUM_PLAYERS} == 0 )); then
     say "All alone..."
     QUIET=0
 
-  elif [[ ${NUM_PLAYERS} == 1 ]]; then
+  elif (( ${NUM_PLAYERS} == 1 )); then
     say "I guess it's just you and me now!"
   fi
+
+  ran_command
 }
 
 check_gamemode_actions(){
@@ -247,6 +248,13 @@ hcsr(){
   if hc "${1}"; then
     say "${2}"
     run "${3}"
-    RCOMMAND=0
+    ran_command
   fi
+}
+
+ran_command() {
+  : ' none -> none
+  wrapper to set RCOMMAND
+  '
+  RCOMMAND=1
 }

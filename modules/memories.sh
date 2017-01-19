@@ -28,21 +28,22 @@ remember_phrase(){
   parse out note to remember and write to user file
   '
   local regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  local note=$(echo "$CLINE" | grep -oih 'remember .*$' | sed -e "$regex")
+  local note=$(grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex")
 
-  if test "$note" != ""; then
+  if ! [[ -z "$note" ]]; then
     echo "$note" >> "$MEM_DIR""$USER".memories
     say "Okay $USER, I'll remember!"
 
     # check total disk usage
-    local dir_size=$(du -c "$MEM_DIR"*.memories | tail -n 1 | cut -f 1)
+    local memory_files=( $MEM_DIR*.memories )
+    local dir_size=$(\
+      du -c "${memory_files}" 2>/dev/null | tail -n 1 | cut -f 1)
 
-    if [[ "$dir_size" -ge "$MAX_MEM_DIR_SIZE" ]]; then
-      local memory_files=( $MEM_DIR*.memories )
-      local new_size=$(( $MAX_MEM_DIR_SIZE / ${#files[@]} ))
+    if (( ${dir_size} > ${MAX_MEM_DIR_SIZE} )); then
+      local new_size=$(( $MAX_MEM_DIR_SIZE / ${#memory_files[@]} ))
 
       for file in ${memory_files[@]}; do
-        if [[ $(wc -c $file) -ge $new_size ]]; then
+        if (( $(wc -c $file) > ${new_size} )); then
           truncate -s $new_size $file
         fi
       done
@@ -51,14 +52,14 @@ remember_phrase(){
     else
       local file="$MEM_DIR""$USER"".memories"
       local file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
-      if [[ "$file_size" -ge $MAX_MEM_SIZE ]]; then
+      if (( $file_size > $MAX_MEM_SIZE )); then
         truncate -s "$MAX_MEM_SIZE" "$file"
       fi
     fi
   else
     say "Remember what?"
   fi
-  RCOMMAND=0
+  ran_command
 }
 
 recall_phrase(){
@@ -82,7 +83,7 @@ recall_phrase(){
   else
     say "Recall what?"
   fi
-  RCOMMAND=0
+  ran_command
 }
 
 recall_everything(){
@@ -94,7 +95,7 @@ recall_everything(){
   cat "$MEM_DIR""$USER".memories | while read -r line; do
     say "$line"
   done
-  RCOMMAND=0
+  ran_command
 }
 
 forget_phrase(){
@@ -114,7 +115,7 @@ forget_phrase(){
   else
     say "Sorry $USER, I'm not sure what to do"
   fi
-  RCOMMAND=0
+  ran_command
 }
 
 forget_everything(){
@@ -124,5 +125,5 @@ forget_everything(){
   '
   say "Done $USER, I forgot everything!"
   echo '' > "$MEM_DIR""$USER".memories
-  RCOMMAND=0
+  ran_command
 }

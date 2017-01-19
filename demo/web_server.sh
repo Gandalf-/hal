@@ -73,11 +73,7 @@ do_post() {
   conversions
   '
   echo "POST"
-  local content
-  local header
-  local user_regex
-  local message_regex
-
+  local content header user_regex message_regex
   content="$(head -c ${CONTENT_LENGTH} incoming_fifo)"
   header="$(echo "[$(date +"%H:%M:%S")] [Server thread/INFO]:")"
   user_regex='[A-Za-z]'
@@ -85,9 +81,7 @@ do_post() {
   echo "U -> S: \"${content}\""
 
   # log in
-  local name
-  local message
-  local output
+  local name message output
   if grep -qi "has joined the game" <<< "${content}"; then
     name="$(tr -cd "${user_regex}" <<< "${content// has joined the game/}")"
     output="${header} ${name} joined the game"
@@ -111,9 +105,7 @@ do_post() {
   echo "${output}" >> "${HAL_INPUT_FILE}"
 
   # wait for hal to work, timeout after 1 second
-  local timeout
-  local before_time
-  local current_time
+  local timeout before_time current_time
   timeout=$(( $(date +'%s') + 1))
   before_time=$(stat -c '%Z' "${HAL_OUTPUT_FILE}")
   current_time=$before_time

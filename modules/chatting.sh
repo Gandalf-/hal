@@ -14,18 +14,18 @@ check_chatting_actions(){
   if hc 'be quiet'; then
     say 'Oh... Are you sure?'
     set_intent 'yes' 'intent_be_quiet'
-    RCOMMAND=0
+    ran_command
   fi
 
   if hc 'you can talk'; then
     QUIET=0
     say "Hooray!"
-    RCOMMAND=0
+    ran_command
   fi
 
   if hc 'status update'; then
     say "Active players: ${num_players}"
-    RCOMMAND=0
+    ran_command
   fi
 
   if hc 'how are you'; then
@@ -59,7 +59,7 @@ check_chatting_actions(){
     esac
 
     say "I'm feeling $adverb $adjective! I've been alive for $time $label"
-    RCOMMAND=0
+    ran_command
   fi
 
   if hc 'tell .* joke'; then 
@@ -104,7 +104,7 @@ check_chatting_actions(){
     else 
       recall_phrase
     fi
-    RCOMMAND=0
+    ran_command
   fi
 
   if (( $RCOMMAND )); then
@@ -135,7 +135,7 @@ check_simple_math(){
       say "I'm not sure..."
     fi
 
-    RCOMMAND=0
+    ran_command
   fi
 }
 
@@ -171,7 +171,7 @@ tell_player(){
     set_intent 'cannot' "intent_tell_player $USER $player $msg"
     say "Sure thing $USER!"
     run "/tell $player $msg"
-    RCOMMAND=0
+    ran_command
   fi
 }
 
@@ -229,5 +229,5 @@ tell_joke(){
   'Whats an endermans favourite band?  Imagine Dragons!' \
   'How does Steve chop down trees with his fists?  How wood I know?' \
   'What is a pigmans favorite cereal?  Golden nuggets.')"
-  RCOMMAND=0
+  ran_command
 }

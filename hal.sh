@@ -21,15 +21,15 @@ QUIET=0
 CLINE=''
 MEM_DIR=''
 OUT_FILE=''
-RCOMMAND=0
+RCOMMAND=1
 NUM_PLAYERS=0
 MAX_MEM_SIZE=1024
 MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
-
 INTENT_A=''
 INTENT_B=''
 INTENT_C=''
 
+# locals
 prevline=''
 inst_dir=''
 log_file=''
@@ -84,7 +84,7 @@ done
 # shellcheck source=modules/intent.sh
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
 for file in ${srcs[@]}; do
-  source "${inst_dir}""modules/""${file}"
+  source "${inst_dir}modules/${file}"
 done
 
 # startup messages and set up
@@ -104,7 +104,7 @@ while true; do
   if [[ "$new_hash" != "$old_hash" ]]; then
 
     # preparation
-    RCOMMAND=1
+    RCOMMAND=0
     CLINE="$(tail -n 1 "${log_file}" )"
     LIFETIME=$(( $(date +%s) - starttime ))
 
@@ -120,9 +120,9 @@ while true; do
     fi
 
     # check for quiet timeout
-    if [[ ${QUIET} -ge 300 ]]; then
+    if (( ${QUIET} > 300 )); then
       QUIET=0
-    elif [[ ${QUIET} -ne 0 ]]; then
+    elif (( ${QUIET} > 0 )); then
       QUIET=$(( QUIET + 1 ))
     fi
 
@@ -162,11 +162,11 @@ while true; do
       # misc server triggered
       if contains "${USER} moved too quickly"; then
         say "Woah there ${USER}! Maybe slow down a little?!"
-        RCOMMAND=0
+        ran_command
       fi
 
       # not sure what to do
-      if (( $RCOMMAND )); then
+      if ! (( $RCOMMAND )); then
         hcsr 'hal?' "$USER?"
 
         if contains "hal"; then

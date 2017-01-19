@@ -43,7 +43,7 @@ go_to_dest(){
       run "/tp $USER $dest"
     fi
   fi
-  RCOMMAND=0
+  ran_command
 }
 
 go_home(){
@@ -62,7 +62,7 @@ go_home(){
     say "Off you go $USER!"
     run "/tp $USER $xcoord $ycoord $zcoord"
   fi
-  RCOMMAND=0
+  ran_command
 }
 
 set_home(){
@@ -81,5 +81,5 @@ set_home(){
     echo "$xcoord $ycoord $zcoord" > "$MEM_DIR""$USER".home
     say "Okay $USER, I've set your home to be $xcoord $ycoord $zcoord!"
   fi
-  RCOMMAND=0
+  ran_command
 }
