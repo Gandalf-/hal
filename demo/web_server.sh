@@ -77,7 +77,7 @@ do_post() {
   content="$(head -c ${CONTENT_LENGTH} incoming_fifo)"
   header="$(echo "[$(date +"%H:%M:%S")] [Server thread/INFO]:")"
   user_regex='[A-Za-z]'
-  message_regex='[A-Za-z0-9:\+\/\%\*\-\ \(\)\n]'
+  message_regex='[A-Za-z0-9:\+\/\%\^\*\-\ \(\)\n]'
   echo "U -> S: \"${content}\""
 
   # log in
@@ -164,11 +164,14 @@ main() {
   bash ../hal.sh ${HAL_INPUT_FILE} ../ ${ROOT_DIR} ${HAL_OUTPUT_FILE} &
   readonly HAL_PID=$!
 
+  $(while true; do
+      cat outgoing_fifo | nc -l ${PORT} > incoming_fifo
+    done) &
+  SERVER_PID=$!
+
   # start http server
   echo "Starting server..."
   while true; do
-    cat outgoing_fifo | nc -l ${PORT} > incoming_fifo &
-    SERVER_PID=$!
 
     CONTENT_LENGTH=0
     local method=""

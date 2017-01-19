@@ -29,7 +29,7 @@ remember_phrase(){
   parse out note to remember and write to user file
   '
   local regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  local note=$(grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex")
+  local note="$(grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex")"
 
   if ! [[ -z "$note" ]]; then
     echo "$note" >> "$MEM_DIR""$USER".memories

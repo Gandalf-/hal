@@ -56,7 +56,10 @@
         var s_ix = text.indexOf('<br>/', 0);
         var e_ix = 0;
 
-        if (req.responseText){
+        if (req.responseText.length < 3){
+          result.innerHTML += '<span style="color:grey">' + help + '</span>'; 
+        }
+        else { 
           while (s_ix != -1) {
             text = text.slice(0, s_ix + 4) + grey + text.slice(s_ix + 4);
             e_ix = text.indexOf('<br>', s_ix + 4);
@@ -64,9 +67,6 @@
             s_ix = text.indexOf('<br>/', s_ix + 4);
           }
           result.innerHTML += text;
-        }
-        else { 
-          result.innerHTML += '<span style="color:grey">' + help + '</span>'; 
         }
         chat.scrollTop = chat.scrollHeight;
         input.focus();

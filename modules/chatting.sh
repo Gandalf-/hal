@@ -107,7 +107,7 @@ check_chatting_actions(){
     ran_command
   fi
 
-  if (( $RCOMMAND )); then
+  if ! (( $RCOMMAND )); then
     check_simple_math
   fi
 }
