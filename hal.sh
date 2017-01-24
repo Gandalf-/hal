@@ -38,7 +38,16 @@ old_hash=''
 starttime=$(date +%s)
 readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
-# verify validity of arguments and/or configuration file
+# check for required programs
+progs=('tmux' 'sha1sum' 'truncate' 'tr' 'sed' 'bc' 'cut' 'grep' 'du' 'wc' 'tail')
+for req_prog in ${progs[@]}; do
+  if [[ -z "$(which ${req_prog})" ]]; then
+    echo "error: hal.sh requires ${req_prog} to run"
+    exit
+  fi
+done
+
+# command line arguments
 if ! [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
   log_file="$1"
   inst_dir="$2"
@@ -48,7 +57,7 @@ if ! [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
   eval inst_dir="${inst_dir}"
   readonly log_file inst_dir MEM_DIR OUT_FILE DEBUG
 
-# no arguments mode, parse halrc
+# no arguments, parse halrc
 elif [[ -e ~/.halrc ]]; then
   log_file=$(grep "LOGFILE "    ~/.halrc | cut -f 2- -d ' ')
   inst_dir=$(grep "INSTALLDIR " ~/.halrc | cut -f 2- -d ' ')
@@ -56,35 +65,36 @@ elif [[ -e ~/.halrc ]]; then
   eval inst_dir="${inst_dir}"
   readonly log_file inst_dir MEM_DIR OUT_FILE DEBUG
 
-  for configuration in "${inst_dir}" "${log_file}" "${MEM_DIR}"; do
-    if [[ -z "${configuration}" ]]; then
-      echo "error: Configuration file is incomplete" 
-      exit
-    fi
-  done
-
+# no arguments, no halrc
 else
-  echo "error: Cannot find ~/.halrc"
+  echo "error: Cannot find ~/.halrc. Did you run make install?"
   exit
 fi
 
-# check for required programs
-for req_prog in "tmux" "sha1sum"; do
-  if [[ -z "$(which ${req_prog})" ]]; then
-    echo "error: hal.sh requires ${req_prog} to run"
+# verify configuration
+for configuration in "${inst_dir}" "${log_file}" "${MEM_DIR}"; do
+  if [[ -z "${configuration}" ]]; then
+    echo "error: Configuration file is incomplete!"
+    echo "       Please check ~/.halrc and make sure it reflects your system"
+    exit
+  fi
+
+  if ! [[ -e "${configuration}" ]]; then
+    echo "error: Configuration directory or file ${configuration} not found!"
+    echo "       Please check ~/.halrc and make sure it reflects your system"
     exit
   fi
 done
 
 # load hal modules
-# shellcheck source=modules/utility.sh
-# shellcheck source=modules/memories.sh
-# shellcheck source=modules/chatting.sh
-# shellcheck source=modules/teleport.sh
-# shellcheck source=modules/intent.sh
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
 for file in ${srcs[@]}; do
-  source "${inst_dir}modules/${file}"
+  source "${inst_dir}modules/${file}" 2>/dev/null
+
+  if (( $? )); then
+    echo "error: Cannot find module ${file}. Did you run make install?"
+    exit
+  fi
 done
 
 # startup messages and set up
