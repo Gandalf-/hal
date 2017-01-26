@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -p
 
 # Hal: Minecraft AI in Shell
 #   requires: bash, tmux
@@ -6,11 +6,14 @@
 #   license : See LICENSE file
 
 set -uf -o pipefail
+umask u=rw,g=,o=
 
 readonly PORT="48000"
 readonly ROOT_DIR='/tmp/hal/demo/'
 readonly HAL_OUTPUT_FILE="${ROOT_DIR}hal_output.log"
 readonly HAL_INPUT_FILE="${ROOT_DIR}hal_input.log"
+readonly outgoing_fifo="${ROOT_DIR}outgoing_fifo"
+readonly incoming_fifo="${ROOT_DIR}ingoing_fifo"
 
 hal_pretty_print() {
   : ' string -> string
@@ -38,30 +41,30 @@ do_get() {
     /)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat index.html
-      ) > outgoing_fifo
+      ) > ${outgoing_fifo}
       echo " OK"
       ;;
     /index.html)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat index.html
-      ) > outgoing_fifo
+      ) > ${outgoing_fifo}
       echo " OK"
       ;;
     /favicon.ico)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat favicon.ico
-      ) > outgoing_fifo
+      ) > ${outgoing_fifo}
       echo " OK"
       ;;
     /robots.txt)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat robots.txt
-      ) > outgoing_fifo
+      ) > ${outgoing_fifo}
       echo " OK"
       ;;
     *)
       ( echo -e "HTTP/1.1 404 OK\n"
-      ) > outgoing_fifo
+      ) > ${outgoing_fifo}
       echo " FAIL"
       ;;
   esac
@@ -74,7 +77,7 @@ do_post() {
   '
   echo "POST"
   local content header user_regex message_regex
-  content="$(head -c ${CONTENT_LENGTH} incoming_fifo)"
+  content="$(head -c ${CONTENT_LENGTH} ${incoming_fifo})"
   header="$(echo "[$(date +"%H:%M:%S")] [Server thread/INFO]:")"
   user_regex='[A-Za-z]'
   message_regex='[A-Za-z0-9:\+\/\%\^\*\-\ \(\)\n]'
@@ -131,7 +134,7 @@ do_post() {
   ( echo -e "HTTP/1.1 200 OK\n"
     echo "${reply}"
     echo ""
-  ) > outgoing_fifo
+  ) > ${outgoing_fifo}
 }
 
 cleanup() {
@@ -144,7 +147,7 @@ cleanup() {
   echo "Stopping hal"
   kill ${HAL_PID}
   echo "Cleaning up filesystem"
-  rm -f outgoing_fifo incoming_fifo ${HAL_INPUT_FILE} ${HAL_OUTPUT_FILE}
+  rm -rf ${ROOT_DIR}
   echo "Exiting"
   exit
 }
@@ -154,10 +157,11 @@ main() {
   '
   # setup
   trap cleanup INT
+  rm -rf ${ROOT_DIR}
   mkdir -p ${ROOT_DIR}
+  chmod u+x ${ROOT_DIR}
   touch ${HAL_OUTPUT_FILE} ${HAL_INPUT_FILE}
-  rm -f outgoing_fifo incoming_fifo
-  mkfifo outgoing_fifo incoming_fifo
+  mkfifo ${outgoing_fifo} ${incoming_fifo}
 
   # start hal
   echo "Starting hal..."
@@ -165,7 +169,7 @@ main() {
   readonly HAL_PID=$!
 
   $(while true; do
-      cat outgoing_fifo | nc -l ${PORT} > incoming_fifo
+      cat ${outgoing_fifo} | nc -l ${PORT} > ${incoming_fifo}
     done) &
   SERVER_PID=$!
 
@@ -178,7 +182,7 @@ main() {
 
     # get headers
     while true; do
-      read -r line < incoming_fifo
+      read -r line < ${incoming_fifo}
 
       case "$line" in
         GET*)

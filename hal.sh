@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -p
 
 # Hal: Minecraft AI in Shell
 #   requires: bash, tmux
@@ -13,6 +13,7 @@
 # output_file : file where debugging information is written
 
 set -o pipefail
+umask u=rw,g=,o=
 
 # globals
 USER=''
@@ -104,6 +105,7 @@ fi
 
 trap shut_down INT
 mkdir -p "${MEM_DIR}"
+chmod u+x "${MEM_DIR}"
 say "I'm alive!"
 
 # main
