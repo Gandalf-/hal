@@ -119,7 +119,7 @@ do_post() {
     if (( $(date +'%s') > $timeout )); then
       break
     fi
-    sleep 0.1
+    sleep 0.05
   done
 
   # return hal's response to user, clear output file
@@ -131,7 +131,8 @@ do_post() {
   echo -n "" > ${HAL_OUTPUT_FILE}
   echo "S -> U: ${reply}"
 
-  ( echo -e "HTTP/1.1 200 OK\n"
+  ( echo "HTTP/1.1 200 OK"
+    echo ""
     echo "${reply}"
     echo ""
   ) > ${server2client}
