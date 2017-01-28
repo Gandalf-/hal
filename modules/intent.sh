@@ -12,9 +12,11 @@ check_intent(){
   checks if the current line satisfies each of the intents. If a match is
   found, evaluate it and move the subsequent intents up the list
   '
+  local pattern function 
+
   if ! [[ -z "${INTENT_A}" ]]; then
-    local pattern=$( cut -f 1 -d '%' <<< "${INTENT_A}" )
-    local function=$(cut -f 2 -d '%' <<< "${INTENT_A}" )
+    pattern=$( cut -f 1 -d '%' <<< "${INTENT_A}" )
+    function=$(cut -f 2 -d '%' <<< "${INTENT_A}" )
 
     if grep -qi "$pattern" <<< "${CLINE}"; then
       INTENT_A="${INTENT_B}"
@@ -23,8 +25,8 @@ check_intent(){
       eval "${function}"
 
     elif ! [[ -z "${INTENT_B}" ]]; then
-      local pattern=$( cut -f 1 -d '%' <<< "${INTENT_B}" )
-      local function=$(cut -f 2 -d '%' <<< "${INTENT_B}" )
+      pattern=$( cut -f 1 -d '%' <<< "${INTENT_B}" )
+      function=$(cut -f 2 -d '%' <<< "${INTENT_B}" )
 
       if grep -qi "$pattern" <<< "${CLINE}"; then
         INTENT_B="${INTENT_C}"
@@ -32,11 +34,12 @@ check_intent(){
         eval "$function"
 
       elif ! [[ -z "${INTENT_C}" ]]; then
-        local pattern=$( cut -f 1 -d '%' <<< "${INTENT_C}" )
-        local function=$(cut -f 2 -d '%' <<< "${INTENT_C}" )
+        pattern=$( cut -f 1 -d '%' <<< "${INTENT_C}" )
+        function=$(cut -f 2 -d '%' <<< "${INTENT_C}" )
 
         if grep -qi "$pattern" <<< "${CLINE}"; then
           eval "$function"
+
         else
           INTENT_C=''
         fi
@@ -69,7 +72,9 @@ intent_if_yes_do(){
   evaluate a function given as an agrument if the current line contains yes,
   sure, or okay
   '
-  local regex='yes\|sure\|okay'
+  local regex
+
+  regex='yes\|sure\|okay'
   if grep -qi "$regex" <<< "${CLINE}"; then
     eval "$@"
   fi
@@ -87,9 +92,11 @@ intent_tell_player(){
  : ' string -> string
  call back function, stores a message for a player
  '
+ local sender target message
+
  say "I'll tell them when they show up again!"
- local sender="$( cut -f 1  -d ' ' <<< "${@}" )"
- local target="$( cut -f 2  -d ' ' <<< "${@}" )"
- local message="$(cut -f 3- -d ' ' <<< "${@}" )"
+ sender="$( cut -f 1  -d ' ' <<< "${@}" )"
+ target="$( cut -f 2  -d ' ' <<< "${@}" )"
+ message="$(cut -f 3- -d ' ' <<< "${@}" )"
  echo "${sender}: ${message}" >> "${MEM_DIR}""${target,,}".mail
 }

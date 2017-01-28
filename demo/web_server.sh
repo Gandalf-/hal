@@ -21,7 +21,7 @@ hal_pretty_print() {
   '
   if ! [[ -z "${@}" ]]; then
     local message
-    message="${@}"
+    message="${*}"
     message="${message//</&lt}"
     message="${message//>/&gt}"
     message="${message//\/say/}"
@@ -77,8 +77,8 @@ do_post() {
   '
   echo "POST"
   local content header user_regex message_regex
-  content="$(head -c ${CONTENT_LENGTH} ${client2server})"
-  header="$(echo "[$(date +"%H:%M:%S")] [Server thread/INFO]:")"
+  content="$(head -c "${CONTENT_LENGTH}" ${client2server})"
+  header="[$(date +"%H:%M:%S")] [Server thread/INFO]:"
   user_regex='[A-Za-z]'
   message_regex='[A-Za-z0-9:\+\/\%\^\*\-\ \(\)\n]'
   echo "U -> S: \"${content}\""
@@ -113,10 +113,10 @@ do_post() {
   before_time=$(stat -c '%Z' "${HAL_OUTPUT_FILE}")
   current_time=$before_time
 
-  while [[ $before_time == $current_time ]]; do
+  while [[ "$before_time" == "$current_time" ]]; do
     current_time=$(stat -c '%Z' $HAL_OUTPUT_FILE)
 
-    if (( $(date +'%s') > $timeout )); then
+    if (( $(date +'%s') > timeout )); then
       break
     fi
     sleep 0.05
@@ -143,8 +143,8 @@ cleanup() {
   kill the web server, hal instance and remove FIFOs and log files
   '
   echo ""
-  echo "Stopping hal   "; kill ${HAL_PID}
-  echo "Cleaning up filesystem"; rm -rf ${ROOT_DIR}
+  echo "Stopping hal   "; kill "${HAL_PID}"
+  echo "Cleaning up filesystem"; rm -rf "${ROOT_DIR}"
   echo "Exiting"
   exit
 }
@@ -165,9 +165,9 @@ main() {
   bash ../hal.sh ${HAL_INPUT_FILE} ../ ${ROOT_DIR} ${HAL_OUTPUT_FILE} &
   readonly HAL_PID=$!
 
-  $(while true; do
-      nc -l -p ${PORT} < <(cat "${server2client}") > "${client2server}"
-    done) &
+  while true; do
+    nc -l -p ${PORT} < <(cat "${server2client}") > "${client2server}"
+  done &
 
   # start http server
   echo "Starting server..."
@@ -183,18 +183,18 @@ main() {
       case "$line" in
         GET*)
           method="GET"
-          RESOURCE="$(cut -f 2 -d ' ' <<< ${line})"
+          RESOURCE="$(cut -f 2 -d ' ' <<< "${line}")"
           ;;
         POST*)
           method="POST"
           ;;
         Content-Length*)
-          CONTENT_LENGTH=$(grep -o "[0-9]*" <<< ${line})
+          CONTENT_LENGTH=$(grep -o "[0-9]*" <<< "${line}")
           ;;
       esac
       #echo -e "$line"
 
-      if grep -P '^\s$' <<< ${line}; then
+      if grep -P '^\s$' <<< "${line}"; then
         break
       fi
     done

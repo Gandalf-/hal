@@ -11,6 +11,8 @@ check_chatting_actions(){
   : ' none -> none
   chatting actions
   '
+  local adverb adjective label time comment
+
   if hc 'be quiet'; then
     say 'Oh... Are you sure?'
     set_intent 'yes' 'intent_be_quiet'
@@ -29,10 +31,10 @@ check_chatting_actions(){
   fi
 
   if hc 'how are you'; then
-    local adverb=$(random "fairly" "quite" "extremely" "modestly" "adequately")
-    local adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
-    local label=$(random "millennium" "years" "days" "hours" "seconds" "milliseconds" "nanoseconds")
-    local time="scale=6; $LIFETIME"
+    adverb=$(random "fairly" "quite" "extremely" "modestly" "adequately")
+    adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
+    label=$(random "millennium" "years" "days" "hours" "seconds" "milliseconds" "nanoseconds")
+    time="scale=6; $LIFETIME"
 
     case "$label" in
       "millennium")
@@ -86,7 +88,7 @@ check_chatting_actions(){
 
   hcsr 'turn down for what' "Nothing! Order another round of shots!"
 
-  local comment="$(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
+  comment="$(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
   hcsr "what's up" "Not too much $USER! Just $comment"
   hcsr "whats up" "Not too much $USER! Just $comment"
 
@@ -107,7 +109,7 @@ check_chatting_actions(){
     ran_command
   fi
 
-  if ! (( $RCOMMAND )); then
+  if ! (( RCOMMAND )); then
     check_simple_math
   fi
 }
@@ -117,14 +119,16 @@ check_simple_math(){
   simple math solutions of the form
   hal what is (expr)
   '
-  local base_regex="[\(\)0-9\+\/\*\.\^\%]*"
-  local regex="$base_regex\|-$base_regex"
+  local base_regex regex exp value
+
+  base_regex="[\(\)0-9\+\/\*\.\^\%]*"
+  regex="$base_regex\|-$base_regex"
 
   if hc "what's" || hc "whats" || hc "what is"; then
     if contains "$regex"; then
 
-      local exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"
-      local value="$(timeout 0.5 bc -l 2>/dev/null <<< "$exp")"
+      exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"
+      value="$(timeout 0.5 bc -l 2>/dev/null <<< "$exp")"
 
       if ! [[ -z "$value" ]]; then
         say "I think that's $value"
@@ -163,9 +167,11 @@ tell_player(){
   attempts to tell a player a message, if the player isnt in the game,
   store it until the log in again
   '
-  local player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
-  local regex='s/[;\|{}'"'"'"&$()]/\\&/g'
-  local msg="$(cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
+  local player regex msg
+
+  player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
+  regex='s/[;\|{}'"'"'"&$()]/\\&/g'
+  msg="$(cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
 
   if ! [[ -z "$player" || -z "$msg" ]]; then
     set_intent 'cannot' "intent_tell_player $USER $player $msg"
