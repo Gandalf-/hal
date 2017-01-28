@@ -120,7 +120,7 @@ check_simple_math(){
   local base_regex="[\(\)0-9\+\/\*\.\^\%]*"
   local regex="$base_regex\|-$base_regex"
 
-  if hc "what's\|whats\|what is"; then
+  if hc "what's" || hc "whats" || hc "what is"; then
     if contains "$regex"; then
 
       local exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"

@@ -12,6 +12,12 @@
 # memory_dir  : folder where user memories and other data is kept
 # output_file : file where debugging information is written
 
+# shellcheck source=modules/utility.sh
+# shellcheck source=modules/memories.sh
+# shellcheck source=modules/chatting.sh
+# shellcheck source=modules/teleport.sh
+# shellcheck source=modules/intent.sh
+
 set -o pipefail
 umask u=rw,g=,o=
 
@@ -25,7 +31,7 @@ OUT_FILE=''
 RCOMMAND=1
 NUM_PLAYERS=0
 MAX_MEM_SIZE=1024
-MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
+MAX_MEM_DIR_SIZE=$(( MAX_MEM_SIZE * 10 ))
 INTENT_A=''
 INTENT_B=''
 INTENT_C=''
@@ -41,8 +47,8 @@ readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
 # check for required programs
 progs=('tmux' 'sha1sum' 'truncate' 'tr' 'sed' 'bc' 'cut' 'grep' 'du' 'wc' 'tail')
-for req_prog in ${progs[@]}; do
-  if [[ -z "$(which ${req_prog})" ]]; then
+for req_prog in "${progs[@]}"; do
+  if [[ -z "$(which "${req_prog}")" ]]; then
     echo "error: hal.sh requires ${req_prog} to run"
     exit
   fi
@@ -89,7 +95,7 @@ done
 
 # load hal modules
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
-for file in ${srcs[@]}; do
+for file in "${srcs[@]}"; do
   source "${inst_dir}modules/${file}" 2>/dev/null
 
   if (( $? )); then
@@ -99,7 +105,7 @@ for file in ${srcs[@]}; do
 done
 
 # startup messages and set up
-if ! (( $DEBUG )); then
+if ! (( DEBUG )); then
   echo 'Hal starting up'
 fi
 
@@ -110,7 +116,7 @@ say "I'm alive!"
 
 # main
 while true; do
-  new_hash="$(sha1sum $log_file)"
+  new_hash="$(sha1sum "$log_file")"
 
   # only run when log file changes
   if [[ "$new_hash" != "$old_hash" ]]; then
@@ -132,9 +138,9 @@ while true; do
     fi
 
     # check for quiet timeout
-    if (( ${QUIET} > 300 )); then
+    if (( QUIET > 300 )); then
       QUIET=0
-    elif (( ${QUIET} > 0 )); then
+    elif (( QUIET > 0 )); then
       QUIET=$(( QUIET + 1 ))
     fi
 
@@ -144,7 +150,7 @@ while true; do
     # user initiated actions
     if [[ "${prevline}" != "${CLINE}" ]] && not_repeat; then
 
-      if ! (( $DEBUG )); then 
+      if ! (( DEBUG )); then 
         echo "CLINE: $CLINE" 
       fi
 
@@ -153,7 +159,7 @@ while true; do
 
       if hc 'restart'; then
         say 'Okay, restarting!'
-        if ! (( $DEBUG )); then
+        if ! (( DEBUG )); then
           bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
           exit
         fi
@@ -178,12 +184,8 @@ while true; do
       fi
 
       # not sure what to do
-      if ! (( $RCOMMAND )); then
-        hcsr 'hal?' "$USER?"
-
-        if contains "hal"; then
-          say "$(random 'Well...' 'Uhh...' 'Hmm...' 'Ehh...')"
-        fi
+      if ! (( RCOMMAND )) && contains "hal"; then
+        say "$(random 'Well..?' 'Uhh..?' 'Hmm..?' 'Ehh..?' 'Oh..?')"
       fi
 
     fi # user initiated actions

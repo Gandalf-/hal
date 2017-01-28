@@ -143,7 +143,6 @@ cleanup() {
   kill the web server, hal instance and remove FIFOs and log files
   '
   echo ""
-  echo "Stopping server"; kill ${SERVER_PID}
   echo "Stopping hal   "; kill ${HAL_PID}
   echo "Cleaning up filesystem"; rm -rf ${ROOT_DIR}
   echo "Exiting"
@@ -169,7 +168,6 @@ main() {
   $(while true; do
       nc -l -p ${PORT} < <(cat "${server2client}") > "${client2server}"
     done) &
-  SERVER_PID=$!
 
   # start http server
   echo "Starting server..."
