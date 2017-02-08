@@ -22,19 +22,20 @@ set -o pipefail
 umask u=rw,g=,o=
 
 # globals
-USER=''
-DEBUG=0
-QUIET=0
-CLINE=''
-MEM_DIR=''
-OUT_FILE=''
-RCOMMAND=1
-NUM_PLAYERS=0
-MAX_MEM_SIZE=1024
-MAX_MEM_DIR_SIZE=$(( MAX_MEM_SIZE * 10 ))
-INTENT_A=''
-INTENT_B=''
-INTENT_C=''
+export USER=''
+export DEBUG=0
+export QUIET=0
+export CLINE=''
+export MEM_DIR=''
+export OUT_FILE=''
+export RCOMMAND=1
+export LIFETIME=0
+export NUM_PLAYERS=0
+export MAX_MEM_SIZE=1024
+export MAX_MEM_DIR_SIZE=$(( MAX_MEM_SIZE * 10 ))
+export INTENT_A=''
+export INTENT_B=''
+export INTENT_C=''
 
 # locals
 prevline=''
@@ -96,6 +97,7 @@ done
 # load hal modules
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
 for file in "${srcs[@]}"; do
+  # shellcheck disable=SC1090
   source "${inst_dir}modules/${file}" 2>/dev/null
 
   if (( $? )); then
@@ -160,7 +162,7 @@ while true; do
       if hc 'restart'; then
         say 'Okay, restarting!'
         if ! (( DEBUG )); then
-          bash "$( cd "$(dirname "$0")"; pwd -P )"/"$(basename "$0") $@" &
+          $(basename "$0") "$@" &
           exit
         fi
       fi
