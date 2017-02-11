@@ -1,16 +1,19 @@
-#!/bin/bash
+#!/bin/bash -p
 
 # Hal: Minecraft AI in Shell
 #   requires: bash, tmux
 #   author  : leaf@anardil.net
 #   license : See LICENSE file
 
-set -uf -o pipefail
+set -f -o pipefail
+umask u=rw,g=,o=
 
 readonly PORT="48000"
 readonly ROOT_DIR='/tmp/hal/demo/'
 readonly HAL_OUTPUT_FILE="${ROOT_DIR}hal_output.log"
 readonly HAL_INPUT_FILE="${ROOT_DIR}hal_input.log"
+readonly server2client="${ROOT_DIR}server2client"
+readonly client2server="${ROOT_DIR}client2server"
 
 hal_pretty_print() {
   : ' string -> string
@@ -18,7 +21,7 @@ hal_pretty_print() {
   '
   if ! [[ -z "${@}" ]]; then
     local message
-    message="${@}"
+    message="${*}"
     message="${message//</&lt}"
     message="${message//>/&gt}"
     message="${message//\/say/}"
@@ -38,30 +41,30 @@ do_get() {
     /)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat index.html
-      ) > outgoing_fifo
+      ) > ${server2client}
       echo " OK"
       ;;
     /index.html)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat index.html
-      ) > outgoing_fifo
+      ) > ${server2client}
       echo " OK"
       ;;
     /favicon.ico)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat favicon.ico
-      ) > outgoing_fifo
+      ) > ${server2client}
       echo " OK"
       ;;
     /robots.txt)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat robots.txt
-      ) > outgoing_fifo
+      ) > ${server2client}
       echo " OK"
       ;;
     *)
       ( echo -e "HTTP/1.1 404 OK\n"
-      ) > outgoing_fifo
+      ) > ${server2client}
       echo " FAIL"
       ;;
   esac
@@ -74,8 +77,8 @@ do_post() {
   '
   echo "POST"
   local content header user_regex message_regex
-  content="$(head -c ${CONTENT_LENGTH} incoming_fifo)"
-  header="$(echo "[$(date +"%H:%M:%S")] [Server thread/INFO]:")"
+  content="$(head -c "${CONTENT_LENGTH}" ${client2server})"
+  header="[$(date +"%H:%M:%S")] [Server thread/INFO]:"
   user_regex='[A-Za-z]'
   message_regex='[A-Za-z0-9:\+\/\%\^\*\-\ \(\)\n]'
   echo "U -> S: \"${content}\""
@@ -110,13 +113,13 @@ do_post() {
   before_time=$(stat -c '%Z' "${HAL_OUTPUT_FILE}")
   current_time=$before_time
 
-  while [[ $before_time == $current_time ]]; do
+  while [[ "$before_time" == "$current_time" ]]; do
     current_time=$(stat -c '%Z' $HAL_OUTPUT_FILE)
 
-    if (( $(date +'%s') > $timeout )); then
+    if (( $(date +'%s') > timeout )); then
       break
     fi
-    sleep 0.1
+    sleep 0.05
   done
 
   # return hal's response to user, clear output file
@@ -128,10 +131,11 @@ do_post() {
   echo -n "" > ${HAL_OUTPUT_FILE}
   echo "S -> U: ${reply}"
 
-  ( echo -e "HTTP/1.1 200 OK\n"
+  ( echo "HTTP/1.1 200 OK"
+    echo ""
     echo "${reply}"
     echo ""
-  ) > outgoing_fifo
+  ) > ${server2client}
 }
 
 cleanup() {
@@ -139,12 +143,8 @@ cleanup() {
   kill the web server, hal instance and remove FIFOs and log files
   '
   echo ""
-  echo "Stopping server"
-  kill ${SERVER_PID}
-  echo "Stopping hal"
-  kill ${HAL_PID}
-  echo "Cleaning up filesystem"
-  rm -f outgoing_fifo incoming_fifo ${HAL_INPUT_FILE} ${HAL_OUTPUT_FILE}
+  echo "Stopping hal   "; kill "${HAL_PID}"
+  echo "Cleaning up filesystem"; rm -rf "${ROOT_DIR}"
   echo "Exiting"
   exit
 }
@@ -154,20 +154,20 @@ main() {
   '
   # setup
   trap cleanup INT
+  rm -rf ${ROOT_DIR}
   mkdir -p ${ROOT_DIR}
+  chmod u+x ${ROOT_DIR}
   touch ${HAL_OUTPUT_FILE} ${HAL_INPUT_FILE}
-  rm -f outgoing_fifo incoming_fifo
-  mkfifo outgoing_fifo incoming_fifo
+  mkfifo ${server2client} ${client2server}
 
   # start hal
   echo "Starting hal..."
   bash ../hal.sh ${HAL_INPUT_FILE} ../ ${ROOT_DIR} ${HAL_OUTPUT_FILE} &
   readonly HAL_PID=$!
 
-  $(while true; do
-      cat outgoing_fifo | nc -l ${PORT} > incoming_fifo
-    done) &
-  SERVER_PID=$!
+  while true; do
+    nc -l -p ${PORT} < <(cat "${server2client}") > "${client2server}"
+  done &
 
   # start http server
   echo "Starting server..."
@@ -178,23 +178,23 @@ main() {
 
     # get headers
     while true; do
-      read -r line < incoming_fifo
+      read -r line < ${client2server}
 
       case "$line" in
         GET*)
           method="GET"
-          RESOURCE="$(cut -f 2 -d ' ' <<< ${line})"
+          RESOURCE="$(cut -f 2 -d ' ' <<< "${line}")"
           ;;
         POST*)
           method="POST"
           ;;
         Content-Length*)
-          CONTENT_LENGTH=$(grep -o "[0-9]*" <<< ${line})
+          CONTENT_LENGTH=$(grep -o "[0-9]*" <<< "${line}")
           ;;
       esac
       #echo -e "$line"
 
-      if grep -P '^\s$' <<< ${line}; then
+      if grep -P '^\s$' <<< "${line}"; then
         break
       fi
     done

@@ -28,32 +28,34 @@ remember_phrase(){
   "hal remember that apples are nice"
   parse out note to remember and write to user file
   '
-  local regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  local note="$(grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex")"
+  local regex note memory_files dir_size new_size file file_size
+
+  regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
+  note="$(grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex")"
 
   if ! [[ -z "$note" ]]; then
     echo "$note" >> "$MEM_DIR""$USER".memories
     say "Okay $USER, I'll remember!"
 
     # check total disk usage
-    local memory_files=( $MEM_DIR*.memories )
-    local dir_size=$(\
-      du -c "${memory_files}" 2>/dev/null | tail -n 1 | cut -f 1)
+    memory_files=( $MEM_DIR*.memories )
+    dir_size=$(\
+      du -c "${memory_files[@]}" 2>/dev/null | tail -n 1 | cut -f 1)
 
-    if (( ${dir_size} > ${MAX_MEM_DIR_SIZE} )); then
-      local new_size=$(( $MAX_MEM_DIR_SIZE / ${#memory_files[@]} ))
+    if (( dir_size > MAX_MEM_DIR_SIZE )); then
+      new_size=$(( MAX_MEM_DIR_SIZE / ${#memory_files[@]} ))
 
-      for file in ${memory_files[@]}; do
-        if (( $(wc -c $file) > ${new_size} )); then
-          truncate -s $new_size $file
+      for file in "${memory_files[@]}"; do
+        if (( $(wc -c "$file") > new_size )); then
+          truncate -s "$new_size" "$file"
         fi
       done
 
     # otherwise, max sure this user isn't going over the quota
     else
-      local file="$MEM_DIR""$USER"".memories"
-      local file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
-      if (( $file_size > $MAX_MEM_SIZE )); then
+      file="$MEM_DIR""$USER"".memories"
+      file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
+      if (( file_size > MAX_MEM_SIZE )); then
         truncate -s "$MAX_MEM_SIZE" "$file"
       fi
     fi
@@ -69,9 +71,11 @@ recall_phrase(){
   "hal tell me about apples"
   search through user memories for related information
   '
-  local regex='s/\(about\ \|hal$\)//gI'
-  local phrase=$(echo "$CLINE" | grep -oih 'about .*$' | sed -e "$regex")
-  local mem_file="$MEM_DIR""$USER".memories
+  local regex phrase mem_file
+
+  regex='s/\(about\ \|hal$\)//gI'
+  phrase=$(echo "$CLINE" | grep -oih 'about .*$' | sed -e "$regex")
+  mem_file="$MEM_DIR""$USER".memories
 
   if ! [[ -z "$phrase" ]]; then
     if grep -qi "$phrase" "$mem_file"; then
@@ -95,9 +99,11 @@ recall_everything(){
   tell user everything in memory file
   '
   say "Okay $USER, here's everything I know for you!"
-  cat "$MEM_DIR""$USER".memories | while read -r line; do
+
+  while read -r line; do
     say "$line"
-  done
+  done < "$MEM_DIR""$USER".memories
+
   ran_command
 }
 
@@ -106,11 +112,12 @@ forget_phrase(){
   "hal forget about apples" 
   remove all related phrases from user file
   '
-  local regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
-  local phrase=$(\
-    sed -e "$regex" <<< "${CLINE}" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
-  local mem_file="$MEM_DIR""$USER".memories
-  local file_contents=$(cat "$mem_file")
+  local regex phrase mem_file file_contents
+
+  regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
+  phrase=$(sed -e "$regex" <<< "${CLINE}" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
+  mem_file="$MEM_DIR""$USER".memories
+  file_contents=$(cat "$mem_file")
 
   if ! [[ -z "$phrase" ]]; then
     echo "$file_contents" | grep -iv "$phrase\|^$" > "$mem_file"

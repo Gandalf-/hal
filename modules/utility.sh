@@ -31,23 +31,24 @@ player_joined(){
   greet player, make comment on number of active players,
   and check for messages
   '
+  local mfile
+
   sleep 0.1
   say "Hey there ${USER}! Try saying \"Hal help\""
-  NUM_PLAYERS=$(( ${NUM_PLAYERS} + 1 ))
-  ran_command
+  NUM_PLAYERS=$(( NUM_PLAYERS + 1 ))
 
-  if (( ${NUM_PLAYERS} == 1 )); then
+  if (( NUM_PLAYERS == 1 )); then
     say "You're the first one here!"
 
-  elif (( ${NUM_PLAYERS} == 2 )); then
+  elif (( NUM_PLAYERS == 2 )); then
     say "Two makes a party!"
 
-  elif (( ${NUM_PLAYERS} > 2 )); then
+  elif (( NUM_PLAYERS > 2 )); then
     say "Things sure are busy today!"
   fi
 
   # check for messages
-  local mfile="$MEM_DIR""${USER,,}".mail
+  mfile="$MEM_DIR""${USER,,}".mail
   if [[ -e "$mfile" ]]; then
     if (( $(wc -l "$mfile" | cut -f 1 -d ' ') > 1 )); then
       say "Looks like you have some messages!"
@@ -61,6 +62,8 @@ player_joined(){
 
     rm -f "$mfile"
   fi
+
+  ran_command
 }
 
 player_left(){
@@ -68,17 +71,17 @@ player_left(){
   Say goodbye, comment on player count
   '
   say "Goodbye ${USER}! See you again soon I hope!"
-  NUM_PLAYERS=$(( ${NUM_PLAYERS} - 1 ))
+  NUM_PLAYERS=$(( NUM_PLAYERS - 1 ))
 
-  if (( ${NUM_PLAYERS} < 0 )); then
+  if (( NUM_PLAYERS < 0 )); then
     say "I seem to have gotten confused..."
     NUM_PLAYERS=0
 
-  elif (( ${NUM_PLAYERS} == 0 )); then
+  elif (( NUM_PLAYERS == 0 )); then
     say "All alone..."
     QUIET=0
 
-  elif (( ${NUM_PLAYERS} == 1 )); then
+  elif (( NUM_PLAYERS == 1 )); then
     say "I guess it's just you and me now!"
   fi
 
@@ -149,7 +152,7 @@ hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
-  grep -qi "${1}.*Hal\|Hal.*${1}" <<< ${CLINE}
+  grep -qi "${1}.*Hal\|Hal.*${1}" <<< "${CLINE}"
 }
 
 contains(){
@@ -174,8 +177,8 @@ say(){
   : ' string -> none
   say a phrase in the server
   '
-  if ! (( $QUIET )); then
-    if ! (( $DEBUG )); then
+  if ! (( QUIET )); then
+    if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/say [Hal] ${1}" Enter
     else
       debug_output "/say [Hal] ${1}"
@@ -187,8 +190,8 @@ tell(){
   : ' string -> none
   say a phrase in the server
   '
-  if ! (( $QUIET )); then
-    if ! (( $DEBUG )); then
+  if ! (( QUIET )); then
+    if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/tell ${USER} ${1}" Enter
     else
       debug_output "/tell ${USER} ${1}"
@@ -201,7 +204,7 @@ run(){
   run a command in the server
   '
   if ! [[ -z "${1}" ]]; then
-    if ! (( $DEBUG )); then
+    if ! (( DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
     else
       debug_output "$@"
@@ -221,10 +224,12 @@ random(){
   : ' any, ... -> any
   returns a randomly chosen element out of the arguments
   '
+  local array
+
   if [[ -z "${1}" ]]; then
     echo ''
   else
-    local array=("$@")
+    array=("$@")
     echo "${array[$RANDOM % ${#array[@]} ]}"
   fi
 }
@@ -236,7 +241,7 @@ shut_down(){
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
-  if ! (( $DEBUG )); then
+  if ! (( DEBUG )); then
     exit
   fi
 }
