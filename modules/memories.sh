@@ -11,14 +11,13 @@ check_memory_actions(){
   : ' none -> none
   check memory actions
   '
-  if hc 'remember'; then 
-    remember_phrase; 
-  fi
-  
-  if hc 'forget everything'; then 
+  if hc 'remember'; then
+    remember_phrase;
+
+  elif hc 'forget everything'; then
     forget_everything
 
-  elif hc 'forget'; then 
+  elif hc 'forget'; then
     forget_phrase
   fi
 }
@@ -31,7 +30,9 @@ remember_phrase(){
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  note="$(grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex")"
+  note="$(\
+    grep -oih 'remember .*$' <<< "${CLINE}" |
+    sed -e "$regex")"
 
   if ! [[ -z "$note" ]]; then
     echo "$note" >> "$MEM_DIR""$USER".memories
@@ -51,7 +52,7 @@ remember_phrase(){
         fi
       done
 
-    # otherwise, max sure this user isn't going over the quota
+    # otherwise, make sure this user isn't going over the quota
     else
       file="$MEM_DIR""$USER"".memories"
       file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
@@ -71,22 +72,44 @@ recall_phrase(){
   "hal tell me about apples"
   search through user memories for related information
   '
-  local regex phrase mem_file
+  local regex phrase mem_file url
 
-  regex='s/\(about\ \|hal$\)//gI'
-  phrase=$(echo "$CLINE" | grep -oih 'about .*$' | sed -e "$regex")
+  url='https://en.wikipedia.org/wiki'
+  regex='s/\(about\ \|\ hal$\)//gI'
+  phrase=$(\
+    grep -oih 'about .*$' <<< "${CLINE}" |
+    sed -e "$regex")
   mem_file="$MEM_DIR""$USER".memories
 
   if ! [[ -z "$phrase" ]]; then
-    if grep -qi "$phrase" "$mem_file"; then
+    # read from memory file
+    if grep -qi "$phrase" "$mem_file" 2>/dev/null ; then
       say "Okay $USER, here's what I know about \"$phrase\":"
 
       grep -i "$phrase" "$mem_file" | while read -r line; do
         say "\"$line\""
       done
+
+    # fetch from wikipedia
     else
-      say "Sorry $USER, looks like I don't know anything about $phrase"
+      phrase=${phrase,,}
+      phrase=${phrase^}
+      reply=$(\
+        curl -s "${url}/${phrase/ /_}" |
+        head -n 300 |
+        grep -i "<b>${phrase}</b>" |
+        sed -n '/^$/!{s/\(<[^>]*>\|\[[^\]]*\)//g;p;}' |
+        cut -c 1-300 )
+
+      if [[ -z "$reply" ]]; then
+        say "Sorry $USER, looks like I don't know anything about \"${phrase}\"!"
+
+      else
+        say "Okay $USER, here's what the internet says:"
+        say "\"${reply}...\""
+      fi
     fi
+
   else
     say "Recall what?"
   fi
@@ -109,18 +132,19 @@ recall_everything(){
 
 forget_phrase(){
   : ' none -> none
-  "hal forget about apples" 
+  "hal forget about apples"
   remove all related phrases from user file
   '
   local regex phrase mem_file file_contents
 
   regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
-  phrase=$(sed -e "$regex" <<< "${CLINE}" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
+  phrase=$(\
+    sed -e "$regex" <<< "${CLINE}" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
   mem_file="$MEM_DIR""$USER".memories
   file_contents=$(cat "$mem_file")
 
   if ! [[ -z "$phrase" ]]; then
-    echo "$file_contents" | grep -iv "$phrase\|^$" > "$mem_file"
+    grep -iv "$phrase\|^$" <<< "$file_contents" > "$mem_file"
     say "Okay $USER, I've forgetten everything about \"$phrase!\""
 
   else
@@ -131,7 +155,7 @@ forget_phrase(){
 
 forget_everything(){
   : ' none -> none
-  "hal forget everything" 
+  "hal forget everything"
   remove all phrases from user file
   '
   say "Done $USER, I forgot everything!"
