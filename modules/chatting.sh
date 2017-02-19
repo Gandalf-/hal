@@ -20,13 +20,14 @@ check_chatting_actions(){
   fi
 
   if hc 'you can talk'; then
+    #shellcheck disable=SC2034
     QUIET=0
     say "Hooray!"
     ran_command
   fi
 
   if hc 'status update'; then
-    say "Active players: ${num_players}"
+    say "Active players: ${NUM_PLAYERS}"
     ran_command
   fi
 
@@ -64,7 +65,7 @@ check_chatting_actions(){
     ran_command
   fi
 
-  if hc 'tell .* joke'; then 
+  if hc 'tell .* joke'; then
     tell_joke
 
   elif hc 'tell .* about everything'; then
@@ -73,7 +74,7 @@ check_chatting_actions(){
   elif hc 'tell .* about .*'; then
     recall_phrase
 
-  elif hc 'tell '; then 
+  elif hc 'tell '; then
     tell_player
   fi
 
@@ -103,15 +104,13 @@ check_chatting_actions(){
     elif contains 'spider'; then
       say "Too many legs for my sensibilities"
 
-    else 
+    else
       recall_phrase
     fi
     ran_command
   fi
 
-  if ! (( RCOMMAND )); then
-    check_simple_math
-  fi
+  ! (( RCOMMAND )) && check_simple_math
 }
 
 check_simple_math(){
@@ -170,7 +169,7 @@ tell_player(){
   local player regex msg
 
   player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
-  regex='s/[;\|{}'"'"'"&$()]/\\&/g'
+  regex='s/[;\|{}&()$]/\\&/g'
   msg="$(cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
 
   if ! [[ -z "$player" || -z "$msg" ]]; then
