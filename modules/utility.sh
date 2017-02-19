@@ -248,7 +248,7 @@ shut_down(){
 
 hcsr(){
   : ' string, string, string -> none
-  wrapper around check ${1}, say ${2}, run ${3} logic
+  wrapper around check 1, say 2, run 3 logic
   '
   if hc "${1}"; then
     say "${2}"
@@ -261,5 +261,6 @@ ran_command() {
   : ' none -> none
   wrapper to set RCOMMAND
   '
+  # shellcheck disable=SC2034
   RCOMMAND=1
 }

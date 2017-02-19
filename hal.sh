@@ -47,7 +47,8 @@ starttime=$(date +%s)
 readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
 # check for required programs
-progs=('tmux' 'sha1sum' 'truncate' 'tr' 'sed' 'bc' 'cut' 'grep' 'du' 'wc' 'tail')
+progs=('tmux' 'sha1sum' 'truncate' 'tr' 'sed' 'bc' 'cut' 'grep' 'du' 'wc'
+       'tail' 'curl')
 for req_prog in "${progs[@]}"; do
   if [[ -z "$(which "${req_prog}")" ]]; then
     echo "error: hal.sh requires ${req_prog} to run"
@@ -107,9 +108,7 @@ for file in "${srcs[@]}"; do
 done
 
 # startup messages and set up
-if ! (( DEBUG )); then
-  echo 'Hal starting up'
-fi
+! (( DEBUG )) && echo 'Hal starting up'
 
 trap shut_down INT
 mkdir -p "${MEM_DIR}"
@@ -152,12 +151,10 @@ while true; do
     # user initiated actions
     if [[ "${prevline}" != "${CLINE}" ]] && not_repeat; then
 
-      if ! (( DEBUG )); then 
-        echo "CLINE: $CLINE" 
-      fi
+      ! (( DEBUG )) && echo "CLINE: $CLINE"
 
       # administrative
-      if hc 'help'; then show_help; fi
+      hc 'help' && show_help
 
       if hc 'restart'; then
         say 'Okay, restarting!'
@@ -176,8 +173,8 @@ while true; do
       check_effect_actions
 
       # player joins or leaves
-      if contains "joined the game";       then player_joined; fi
-      if contains "${USER} left the game"; then player_left  ; fi
+      contains 'joined the game'       && player_joined
+      contains "${USER} left the game" && player_left
 
       # misc server triggered
       if contains "${USER} moved too quickly"; then
