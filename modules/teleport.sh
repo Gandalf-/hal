@@ -11,9 +11,9 @@ check_teleport_actions(){
   : ' none -> none
   wrapper for teleportation actions
   '
-  if hc 'take me home'; then go_home   ; fi
-  if hc 'set home as '; then set_home  ; fi
-  if hc 'take me to ' ; then go_to_dest; fi
+  hc 'take me home' && go_home
+  hc 'set home as ' && set_home
+  hc 'take me to '  && go_to_dest
 }
 
 go_to_dest(){

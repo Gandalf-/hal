@@ -241,9 +241,7 @@ shut_down(){
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
-  if ! (( DEBUG )); then
-    exit
-  fi
+  ! (( DEBUG )) && exit
 }
 
 hcsr(){
