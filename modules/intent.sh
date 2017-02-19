@@ -12,7 +12,7 @@ check_intent(){
   checks if the current line satisfies each of the intents. If a match is
   found, evaluate it and move the subsequent intents up the list
   '
-  local pattern function 
+  local pattern function
 
   if ! [[ -z "${INTENT_A}" ]]; then
     pattern=$( cut -f 1 -d '%' <<< "${INTENT_A}" )
@@ -52,16 +52,16 @@ set_intent(){
   : ' string, function -> none
   '
   if [[ -z "${INTENT_A}" ]]; then
-    INTENT_A="${1}%${@:2}"
+    INTENT_A="${1}%${*:2}"
 
   elif [[ -z "${INTENT_B}" ]]; then
     INTENT_B="${INTENT_A}"
-    INTENT_A="${1}%${@:2}"
+    INTENT_A="${1}%${*:2}"
 
   else
     INTENT_C="${INTENT_B}"
     INTENT_B="${INTENT_A}"
-    INTENT_A="${1}%${@:2}"
+    INTENT_A="${1}%${*:2}"
   fi
 }
 
@@ -85,6 +85,7 @@ intent_be_quiet(){
   call back function, suppress hal comments
   '
   say "Oh... Okay. I'll still do as you say but stay quiet for a while"
+  #shellcheck disable=SC2034
   QUIET=1
 }
 
