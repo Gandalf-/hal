@@ -23,17 +23,19 @@ go_to_dest(){
   '
   local where dest
 
-  where=$(\
+  where=$(
     grep -oih 'take me to .*$' <<< "${CLINE}" |
     sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' |
-    cut -f 4- -d ' ') || ''
+    cut -f 4- -d ' ')
 
   if [[ -z "$where" ]]; then
     say "Sorry $USER, I don't know where that is!"
 
   else
-    dest=$(\
-      grep '\->' ~/.halrc | grep -i "$where" | grep -oih '\->.*$' |
+    dest=$(
+      grep '\->' ~/.halrc |
+      grep -i "$where" |
+      grep -oih '\->.*$' |
       cut -f 2- -d ' ')
 
     if [[ -z "$dest" ]]; then
@@ -55,10 +57,10 @@ go_home(){
   '
   local homeline xcoord ycoord zcoord
 
-  homeline=$(cat "$MEM_DIR""$USER".home 2>/dev/null) || ''
-  xcoord=$(cut -f 1 -d ' ' <<< "${homeline}" ) || ''
-  ycoord=$(cut -f 2 -d ' ' <<< "${homeline}" ) || ''
-  zcoord=$(cut -f 3 -d ' ' <<< "${homeline}" ) || ''
+  homeline=$(cat "$MEM_DIR""$USER".home 2>/dev/null)
+  xcoord=$(cut -f 1 -d ' ' <<< "${homeline}" )
+  ycoord=$(cut -f 2 -d ' ' <<< "${homeline}" )
+  zcoord=$(cut -f 3 -d ' ' <<< "${homeline}" )
 
   if [[ -z "$xcoord" || -z "$ycoord" || -z "$zcoord" ]]; then
     say "Sorry $USER, either you never told me where home was or I forgot!"
@@ -77,10 +79,10 @@ set_home(){
   '
   local homeline xcoord ycoord zcoord
 
-  homeline=$(grep -io 'set home as .*$' <<< "${CLINE}" ) || ''
-  xcoord=$(cut -f 4 -d ' ' <<< "${homeline}" ) || ''
-  ycoord=$(cut -f 5 -d ' ' <<< "${homeline}" ) || ''
-  zcoord=$(cut -f 6 -d ' ' <<< "${homeline}" ) || ''
+  homeline=$(grep -io 'set home as .*$' <<< "${CLINE}" )
+  xcoord=$(cut -f 4 -d ' ' <<< "${homeline}" )
+  ycoord=$(cut -f 5 -d ' ' <<< "${homeline}" )
+  zcoord=$(cut -f 6 -d ' ' <<< "${homeline}" )
 
   if [[ -z "$xcoord" || -z "$ycoord" || -z "$zcoord" ]]; then
     say "Sorry $USER, something doesn't look right with those coordinates"

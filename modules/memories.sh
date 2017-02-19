@@ -30,7 +30,7 @@ remember_phrase(){
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  note="$(\
+  note="$(
     grep -oih 'remember .*$' <<< "${CLINE}" |
     sed -e "$regex")"
 
@@ -76,7 +76,7 @@ recall_phrase(){
 
   url='https://en.wikipedia.org/wiki'
   regex='s/\(about\ \|\ hal$\)//gI'
-  phrase=$(\
+  phrase=$(
     grep -oih 'about .*$' <<< "${CLINE}" |
     sed -e "$regex")
   mem_file="$MEM_DIR""$USER".memories
@@ -142,8 +142,10 @@ forget_phrase(){
   local regex phrase mem_file file_contents
 
   regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
-  phrase=$(\
-    sed -e "$regex" <<< "${CLINE}" | grep -oih 'forget .*$' | cut -f 2- -d ' ')
+  phrase=$(
+    sed -e "$regex" <<< "${CLINE}" |
+    grep -oih 'forget .*$' |
+    cut -f 2- -d ' ')
   mem_file="$MEM_DIR""$USER".memories
   file_contents=$(cat "$mem_file")
 
