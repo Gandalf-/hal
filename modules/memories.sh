@@ -94,19 +94,23 @@ recall_phrase(){
     else
       phrase=${phrase,,}
       phrase=${phrase^}
-      reply=$(\
+      reply=$(
         curl -s "${url}/${phrase/ /_}" |
-        head -n 300 |
-        grep -i "<b>${phrase}</b>" |
+        grep -i "<b>${phrase}" |
+        head -n 1 |
         sed -n '/^$/!{s/\(<[^>]*>\|\[[^\]]*\)//g;p;}' |
-        cut -c 1-300 )
+        head -c 300)
 
       if [[ -z "$reply" ]]; then
         say "Sorry $USER, looks like I don't know anything about \"${phrase}\"!"
 
       else
         say "Okay $USER, here's what the internet says:"
-        say "\"${reply}...\""
+        if (( ${#reply} > 298 )); then
+          say "\"${reply}...\""
+        else
+          say "\"${reply}\""
+        fi
       fi
     fi
 
