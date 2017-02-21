@@ -140,11 +140,8 @@ while true; do
     fi
 
     # check for quiet timeout
-    if (( QUIET > 300 )); then
-      QUIET=0
-    elif (( QUIET > 0 )); then
-      QUIET=$(( QUIET + 1 ))
-    fi
+    (( QUIET > 300 )) && QUIET=0
+    (( QUIET >   0 )) && QUIET=$(( QUIET + 1 ))
 
     # do all intention checks
     check_intent
