@@ -15,7 +15,7 @@ check_chatting_actions(){
 
   if hc 'be quiet'; then
     say 'Oh... Are you sure?'
-    set_intent 'yes' 'intent_be_quiet'
+    set_intent 'yes|sure' 'intent_be_quiet'
     ran_command
   fi
 

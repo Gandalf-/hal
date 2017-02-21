@@ -18,7 +18,8 @@ check_intent(){
     pattern=$( cut -f 1 -d '%' <<< "${INTENT_A}" )
     function=$(cut -f 2 -d '%' <<< "${INTENT_A}" )
 
-    if grep -qi "$pattern" <<< "${CLINE}"; then
+    if [[ "${CLINE}" =~ $pattern ]]; then
+    #if grep -qi "$pattern" <<< "${CLINE}"; then
       INTENT_A="${INTENT_B}"
       INTENT_B="${INTENT_C}"
       INTENT_C=''
@@ -28,7 +29,7 @@ check_intent(){
       pattern=$( cut -f 1 -d '%' <<< "${INTENT_B}" )
       function=$(cut -f 2 -d '%' <<< "${INTENT_B}" )
 
-      if grep -qi "$pattern" <<< "${CLINE}"; then
+      if [[ "${CLINE}" =~ $pattern ]]; then
         INTENT_B="${INTENT_C}"
         INTENT_C=''
         eval "$function"
@@ -37,7 +38,7 @@ check_intent(){
         pattern=$( cut -f 1 -d '%' <<< "${INTENT_C}" )
         function=$(cut -f 2 -d '%' <<< "${INTENT_C}" )
 
-        if grep -qi "$pattern" <<< "${CLINE}"; then
+        if [[ "${CLINE}" =~ $pattern ]]; then
           eval "$function"
 
         else
@@ -74,8 +75,8 @@ intent_if_yes_do(){
   '
   local regex
 
-  regex='yes\|sure\|okay'
-  if grep -qi "$regex" <<< "${CLINE}"; then
+  regex='yes|sure|okay'
+  if [[ "${CLINE}" =~ $regex ]]; then
     eval "$@"
   fi
 }

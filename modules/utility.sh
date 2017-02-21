@@ -217,7 +217,7 @@ not_repeat(){
   checks if the current line contains something from Hal
   makes sure we dont trigger commands off of ourself
   '
-  ! grep -qi '\[Hal\]' <<< "${CLINE}"
+  ! [[ "${CLINE}" =~ \[Hal\] ]]
 }
 
 random(){

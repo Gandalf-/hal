@@ -72,7 +72,7 @@ do_get() {
 
 do_post() {
   : ' none -> none
-  Handles POST requests and User -> Server -> Hal -> Server -> User formatting 
+  Handles POST requests and User -> Server -> Hal -> Server -> User formatting
   conversions
   '
   echo "POST"
@@ -85,12 +85,12 @@ do_post() {
 
   # log in
   local name message output
-  if grep -qi "has joined the game" <<< "${content}"; then
+  if [[ "${content}" =~ (has joined the game) ]]; then
     name="$(tr -cd "${user_regex}" <<< "${content// has joined the game/}")"
     output="${header} ${name} joined the game"
 
   # log out
-  elif grep -qi "left the game" <<< "${content}"; then
+  elif [[ "${content}" =~ (left the game) ]]; then
     name="$(tr -cd "${user_regex}" <<< "${content// left the game/}")"
     output="${header} ${name} left the game"
 
@@ -200,7 +200,7 @@ main() {
     done
 
     # determine response
-    case $method in 
+    case $method in
       GET)
         do_get
         ;;

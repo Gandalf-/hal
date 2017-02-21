@@ -75,13 +75,13 @@ test_hc(){
   declare -a arry=('hal blah' 'HAL blah blah' 'BLAH HAL' 'blah hAl blah')
   for CLINE in "${arry[@]}"; do
     hc 'blah'
-    ocpass 
+    ocpass
   done
 
   declare -a arry=('blah' 'hal herp' 'HAL' 'herp')
   for CLINE in "${arry[@]}"; do
     hc 'blah'
-    ocfail 
+    ocfail
   done
   test_cleanup
 }
@@ -151,13 +151,13 @@ test_not_repeat(){
   declare -a arry=('[hal] blah' '[hal] BLAH ' 'blah [HAL]' 'blah [hAl] blah')
   for CLINE in "${arry[@]}"; do
     not_repeat
-    ocfail 
+    ocfail
   done
 
   declare -a arry=('goof' 'hal herp' 'HAL' 'herp derp')
   for CLINE in "${arry[@]}"; do
     not_repeat
-    ocpass 
+    ocpass
   done
   test_cleanup
 }
@@ -356,25 +356,25 @@ test_check_intent(){
   echo -n 'check_intent    '
   CLINE='yes hal'
   scpass "$INTENT_A" ''
-  set_intent 'yes\|no' 'intent_if_yes_do echo hello'
+  set_intent 'yes|no' 'intent_if_yes_do echo hello'
   check_intent >/dev/null
   scpass "$INTENT_A" ''
 
   CLINE='whatever hal'
-  set_intent 'yes\|no' 'intent_if_yes_do echo hello'
-  scpass "$INTENT_A" 'yes\|no%intent_if_yes_do echo hello'
+  set_intent 'yes|no' 'intent_if_yes_do echo hello'
+  scpass "$INTENT_A" 'yes|no%intent_if_yes_do echo hello'
   scpass "$INTENT_B" ''
   check_intent >/dev/null
-  scpass "$INTENT_A" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_A" 'yes|no%intent_if_yes_do echo hello'
   scpass "$INTENT_B" ''
   set_intent 'whatever' 'echo sure'
   scpass "$INTENT_A" 'whatever%echo sure'
-  scpass "$INTENT_B" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_B" 'yes|no%intent_if_yes_do echo hello'
   scpass "$INTENT_C" ''
   echo
   echo -n '...             '
   check_intent >/dev/null
-  scpass "$INTENT_A" 'yes\|no%intent_if_yes_do echo hello'
+  scpass "$INTENT_A" 'yes|no%intent_if_yes_do echo hello'
   scpass "$INTENT_B" ''
   CLINE='yes hal'
   check_intent >/dev/null
@@ -398,7 +398,7 @@ test_check_intent(){
   scpass "$INTENT_A" ''
 
   CLINE='yes hal'
-  set_intent 'yes\|no' 'intent_if_yes_do echo hello'
+  set_intent 'yes|no' 'intent_if_yes_do echo hello'
   scpass "$(check_intent)" 'hello'
   test_cleanup
 }
@@ -411,27 +411,27 @@ test_set_intent(){
   '
   echo -n 'set_intent      '
   CLINE='yes hal'
-  set_intent 'yes\|no' functionA
-  scpass "$INTENT_A" 'yes\|no%functionA'
+  set_intent 'yes|no' functionA
+  scpass "$INTENT_A" 'yes|no%functionA'
   scpass "$INTENT_B" ''
 
-  set_intent 'yes\|no' functionB
-  scpass "$INTENT_A" 'yes\|no%functionB'
-  scpass "$INTENT_B" 'yes\|no%functionA'
+  set_intent 'yes|no' functionB
+  scpass "$INTENT_A" 'yes|no%functionB'
+  scpass "$INTENT_B" 'yes|no%functionA'
   scpass "$INTENT_C" ''
 
-  set_intent 'yes\|no' functionC
-  scpass "$INTENT_A" 'yes\|no%functionC'
-  scpass "$INTENT_B" 'yes\|no%functionB'
-  scpass "$INTENT_C" 'yes\|no%functionA'
+  set_intent 'yes|no' functionC
+  scpass "$INTENT_A" 'yes|no%functionC'
+  scpass "$INTENT_B" 'yes|no%functionB'
+  scpass "$INTENT_C" 'yes|no%functionA'
 
   # cycle
-  set_intent 'yes\|no' functionD
-  scpass "$INTENT_A" 'yes\|no%functionD'
+  set_intent 'yes|no' functionD
+  scpass "$INTENT_A" 'yes|no%functionD'
   echo
   echo -n '...             '
-  scpass "$INTENT_B" 'yes\|no%functionC'
-  scpass "$INTENT_C" 'yes\|no%functionB'
+  scpass "$INTENT_B" 'yes|no%functionC'
+  scpass "$INTENT_C" 'yes|no%functionB'
 
   test_cleanup
 }
