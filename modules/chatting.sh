@@ -124,7 +124,7 @@ check_simple_math(){
   regex="$base_regex\|-$base_regex"
 
   if hc "what's" || hc "whats" || hc "what is"; then
-    if contains "$regex"; then
+    if contains "$base_regex"; then
 
       exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"
       value="$(timeout 0.5 bc -l 2>/dev/null <<< "$exp")"

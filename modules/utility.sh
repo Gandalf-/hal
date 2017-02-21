@@ -152,14 +152,14 @@ hc(){
   : ' string -> int
   check if the current line contains the required text and the "hal" keyword
   '
-  grep -qi "${1}.*Hal\|Hal.*${1}" <<< "${CLINE}"
+  [[ "${CLINE}" =~ hal(.*)${1}|${1}(.*)hal ]]
 }
 
 contains(){
   : ' string -> int
   check if the current line contains the required text
   '
-  grep -qi "${1}" <<< "${CLINE}"
+  [[ "${CLINE}" =~ ${1} ]]
 }
 
 debug_output(){

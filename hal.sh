@@ -19,6 +19,7 @@
 # shellcheck source=modules/intent.sh
 
 set -o pipefail
+shopt -s nocasematch
 umask u=rw,g=,o=
 
 # globals

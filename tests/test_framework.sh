@@ -7,12 +7,23 @@
 
 # test_utility.sh
 
+set -o pipefail
+shopt -s nocasematch
+umask u=rw,g=,o=
+
 # boilerplate
 #==================
 test_cleanup(){
-  DEBUG=1 ; QUIET=0 ; USER='<player1>'
-  MEM_DIR='/tmp/haltest/'; rm -rf "$MEM_DIR"; mkdir -p "$MEM_DIR"
-  INTENT_A=''; INTENT_B=''; INTENT_C=''
+  export DEBUG=1
+  export QUIET=0
+  export USER='<player1>'
+  export MEM_DIR='/tmp/haltest/'
+  rm -rf "$MEM_DIR"
+  mkdir -p "$MEM_DIR"
+  chmod u+x "${MEM_DIR}"
+  export INTENT_A=''
+  export INTENT_B=''
+  export INTENT_C=''
   echo
 }
 
@@ -24,10 +35,10 @@ scpass(){
   : ' string, string -> string
   direct string comparision, pass if equal
   '
-  if [[ "$1" == "$2" ]]; then 
+  if [[ "$1" == "$2" ]]; then
     pass
 
-  else 
+  else
     fail
     echo "Expected: $2"
     echo "Received: $1"
@@ -39,13 +50,13 @@ scfail(){
   : ' string, string -> string
   direct string comparision, pass if different
   '
-  if [[ "$1" == "$2" ]]; then 
+  if [[ "$1" == "$2" ]]; then
     fail
     echo "Expected: $1"
     echo "Received: $2"
     exit 1
 
-  else 
+  else
     pass
   fi
 }
@@ -54,10 +65,10 @@ rcpass(){
   : ' string, string -> string
   loose string comparison which ignores newlines, pass if equal
   '
-  if grep -qF "$2" <<< "$1"; then 
+  if grep -qF "$2" <<< "$1"; then
     pass
 
-  else 
+  else
     fail
     echo "Expected: $2"
     echo "Received: $1"
@@ -69,13 +80,13 @@ rcfail(){
   : ' string, string -> string
   loose string comparison which ignores newlines, pass if different
   '
-  if grep -qF "$2" <<< "$1"; then 
+  if grep -qF "$2" <<< "$1"; then
     fail
     echo "Expected: $2"
     echo "Received: $1"
     exit 1
 
-  else 
+  else
     pass
   fi
 }
@@ -84,9 +95,9 @@ ocpass(){
   #: ' none -> string
   #return code comparison, pass if command succeded
   #'
-  if [[ $? -eq 0 ]]; then 
+  if [[ $? -eq 0 ]]; then
     pass
-  else 
+  else
     fail
     echo "Return value was non-zero"
     exit 1
@@ -97,11 +108,11 @@ ocfail(){
   #': ' none -> string
   #return code comparison, pass if command failed
   #'
-  if [[ $? -eq 0 ]]; then 
+  if [[ $? -eq 0 ]]; then
     fail
     echo "Return value was zero"
     exit 1
-  else 
+  else
     pass
   fi
 }
@@ -110,9 +121,9 @@ test_test(){
   echo -n 'test            '
   scpass 'a' 'a'
   rcpass 'apple blueberry watermelon' 'blue'
-  true ; ocpass 
+  true ; ocpass
   scfail 'a' 'b'
   rcfail 'apple blueberry watermelon' 'green'
-  false ; ocfail 
+  false ; ocfail
   test_cleanup
 }
