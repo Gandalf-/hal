@@ -27,8 +27,6 @@ hal_pretty_print() {
     message="${message//\/say/}"
     message="$(sed ':a;N;$!ba;s/\n/<br>/g' <<< "${message}")"
     echo "${message}<br>"
-  else
-    echo ""
   fi
 }
 
@@ -115,12 +113,11 @@ do_post() {
 
   while [[ "$before_time" == "$current_time" ]]; do
     current_time=$(stat -c '%Z' $HAL_OUTPUT_FILE)
-
-    if (( $(date +'%s') > timeout )); then
-      break
-    fi
-    sleep 0.05
+    (( $(date +'%s') > timeout )) && break
+    sleep 0.005
+    echo -n "."
   done
+  echo
 
   # return hal's response to user, clear output file
   local reply
@@ -194,9 +191,7 @@ main() {
       esac
       #echo -e "$line"
 
-      if grep -P '^\s$' <<< "${line}"; then
-        break
-      fi
+      grep -P '^\s$' <<< "${line}" && break
     done
 
     # determine response

@@ -226,9 +226,7 @@ random(){
   '
   local array
 
-  if [[ -z "${1}" ]]; then
-    echo ''
-  else
+  if ! [[ -z "${1}" ]]; then
     array=("$@")
     echo "${array[$RANDOM % ${#array[@]} ]}"
   fi

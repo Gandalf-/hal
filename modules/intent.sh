@@ -19,7 +19,6 @@ check_intent(){
     function=$(cut -f 2 -d '%' <<< "${INTENT_A}" )
 
     if [[ "${CLINE}" =~ $pattern ]]; then
-    #if grep -qi "$pattern" <<< "${CLINE}"; then
       INTENT_A="${INTENT_B}"
       INTENT_B="${INTENT_C}"
       INTENT_C=''

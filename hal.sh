@@ -194,7 +194,7 @@ while true; do
 
   # hashes are the same, sleep
   else
-    sleep 0.1
+    sleep 0.075
   fi
 
   old_hash="$new_hash"
