@@ -8,9 +8,9 @@
 # chatting.sh
 
 check_chatting_actions(){
-  : ' none -> none
-  chatting actions
-  '
+  # : ' none -> none
+  # chatting actions
+  # '
   local comment
 
   case "$CLINE" in
@@ -94,9 +94,9 @@ check_chatting_actions(){
 }
 
 random_status(){
-  : ' none -> none
-  wrapper around "how are you" logic
-  '
+  # : ' none -> none
+  # wrapper around "how are you" logic
+  # '
   local adverb adjective label time
 
   adverb=$(random \
@@ -137,10 +137,10 @@ random_status(){
 }
 
 check_simple_math(){
-  : ' none -> none
-  simple math solutions of the form
-  hal what is (expr)
-  '
+  # : ' none -> none
+  # simple math solutions of the form
+  # hal what is (expr)
+  #'
   local base_regex regex exp value
 
   base_regex="[\(\)0-9\+\/\*\.\^\%]*"
@@ -166,9 +166,9 @@ check_simple_math(){
 }
 
 random_okay(){
-  : ' string -> string
-  returns a random affirmative
-  '
+  # : ' string -> string
+  # returns a random affirmative
+  # '
   if [[ -z "${1:-}" ]]; then
     random \
       'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
@@ -179,10 +179,10 @@ random_okay(){
 }
 
 tell_player(){
-  : ' none -> none
-  attempts to tell a player a message, if the player isnt in the game,
-  store it until the log in again
-  '
+  # : ' none -> none
+  # attempts to tell a player a message, if the player isnt in the game,
+  # store it until the log in again
+  # '
   local player regex msg
 
   player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
@@ -198,9 +198,9 @@ tell_player(){
 }
 
 random_musing(){
-  : ' none -> string
-  returns a random musing
-  '
+  # : ' none -> string
+  # returns a random musing
+  # '
   random \
     'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' \
     'Just growing some trees...' 'Reorganizing clouds...' \
@@ -210,9 +210,9 @@ random_musing(){
 }
 
 tell_joke(){
-  : ' none -> none
-  tell a random joke
-  '
+  # : ' none -> none
+  # tell a random joke
+  # '
   say "$(random \
   'How does Steve get his exercise?  He runs around the block. ' \
   'Have you heard of the creeper that went to a party?  He had a BLAST!' \

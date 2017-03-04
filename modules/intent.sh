@@ -8,10 +8,10 @@
 # intent.sh
 
 check_intent(){
-  : ' none -> none
-  checks if the current line satisfies each of the intents. If a match is
-  found, evaluate it and move the subsequent intents up the list
-  '
+  # : ' none -> none
+  # checks if the current line satisfies each of the intents. If a match is
+  # found, evaluate it and move the subsequent intents up the list
+  # '
   local pattern function
 
   if ! [[ -z "${INTENT_A}" ]]; then
@@ -49,8 +49,8 @@ check_intent(){
 }
 
 set_intent(){
-  : ' string, function -> none
-  '
+  # : ' string, function -> none
+  # '
   if [[ -z "${INTENT_A}" ]]; then
     INTENT_A="${1}%${*:2}"
 
@@ -68,10 +68,10 @@ set_intent(){
 # intentions
 #==================
 intent_if_yes_do(){
-  : ' function -> none
-  evaluate a function given as an agrument if the current line contains yes,
-  sure, or okay
-  '
+  # : ' function -> none
+  # evaluate a function given as an agrument if the current line contains yes,
+  # sure, or okay
+  # '
   local regex
 
   regex='yes|sure|okay'
@@ -81,18 +81,18 @@ intent_if_yes_do(){
 }
 
 intent_be_quiet(){
-  : ' none -> none
-  call back function, suppress hal comments
-  '
+  # : ' none -> none
+  # call back function, suppress hal comments
+  # '
   say "Oh... Okay. I'll still do as you say but stay quiet for a while"
   #shellcheck disable=SC2034
   QUIET=1
 }
 
 intent_tell_player(){
- : ' string -> string
- call back function, stores a message for a player
- '
+ # : ' string -> string
+ # call back function, stores a message for a player
+ # '
  local sender target message
 
  say "I'll tell them when they show up again!"

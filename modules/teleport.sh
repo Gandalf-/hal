@@ -8,9 +8,9 @@
 # teleport.sh
 
 check_teleport_actions(){
-  : ' none -> none
-  wrapper for teleportation actions
-  '
+  # : ' none -> none
+  # wrapper for teleportation actions
+  # '
   case "$CLINE" in
     *'take me home'*)
       go_home
@@ -25,10 +25,10 @@ check_teleport_actions(){
 }
 
 go_to_dest(){
-  : ' none -> none
-  "hal take me to notch"
-  attempts to teleport the current user to the destination user
-  '
+  # : ' none -> none
+  # "hal take me to notch"
+  # attempts to teleport the current user to the destination user
+  # '
   local where dest
 
   where=$(
@@ -59,10 +59,10 @@ go_to_dest(){
 }
 
 go_home(){
-  : ' none -> none
-  "hal take me home"
-  attempts to teleport the current user to their home destination
-  '
+  # : ' none -> none
+  # "hal take me home"
+  # attempts to teleport the current user to their home destination
+  # '
   local homeline xcoord ycoord zcoord
 
   homeline=$(cat "$MEM_DIR""$USER".home 2>/dev/null)
@@ -81,10 +81,10 @@ go_home(){
 }
 
 set_home(){
-  : ' none -> none
-  "hal set home as <x> <y> <z>"
-  attempts to set the current users home destination
-  '
+  # : ' none -> none
+  # "hal set home as <x> <y> <z>"
+  # attempts to set the current users home destination
+  # '
   local homeline xcoord ycoord zcoord
 
   homeline=$(grep -io 'set home as .*$' <<< "${CLINE}" )

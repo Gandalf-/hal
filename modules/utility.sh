@@ -9,9 +9,9 @@
 
 # AGGLOMERATIVE FUNCTIONS
 show_help(){
-  : ' none -> none
-  print in game usage information
-  '
+  # : ' none -> none
+  # print in game usage information
+  # '
   say "I'm Hal, a teenie tiny AI that will try to help you!"
   say "Here are some of the things I understand:"
   say "- thanks, yes, no, whatever, tell a joke"
@@ -27,10 +27,10 @@ show_help(){
 }
 
 player_joined(){
-  : ' string -> int
-  greet player, make comment on number of active players,
-  and check for messages
-  '
+  # : ' string -> int
+  # greet player, make comment on number of active players,
+  # and check for messages
+  # '
   local mfile
 
   sleep 0.1
@@ -67,9 +67,9 @@ player_joined(){
 }
 
 player_left(){
-  : ' none -> none
-  Say goodbye, comment on player count
-  '
+  # : ' none -> none
+  # Say goodbye, comment on player count
+  # '
   say "Goodbye ${USER}! See you again soon I hope!"
   NUM_PLAYERS=$(( NUM_PLAYERS - 1 ))
 
@@ -89,9 +89,9 @@ player_left(){
 }
 
 check_gamemode_actions(){
-  : ' none -> none
-  gamemode modifing actions
-  '
+  # : ' none -> none
+  # gamemode modifing actions
+  # '
   hcsr 'put me in survival mode' \
     "$(random_okay 'Remember to eat!')" \
     "/gamemode surival ${USER}"
@@ -106,9 +106,9 @@ check_gamemode_actions(){
 }
 
 check_weather_actions(){
-  : ' none -> none
-  weather modifing actions
-  '
+  # : ' none -> none
+  # weather modifing actions
+  # '
   hcsr 'make it clear' \
     "$(random_okay 'Rain clouds begone!')" \
     "/weather clear 600"
@@ -131,9 +131,9 @@ check_weather_actions(){
 }
 
 check_effect_actions(){
-  : ' none -> none
-  player effect modifing actions
-  '
+  # : ' none -> none
+  # player effect modifing actions
+  # '
   hcsr 'make me healthy' \
     "$(random_okay 'This should help you feel better')" \
     "/effect ${USER} minecraft:instant_health 1 10"
@@ -149,23 +149,23 @@ check_effect_actions(){
 
 # UTILITY FUNCTIONS
 hc(){
-  : ' string -> int
-  check if the current line contains the required text and the "hal" keyword
-  '
+  # : ' string -> int
+  # check if the current line contains the required text and the "hal" keyword
+  # '
   [[ "${CLINE}" =~ hal(.*)${1}|${1}(.*)hal ]]
 }
 
 contains(){
-  : ' string -> int
-  check if the current line contains the required text
-  '
+  # : ' string -> int
+  # check if the current line contains the required text
+  # '
   [[ "${CLINE}" =~ ${1} ]]
 }
 
 debug_output(){
-  : ' string -> none
-  sends output to correct location
-  '
+  # : ' string -> none
+  # sends output to correct location
+  # '
   if [[ -e "${OUT_FILE}" ]]; then
     echo "${@}" >> "${OUT_FILE}"
   else
@@ -174,9 +174,9 @@ debug_output(){
 }
 
 say(){
-  : ' string -> none
-  say a phrase in the server
-  '
+  # : ' string -> none
+  # say a phrase in the server
+  # '
   if ! (( QUIET )); then
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/say [Hal] ${1}" Enter
@@ -187,9 +187,9 @@ say(){
 }
 
 tell(){
-  : ' string -> none
-  say a phrase in the server
-  '
+  # : ' string -> none
+  # say a phrase in the server
+  # '
   if ! (( QUIET )); then
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/tell ${USER} ${1}" Enter
@@ -200,9 +200,9 @@ tell(){
 }
 
 run(){
-  : ' string -> none
-  run a command in the server
-  '
+  # : ' string -> none
+  # run a command in the server
+  # '
   if ! [[ -z "${1}" ]]; then
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
@@ -213,17 +213,17 @@ run(){
 }
 
 not_repeat(){
-  : ' none -> int
-  checks if the current line contains something from Hal
-  makes sure we dont trigger commands off of ourself
-  '
+  # : ' none -> int
+  # checks if the current line contains something from Hal
+  # makes sure we dont trigger commands off of ourself
+  # '
   ! [[ "${CLINE}" =~ \[Hal\] ]]
 }
 
 random(){
-  : ' any, ... -> any
-  returns a randomly chosen element out of the arguments
-  '
+  # : ' any, ... -> any
+  # returns a randomly chosen element out of the arguments
+  # '
   local array
 
   if ! [[ -z "${1}" ]]; then
@@ -233,9 +233,9 @@ random(){
 }
 
 shut_down(){
-  : ' none -> none
-  interrupt handler
-  '
+  # : ' none -> none
+  # interrupt handler
+  # '
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
@@ -243,9 +243,9 @@ shut_down(){
 }
 
 hcsr(){
-  : ' string, string, string -> none
-  wrapper around check 1, say 2, run 3 logic
-  '
+  # : ' string, string, string -> none
+  # wrapper around check 1, say 2, run 3 logic
+  # '
   if hc "${1}"; then
     say "${2}"
     run "${3}"
@@ -254,9 +254,9 @@ hcsr(){
 }
 
 ran_command() {
-  : ' none -> none
-  wrapper to set RCOMMAND
-  '
+  # : ' none -> none
+  # wrapper to set RCOMMAND
+  # '
   # shellcheck disable=SC2034
   RCOMMAND=1
 }

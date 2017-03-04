@@ -8,9 +8,9 @@
 # memories.sh
 
 check_memory_actions(){
-  : ' none -> none
-  check memory actions
-  '
+  # : ' none -> none
+  # check memory actions
+  # '
   case "$CLINE" in
     *'remember'*)
       remember_phrase
@@ -25,10 +25,10 @@ check_memory_actions(){
 }
 
 remember_phrase(){
-  : ' none -> none
-  "hal remember that apples are nice"
-  parse out note to remember and write to user file
-  '
+  # : ' none -> none
+  # "hal remember that apples are nice"
+  # parse out note to remember and write to user file
+  # '
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
@@ -70,10 +70,10 @@ remember_phrase(){
 }
 
 recall_phrase(){
-  : ' none -> none
-  "hal tell me about apples"
-  search through user memories for related information
-  '
+  # : ' none -> none
+  # "hal tell me about apples"
+  # search through user memories for related information
+  # '
   local regex phrase mem_file url
 
   url='https://en.wikipedia.org/wiki'
@@ -123,10 +123,10 @@ recall_phrase(){
 }
 
 recall_everything(){
-  : ' none -> none
-  "hal recall everything"
-  tell user everything in memory file
-  '
+  # : ' none -> none
+  # "hal recall everything"
+  # tell user everything in memory file
+  # '
   say "Okay $USER, here's everything I know for you!"
 
   while read -r line; do
@@ -137,10 +137,10 @@ recall_everything(){
 }
 
 forget_phrase(){
-  : ' none -> none
-  "hal forget about apples"
-  remove all related phrases from user file
-  '
+  # : ' none -> none
+  # "hal forget about apples"
+  # remove all related phrases from user file
+  # '
   local regex phrase mem_file file_contents
 
   regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
@@ -162,10 +162,10 @@ forget_phrase(){
 }
 
 forget_everything(){
-  : ' none -> none
-  "hal forget everything"
-  remove all phrases from user file
-  '
+  # : ' none -> none
+  # "hal forget everything"
+  # remove all phrases from user file
+  # '
   say "Done $USER, I forgot everything!"
   echo '' > "$MEM_DIR""$USER".memories
   ran_command
