@@ -11,9 +11,17 @@ check_teleport_actions(){
   : ' none -> none
   wrapper for teleportation actions
   '
-  hc 'take me home' && go_home
-  hc 'set home as ' && set_home
-  hc 'take me to '  && go_to_dest
+  case "$CLINE" in
+    *'take me home'*)
+      go_home
+      ;;
+    *'set home as'*)
+      set_home
+      ;;
+    *'take me to'*)
+      go_to_dest
+      ;;
+  esac
 }
 
 go_to_dest(){

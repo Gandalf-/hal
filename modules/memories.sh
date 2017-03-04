@@ -11,15 +11,17 @@ check_memory_actions(){
   : ' none -> none
   check memory actions
   '
-  if hc 'remember'; then
-    remember_phrase;
-
-  elif hc 'forget everything'; then
-    forget_everything
-
-  elif hc 'forget'; then
-    forget_phrase
-  fi
+  case "$CLINE" in
+    *'remember'*)
+      remember_phrase
+      ;;
+    *'forget everything'*)
+      forget_everything
+      ;;
+    *'forget'*)
+      forget_phrase
+      ;;
+  esac
 }
 
 remember_phrase(){

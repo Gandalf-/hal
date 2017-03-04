@@ -163,12 +163,14 @@ while true; do
       fi
 
       # check actions
-      check_chatting_actions
-      check_memory_actions
-      check_teleport_actions
-      check_gamemode_actions
-      check_weather_actions
-      check_effect_actions
+      if contains 'hal'; then
+        check_chatting_actions
+        check_memory_actions
+        check_teleport_actions
+        check_gamemode_actions
+        check_weather_actions
+        check_effect_actions
+      fi
 
       # player joins or leaves
       contains 'joined the game'       && player_joined

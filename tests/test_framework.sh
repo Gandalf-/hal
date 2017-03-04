@@ -92,28 +92,28 @@ rcfail(){
 }
 
 ocpass(){
-  #: ' none -> string
-  #return code comparison, pass if command succeded
-  #'
-  if [[ $? -eq 0 ]]; then
-    pass
-  else
+  # : ' none -> string
+  # return code comparison, pass if command succeded
+  # '
+  if (( $? )); then
     fail
     echo "Return value was non-zero"
     exit 1
+  else
+    pass
   fi
 }
 
 ocfail(){
-  #': ' none -> string
-  #return code comparison, pass if command failed
-  #'
-  if [[ $? -eq 0 ]]; then
+  # : ' none -> string
+  # return code comparison, pass if command failed
+  # '
+  if (( $? )); then
+    pass
+  else
     fail
     echo "Return value was zero"
     exit 1
-  else
-    pass
   fi
 }
 
