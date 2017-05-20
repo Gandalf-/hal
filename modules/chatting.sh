@@ -90,7 +90,7 @@ check_chatting_actions(){
       ;;
   esac
 
-  ! (( RCOMMAND )) && check_simple_math
+  (( RCOMMAND )) || check_simple_math
 }
 
 random_status(){

@@ -35,7 +35,7 @@ player_joined(){
 
   sleep 0.1
   say "Hey there ${USER}! Try saying \"Hal help\""
-  NUM_PLAYERS=$(( NUM_PLAYERS + 1 ))
+  let NUM_PLAYERS++
 
   if (( NUM_PLAYERS == 1 )); then
     say "You're the first one here!"
@@ -71,7 +71,7 @@ player_left(){
   # Say goodbye, comment on player count
   # '
   say "Goodbye ${USER}! See you again soon I hope!"
-  NUM_PLAYERS=$(( NUM_PLAYERS - 1 ))
+  let NUM_PLAYERS--
 
   if (( NUM_PLAYERS < 0 )); then
     say "I seem to have gotten confused..."
@@ -239,7 +239,7 @@ shut_down(){
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
-  ! (( DEBUG )) && exit
+  (( DEBUG )) || exit
 }
 
 hcsr(){

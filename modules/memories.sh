@@ -49,18 +49,15 @@ remember_phrase(){
       new_size=$(( MAX_MEM_DIR_SIZE / ${#memory_files[@]} ))
 
       for file in "${memory_files[@]}"; do
-        if (( $(wc -c "$file") > new_size )); then
-          truncate -s "$new_size" "$file"
-        fi
+        (( $(wc -c "$file") > new_size )) && truncate -s "$new_size" "$file"
       done
 
     # otherwise, make sure this user isn't going over the quota
     else
       file="$MEM_DIR""$USER"".memories"
       file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
-      if (( file_size > MAX_MEM_SIZE )); then
-        truncate -s "$MAX_MEM_SIZE" "$file"
-      fi
+
+      (( file_size > MAX_MEM_SIZE )) && truncate -s "$MAX_MEM_SIZE" "$file"
     fi
 
   else
@@ -108,11 +105,13 @@ recall_phrase(){
 
       else
         say "Okay $USER, here's what the internet says:"
+
         if (( ${#reply} > 298 )); then
           say "\"${reply}...\""
         else
           say "\"${reply}\""
         fi
+
       fi
     fi
 
