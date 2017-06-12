@@ -8,25 +8,27 @@
 # memories.sh
 
 check_memory_actions(){
-  : ' none -> none
-  check memory actions
-  '
-  if hc 'remember'; then
-    remember_phrase;
-
-  elif hc 'forget everything'; then
-    forget_everything
-
-  elif hc 'forget'; then
-    forget_phrase
-  fi
+  # : ' none -> none
+  # check memory actions
+  # '
+  case "$CLINE" in
+    *'remember'*)
+      remember_phrase
+      ;;
+    *'forget everything'*)
+      forget_everything
+      ;;
+    *'forget'*)
+      forget_phrase
+      ;;
+  esac
 }
 
 remember_phrase(){
-  : ' none -> none
-  "hal remember that apples are nice"
-  parse out note to remember and write to user file
-  '
+  # : ' none -> none
+  # "hal remember that apples are nice"
+  # parse out note to remember and write to user file
+  # '
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
@@ -47,18 +49,15 @@ remember_phrase(){
       new_size=$(( MAX_MEM_DIR_SIZE / ${#memory_files[@]} ))
 
       for file in "${memory_files[@]}"; do
-        if (( $(wc -c "$file") > new_size )); then
-          truncate -s "$new_size" "$file"
-        fi
+        (( $(wc -c "$file") > new_size )) && truncate -s "$new_size" "$file"
       done
 
     # otherwise, make sure this user isn't going over the quota
     else
       file="$MEM_DIR""$USER"".memories"
       file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
-      if (( file_size > MAX_MEM_SIZE )); then
-        truncate -s "$MAX_MEM_SIZE" "$file"
-      fi
+
+      (( file_size > MAX_MEM_SIZE )) && truncate -s "$MAX_MEM_SIZE" "$file"
     fi
 
   else
@@ -68,10 +67,10 @@ remember_phrase(){
 }
 
 recall_phrase(){
-  : ' none -> none
-  "hal tell me about apples"
-  search through user memories for related information
-  '
+  # : ' none -> none
+  # "hal tell me about apples"
+  # search through user memories for related information
+  # '
   local regex phrase mem_file url
 
   url='https://en.wikipedia.org/wiki'
@@ -106,11 +105,13 @@ recall_phrase(){
 
       else
         say "Okay $USER, here's what the internet says:"
+
         if (( ${#reply} > 298 )); then
           say "\"${reply}...\""
         else
           say "\"${reply}\""
         fi
+
       fi
     fi
 
@@ -121,10 +122,10 @@ recall_phrase(){
 }
 
 recall_everything(){
-  : ' none -> none
-  "hal recall everything"
-  tell user everything in memory file
-  '
+  # : ' none -> none
+  # "hal recall everything"
+  # tell user everything in memory file
+  # '
   say "Okay $USER, here's everything I know for you!"
 
   while read -r line; do
@@ -135,10 +136,10 @@ recall_everything(){
 }
 
 forget_phrase(){
-  : ' none -> none
-  "hal forget about apples"
-  remove all related phrases from user file
-  '
+  # : ' none -> none
+  # "hal forget about apples"
+  # remove all related phrases from user file
+  # '
   local regex phrase mem_file file_contents
 
   regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
@@ -160,10 +161,10 @@ forget_phrase(){
 }
 
 forget_everything(){
-  : ' none -> none
-  "hal forget everything"
-  remove all phrases from user file
-  '
+  # : ' none -> none
+  # "hal forget everything"
+  # remove all phrases from user file
+  # '
   say "Done $USER, I forgot everything!"
   echo '' > "$MEM_DIR""$USER".memories
   ran_command

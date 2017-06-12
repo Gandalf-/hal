@@ -162,6 +162,7 @@ main() {
   bash ../hal.sh ${HAL_INPUT_FILE} ../ ${ROOT_DIR} ${HAL_OUTPUT_FILE} &
   readonly HAL_PID=$!
 
+  # start listening for tcp connection
   while true; do
     nc -l -p ${PORT} < <(cat "${server2client}") > "${client2server}"
   done &

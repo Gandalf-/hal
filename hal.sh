@@ -109,7 +109,7 @@ for file in "${srcs[@]}"; do
 done
 
 # startup messages and set up
-! (( DEBUG )) && echo 'Hal starting up'
+(( DEBUG )) || echo 'Hal starting up'
 
 trap shut_down INT
 mkdir -p "${MEM_DIR}"
@@ -141,7 +141,7 @@ while true; do
 
     # check for quiet timeout
     (( QUIET > 300 )) && QUIET=0
-    (( QUIET >   0 )) && QUIET=$(( QUIET + 1 ))
+    (( QUIET >   0 )) && let QUIET++
 
     # do all intention checks
     check_intent
@@ -149,7 +149,7 @@ while true; do
     # user initiated actions
     if [[ "${prevline}" != "${CLINE}" ]] && not_repeat; then
 
-      ! (( DEBUG )) && echo "CLINE: $CLINE"
+      (( DEBUG )) || echo "CLINE: $CLINE"
 
       # administrative
       hc 'help' && show_help
@@ -163,12 +163,14 @@ while true; do
       fi
 
       # check actions
-      check_chatting_actions
-      check_memory_actions
-      check_teleport_actions
-      check_gamemode_actions
-      check_weather_actions
-      check_effect_actions
+      if contains 'hal'; then
+        check_chatting_actions
+        check_memory_actions
+        check_teleport_actions
+        check_gamemode_actions
+        check_weather_actions
+        check_effect_actions
+      fi
 
       # player joins or leaves
       contains 'joined the game'       && player_joined

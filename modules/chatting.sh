@@ -8,116 +8,139 @@
 # chatting.sh
 
 check_chatting_actions(){
-  : ' none -> none
-  chatting actions
-  '
-  local adverb adjective label time comment
+  # : ' none -> none
+  # chatting actions
+  # '
+  local comment
 
-  if hc 'be quiet'; then
-    say 'Oh... Are you sure?'
-    set_intent 'yes|sure' 'intent_be_quiet'
-    ran_command
-  fi
-
-  if hc 'you can talk'; then
-    #shellcheck disable=SC2034
-    QUIET=0
-    say "Hooray!"
-    ran_command
-  fi
-
-  if hc 'status update'; then
-    say "Active players: ${NUM_PLAYERS}"
-    ran_command
-  fi
-
-  if hc 'how are you'; then
-    adverb=$(random "fairly" "quite" "extremely" "modestly" "adequately")
-    adjective=$(random "swell" "groovy" "superb" "fine" "awesome" "peachy")
-    label=$(random "millennium" "years" "days" "hours" "seconds" "milliseconds" "nanoseconds")
-    time="scale=6; $LIFETIME"
-
-    case "$label" in
-      "millennium")
-        time=$(bc -l <<< "$time / 60 / 24 / 365 / 1000")
-        ;;
-      "years")
-        time=$(bc -l <<< "$time / 60 / 24 / 365")
-        ;;
-      "days")
-        time=$(bc -l <<< "$time / 60 / 24")
-        ;;
-      "hours")
-        time=$(bc -l <<< "$time / 60")
-        ;;
-      "seconds")
-        time=$(bc -l <<< "$time * 1")
-        ;;
-      "milliseconds")
-        time=$(bc -l <<< "$time * 100")
-        ;;
-      "nanoseconds")
-        time=$(bc -l <<< "$time * 1000000000")
-        ;;
-    esac
-
-    say "I'm feeling $adverb $adjective! I've been alive for $time $label"
-    ran_command
-  fi
-
-  if hc 'tell .* joke'; then
-    tell_joke
-
-  elif hc 'tell .* about everything'; then
-    recall_everything
-
-  elif hc 'tell .* about .*'; then
-    recall_phrase
-
-  elif hc 'tell '; then
-    tell_player
-  fi
-
-  hcsr 'hello'    "Hey there $USER!"
-  hcsr 'hey'      "Hello there $USER!"
-  hcsr 'hi'       "Howdy $USER!"
-  hcsr 'sup'      "Yo, what's good $USER?"
-  hcsr 'yes'      'Ah... okay'
-  hcsr 'no'       'Oh... okay'
-  hcsr 'whatever' 'Well. If you say so'
-  hcsr 'thanks'   "You're quite welcome $USER!"
-
-  hcsr 'turn down for what' "Nothing! Order another round of shots!"
-
-  comment="$(random 'holding the world together' 'hanging out' 'mind controlling a squid' 'contemplating the universe')"
-  hcsr "what's up" "Not too much $USER! Just $comment"
-  hcsr "whats up" "Not too much $USER! Just $comment"
-
-  if hc 'what do you know about'; then
-    # search the internet?
-    if contains 'zombie'; then
-      say "They're wannabe Frankensteins as far as I can tell!"
-
-    elif contains 'skeleton'; then
-      say "They're spooky! Watch out for arrows!"
-
-    elif contains 'spider'; then
-      say "Too many legs for my sensibilities"
-
-    else
+  case "$CLINE" in
+    *'be quiet'*)
+      say 'Oh... Are you sure?'
+      set_intent 'yes|sure' 'intent_be_quiet'
+      ran_command
+      ;;
+    *'you can talk'*)
+      #shellcheck disable=SC2034
+      QUIET=0
+      say "Hooray!"
+      ran_command
+      ;;
+    *'status update'*)
+      say "Active players: ${NUM_PLAYERS}"
+      say "Uptime: ${LIFETIME}"
+      ran_command
+      ;;
+    *'how are you'*)
+      random_status
+      ;;
+    *'tell '*' joke'*)
+      tell_joke
+      ;;
+    *'tell '*' about everything'*)
+      recall_everything
+      ;;
+    *'tell '*' about '*)
       recall_phrase
-    fi
-    ran_command
-  fi
+      ;;
+    *'tell '*)
+      tell_player
+      ;;
+    *'hello'*)
+      say "Hey there $USER!"
+      ran_command
+      ;;
+    *'hey'*)
+      say "Hello there $USER!"
+      ran_command
+      ;;
+    *'hi'*)
+      say "Howdy $USER!"
+      ran_command
+      ;;
+    *'sup'*)
+      say "Yo, what's good $USER?"
+      ran_command
+      ;;
+    *'yes'*)
+      say 'Ah... okay'
+      ran_command
+      ;;
+    *'no'*)
+      say 'Oh... okay'
+      ran_command
+      ;;
+    *'whatever'*)
+      say 'Well. If you say so'
+      ran_command
+      ;;
+    *'thanks'*)
+      say "You're quite welcome $USER!"
+      ran_command
+      ;;
+    *'turn down for what'*)
+      say "Nothing! Order another round of shots!"
+      ran_command
+      ;;
+    *'what'*'up'*)
+      comment="$(random \
+        'holding the world together' 'hanging out' \
+        'mind controlling a squid' 'contemplating the universe')"
+      say "Not too much $USER! Just $comment"
+      ran_command
+      ;;
+  esac
 
-  ! (( RCOMMAND )) && check_simple_math
+  (( RCOMMAND )) || check_simple_math
+}
+
+random_status(){
+  # : ' none -> none
+  # wrapper around "how are you" logic
+  # '
+  local adverb adjective label time
+
+  adverb=$(random \
+    "fairly" "quite" "extremely" "modestly" "adequately")
+  adjective=$(random \
+    "swell" "groovy" "superb" "fine" "awesome" "peachy")
+  label=$(random \
+    "millennium" "years" "days" "hours" "seconds" "milliseconds" "nanoseconds")
+
+  time="scale=6; $LIFETIME"
+
+  case "$label" in
+    "millennium")
+      time=$(bc -l <<< "$time / 60 / 24 / 365 / 1000")
+      ;;
+    "years")
+      time=$(bc -l <<< "$time / 60 / 24 / 365")
+      ;;
+    "days")
+      time=$(bc -l <<< "$time / 60 / 24")
+      ;;
+    "hours")
+      time=$(bc -l <<< "$time / 60")
+      ;;
+    "seconds")
+      time=$(bc -l <<< "$time * 1")
+      ;;
+    "milliseconds")
+      time=$(bc -l <<< "$time * 100")
+      ;;
+    "nanoseconds")
+      time=$(bc -l <<< "$time * 1000000000")
+      ;;
+  esac
+
+  say "I'm feeling $adverb $adjective! I've been alive for $time $label"
+  ran_command
 }
 
 check_simple_math(){
-  : ' none -> none
-  simple math solutions of the form
-  hal what is (expr)
-  '
+  # : ' none -> none
+  # simple math solutions of the form
+  # hal what is (expr)
+  #'
   local base_regex regex exp value
 
   base_regex="[\(\)0-9\+\/\*\.\^\%]*"
@@ -142,16 +165,10 @@ check_simple_math(){
   fi
 }
 
-random_chat(){
-  : 'string -> string
-  requires a file with word : word %, word %, ...
-  '
-}
-
 random_okay(){
-  : ' string -> string
-  returns a random affirmative
-  '
+  # : ' string -> string
+  # returns a random affirmative
+  # '
   if [[ -z "${1:-}" ]]; then
     random \
       'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
@@ -162,10 +179,10 @@ random_okay(){
 }
 
 tell_player(){
-  : ' none -> none
-  attempts to tell a player a message, if the player isnt in the game,
-  store it until the log in again
-  '
+  # : ' none -> none
+  # attempts to tell a player a message, if the player isnt in the game,
+  # store it until the log in again
+  # '
   local player regex msg
 
   player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
@@ -181,9 +198,9 @@ tell_player(){
 }
 
 random_musing(){
-  : ' none -> string
-  returns a random musing
-  '
+  # : ' none -> string
+  # returns a random musing
+  # '
   random \
     'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' \
     'Just growing some trees...' 'Reorganizing clouds...' \
@@ -193,9 +210,9 @@ random_musing(){
 }
 
 tell_joke(){
-  : ' none -> none
-  tell a random joke
-  '
+  # : ' none -> none
+  # tell a random joke
+  # '
   say "$(random \
   'How does Steve get his exercise?  He runs around the block. ' \
   'Have you heard of the creeper that went to a party?  He had a BLAST!' \

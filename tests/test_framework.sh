@@ -32,9 +32,9 @@ pass(){ echo -n " pass"; }
 fail(){ echo " fail"; }
 
 scpass(){
-  : ' string, string -> string
-  direct string comparision, pass if equal
-  '
+  # : ' string, string -> string
+  # direct string comparision, pass if equal
+  # '
   if [[ "$1" == "$2" ]]; then
     pass
 
@@ -47,9 +47,9 @@ scpass(){
 }
 
 scfail(){
-  : ' string, string -> string
-  direct string comparision, pass if different
-  '
+  # : ' string, string -> string
+  # direct string comparision, pass if different
+  # '
   if [[ "$1" == "$2" ]]; then
     fail
     echo "Expected: $1"
@@ -62,9 +62,9 @@ scfail(){
 }
 
 rcpass(){
-  : ' string, string -> string
-  loose string comparison which ignores newlines, pass if equal
-  '
+  # : ' string, string -> string
+  # loose string comparison which ignores newlines, pass if equal
+  # '
   if grep -qF "$2" <<< "$1"; then
     pass
 
@@ -77,9 +77,9 @@ rcpass(){
 }
 
 rcfail(){
-  : ' string, string -> string
-  loose string comparison which ignores newlines, pass if different
-  '
+  # : ' string, string -> string
+  # loose string comparison which ignores newlines, pass if different
+  # '
   if grep -qF "$2" <<< "$1"; then
     fail
     echo "Expected: $2"
@@ -92,28 +92,28 @@ rcfail(){
 }
 
 ocpass(){
-  #: ' none -> string
-  #return code comparison, pass if command succeded
-  #'
-  if [[ $? -eq 0 ]]; then
-    pass
-  else
+  # : ' none -> string
+  # return code comparison, pass if command succeded
+  # '
+  if (( $? )); then
     fail
     echo "Return value was non-zero"
     exit 1
+  else
+    pass
   fi
 }
 
 ocfail(){
-  #': ' none -> string
-  #return code comparison, pass if command failed
-  #'
-  if [[ $? -eq 0 ]]; then
+  # : ' none -> string
+  # return code comparison, pass if command failed
+  # '
+  if (( $? )); then
+    pass
+  else
     fail
     echo "Return value was zero"
     exit 1
-  else
-    pass
   fi
 }
 

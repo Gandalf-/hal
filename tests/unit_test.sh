@@ -7,27 +7,34 @@
 
 # unit_test.sh
 
+# shellcheck disable=SC1091
 source "./test_framework.sh"
 
+# shellcheck disable=SC1091
 source "../modules/utility.sh"
+# shellcheck disable=SC1091
 source "../modules/memories.sh"
+# shellcheck disable=SC1091
 source "../modules/chatting.sh"
+# shellcheck disable=SC1091
 source "../modules/teleport.sh"
+# shellcheck disable=SC1091
 source "../modules/intent.sh"
 
-DEBUG=1
-QUIET=0
-USER='<player1>'
-MEM_DIR='/tmp/haltest/'
-MAX_MEM_SIZE=1024
-MAX_MEM_DIR_SIZE=$(($MAX_MEM_SIZE * 10))
+export CLINE=''
+export DEBUG=1
+export QUIET=0
+export USER='<player1>'
+export MEM_DIR='/tmp/haltest/'
+export MAX_MEM_SIZE=1024
+export MAX_MEM_DIR_SIZE=$((MAX_MEM_SIZE * 10))
 
 # tests
 #==================
 test_requirements(){
-  : ' none -> none
-  make sure all the required external programs are present
-  '
+  # : ' none -> none
+  # make sure all the required external programs are present
+  # '
   echo -n 'requirements    '
   rcpass "$(which tmux)" "tmux"
   rcpass "$(bash --version)" "version 4"
@@ -37,18 +44,18 @@ test_requirements(){
 }
 
 test_tell_joke(){
-  : ' none -> none
-  make sure tell_joke() returns a string
-  '
+  # : ' none -> none
+  # make sure tell_joke() returns a string
+  # '
   echo -n 'tell_joke       '
   scfail tell_joke ""
   test_cleanup
 }
 
 test_check_simple_math(){
-  : ' none -> none
-  make sure hc() only accepts inputs that match "hal" and $1
-  '
+  # : ' none -> none
+  # make sure hc() only accepts inputs that match "hal" and $1
+  # '
   local header="[04:52:07] [Server thread/INFO]: <Steve>"
 
   echo -n 'simple_math     '
@@ -68,9 +75,9 @@ test_check_simple_math(){
 }
 
 test_hc(){
-  : ' none -> none
-  make sure hc() only accepts inputs that match "hal" and $1
-  '
+  # : ' none -> none
+  # make sure hc() only accepts inputs that match "hal" and $1
+  # '
   echo -n 'hc              '
   declare -a arry=('hal blah' 'HAL blah blah' 'BLAH HAL' 'blah hAl blah')
   for CLINE in "${arry[@]}"; do
@@ -87,9 +94,9 @@ test_hc(){
 }
 
 test_contains(){
-  : ' none -> none
-  make sure that contains() succeeds when $1 is present in $CLINE
-  '
+  # : ' none -> none
+  # make sure that contains() succeeds when $1 is present in $CLINE
+  # '
   echo -n 'contains        '
   declare -a arry=('hal blah' 'hal blah blah' 'blah HAL' 'blah hAl blah' 'BLAH')
   for CLINE in "${arry[@]}"; do
@@ -106,9 +113,9 @@ test_contains(){
 }
 
 test_say(){
-  : ' none -> none
-  make sure say() builds "/say [Hal] <phrase>" commands correctly
-  '
+  # : ' none -> none
+  # make sure say() builds "/say [Hal] <phrase>" commands correctly
+  # '
   echo -n 'say             '
   scpass "$(say "hello there")" '/say [Hal] hello there'
   scpass "$(say "hello there $USER")" '/say [Hal] hello there <player1>'
@@ -117,9 +124,9 @@ test_say(){
 }
 
 test_tell(){
-  : ' none -> none
-  make sure tell() builds "/tell $USER <phrase>" commands correctly
-  '
+  # : ' none -> none
+  # make sure tell() builds "/tell $USER <phrase>" commands correctly
+  # '
   echo -n 'tell            '
   scpass "$(tell "hello there")" "/tell $USER hello there"
   scpass "$(tell "hello $USER there wow")" "/tell $USER hello $USER there wow"
@@ -132,9 +139,9 @@ test_tell(){
 }
 
 test_run(){
-  : ' none -> none
-  make sure run() builds "/<command>" commands correctly
-  '
+  # : ' none -> none
+  # make sure run() builds "/<command>" commands correctly
+  # '
   echo -n 'run             '
   scpass "$(run "/hello there")" "/hello there"
   scpass "$(run "/hello $USER there wow")" "/hello $USER there wow"
@@ -144,9 +151,9 @@ test_run(){
 }
 
 test_not_repeat(){
-  : ' none -> none
-  make sure that not_repeat() returns 0 if $CLINE contains output from hal.sh
-  '
+  # : ' none -> none
+  # make sure that not_repeat() returns 0 if $CLINE contains output from hal.sh
+  # '
   echo -n 'not_repeat      '
   declare -a arry=('[hal] blah' '[hal] BLAH ' 'blah [HAL]' 'blah [hAl] blah')
   for CLINE in "${arry[@]}"; do
@@ -163,9 +170,9 @@ test_not_repeat(){
 }
 
 test_random(){
-  : ' none -> none
-  make sure random() returns a selection out of the arguments
-  '
+  # : ' none -> none
+  # make sure random() returns a selection out of the arguments
+  # '
   echo -n 'random          '
   scpass "$(random 'hello')" 'hello'
   scpass "$(random 'string with spaces')" 'string with spaces'
@@ -176,9 +183,9 @@ test_random(){
 }
 
 test_random_okay(){
-  : ' none -> none
-  make sure random_okay() always returns a string
-  '
+  # : ' none -> none
+  # make sure random_okay() always returns a string
+  # '
   echo -n 'random_okay     '
   scfail "$(random_okay 'hello')" ''
   scfail "$(random_okay '')" ''
@@ -186,35 +193,35 @@ test_random_okay(){
 }
 
 test_random_musing(){
-  : ' none -> none
-  make sure random_musing() always returns a string
-  '
+  # : ' none -> none
+  # make sure random_musing() always returns a string
+  # '
   echo -n 'random_musing   '
   scfail "$(random_okay)" ''
   test_cleanup
 }
 
 test_tell_player() {
-  : ' none -> none
-  make sure random_musing() always returns a string
-  '
+  # : ' none -> none
+  # make sure random_musing() always returns a string
+  # '
   echo -n 'tell_player     '
   test_cleanup
 }
 
 test_shut_down(){
-  : ' none -> none
-  make sure shut_down() reports to the users that hal.sh is shutting down
-  '
+  # : ' none -> none
+  # make sure shut_down() reports to the users that hal.sh is shutting down
+  # '
   echo -n 'shut_down       '
   rcpass "$(shut_down)" "Hal shutting down"
   test_cleanup
 }
 
 test_hcsr(){
-  : ' none -> none
-  make sure hcsr() says $2 and runs $3 if "hal" is present in $CLINE
-  '
+  # : ' none -> none
+  # make sure hcsr() says $2 and runs $3 if "hal" is present in $CLINE
+  # '
   echo -n 'hcsr            '
   CLINE='hal whats up?'
   rcpass "$(hcsr 'whats up' 'okie doke' '/my command')" '/say [Hal] okie doke'
@@ -239,13 +246,13 @@ test_hcsr(){
 }
 
 test_go_to_dest(){
-  : ' none -> none
-  make sure that go_to_dest() can handle the following cases:
-    - hal take me to <dest in config>
-    - take me to <dest in config> hal
-    - hal take me to <player>
-    - take me to <player> hal
-  '
+  # : ' none -> none
+  # make sure that go_to_dest() can handle the following cases:
+  #   - hal take me to <dest in config>
+  #  - take me to <dest in config> hal
+  #  - hal take me to <player>
+  #  - take me to <player> hal
+  #'
   echo -n 'go_to_dest      '
   USER='player'
   CLINE='hal take me to the telehub'
@@ -290,8 +297,8 @@ test_go_to_dest(){
 }
 
 test_go_home(){
-  : ' none -> none
-  '
+  # : ' none -> none
+  # '
   echo -n 'go_home         '
   local failure="Sorry $USER, either you never told me where home was or I forgot!"
 
@@ -304,8 +311,8 @@ test_go_home(){
 }
 
 test_set_home(){
-  : ' none -> none
-  '
+  # : ' none -> none
+  # '
   echo -n 'set_home        '
   local failure="Sorry $USER, something doesn't look right with those coordinates"
 
@@ -320,8 +327,8 @@ test_set_home(){
 }
 
 test_remember_phrase(){
-  : ' none -> none
-  '
+  # : ' none -> none
+  # '
   echo -n 'remember_phrase '
   local pass="Okay $USER, I'll remember!"
 
@@ -336,8 +343,8 @@ test_remember_phrase(){
 }
 
 test_recall_phrase(){
-  : ' none -> none
-  '
+  # : ' none -> none
+  # '
   echo -n 'recall_phrase   '
   test_cleanup
 }
@@ -350,9 +357,9 @@ test_forget_phrase(){
 }
 
 test_check_intent(){
-  : ' none -> none
-  ensure that intents are triggered if the condition is met
-  '
+  # : ' none -> none
+  # ensure that intents are triggered if the condition is met
+  # '
   echo -n 'check_intent    '
   CLINE='yes hal'
   scpass "$INTENT_A" ''
@@ -404,11 +411,11 @@ test_check_intent(){
 }
 
 test_set_intent(){
-  : ' none -> none
-  make sure the intents can be set and are cycled correctly
-  newer intents push older ones down the list, dropping the last
-  if necessary
-  '
+  # : ' none -> none
+  # make sure the intents can be set and are cycled correctly
+  # newer intents push older ones down the list, dropping the last
+  # if necessary
+  # '
   echo -n 'set_intent      '
   CLINE='yes hal'
   set_intent 'yes|no' functionA
@@ -437,8 +444,8 @@ test_set_intent(){
 }
 
 test_clear_intent(){
-  : ' none -> none
-  '
+  # : ' none -> none
+  # '
   echo -n 'clear_intent      '
 
   test_cleanup
