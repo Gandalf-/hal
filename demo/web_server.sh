@@ -19,7 +19,7 @@ hal_pretty_print() {
   : ' string -> string
   Converts from hals Minecraft chat format to html format
   '
-  if ! [[ -z "${@}" ]]; then
+  if [[ "${*}" ]]; then
     local message
     message="${*}"
     message="${message//</&lt}"
@@ -197,12 +197,8 @@ main() {
 
     # determine response
     case $method in
-      GET)
-        do_get
-        ;;
-      POST)
-        do_post
-        ;;
+      GET)  do_get  ;;
+      POST) do_post ;;
     esac
   done
 }

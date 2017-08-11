@@ -95,6 +95,7 @@ ocpass(){
   # : ' none -> string
   # return code comparison, pass if command succeded
   # '
+  # shellcheck disable=SC2181
   if (( $? )); then
     fail
     echo "Return value was non-zero"
@@ -108,6 +109,7 @@ ocfail(){
   # : ' none -> string
   # return code comparison, pass if command failed
   # '
+  # shellcheck disable=SC2181
   if (( $? )); then
     pass
   else

@@ -1,8 +1,13 @@
+sudo: true
 language: bash
-sudo: required
 dist: trusty
 before_install:
+  - wget http://ftp.us.debian.org/debian/pool/main/s/shellcheck/shellcheck_0.4.6-1_i386.deb
+  - sudo dpkg -i shellcheck_0.4.6-1_i386.deb
   - sudo apt-get -qq update
-  - sudo apt-get -y install tmux inotify-tools
-before_script: make install
-script: make test
+  - sudo apt-get install -f
+  - sudo apt-get -y install tmux
+before_script: 
+  - make install
+script: 
+  - make test

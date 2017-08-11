@@ -99,13 +99,12 @@ done
 # load hal modules
 srcs=("utility.sh" "memories.sh" "chatting.sh" "teleport.sh" "intent.sh")
 for file in "${srcs[@]}"; do
-  # shellcheck disable=SC1090
-  source "${inst_dir}modules/${file}" 2>/dev/null
-
-  if (( $? )); then
+  # shellcheck disable=SC1091
+  source "${inst_dir}modules/${file}" 2>/dev/null ||
+  {
     echo "error: Cannot find module ${file}. Did you run make install?"
     exit
-  fi
+  }
 done
 
 # startup messages and set up
