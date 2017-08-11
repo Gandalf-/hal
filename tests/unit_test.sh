@@ -38,8 +38,7 @@ test_requirements(){
   echo -n 'requirements    '
   rcpass "$(which tmux)" "tmux"
   rcpass "$(bash --version)" "version 4"
-  rcpass "$(which inotifywait)" "inotifywait"
-  rcpass "$(which sed)" "sed"
+  rcpass "$(which shellcheck)" "shellcheck"
   test_cleanup
 }
 
