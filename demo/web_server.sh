@@ -8,7 +8,7 @@
 set -f -o pipefail
 umask u=rw,g=,o=
 
-readonly PORT="48000"
+readonly PORT="2095"
 readonly ROOT_DIR='/tmp/hal/demo/'
 readonly HAL_OUTPUT_FILE="${ROOT_DIR}hal_output.log"
 readonly HAL_INPUT_FILE="${ROOT_DIR}hal_input.log"
