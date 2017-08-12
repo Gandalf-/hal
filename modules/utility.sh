@@ -88,65 +88,6 @@ player_left(){
   ran_command
 }
 
-check_gamemode_actions(){
-  # : ' none -> none
-  # gamemode modifing actions
-  # '
-  hcsr 'put me in survival mode' \
-    "$(random_okay 'Remember to eat!')" \
-    "/gamemode surival ${USER}"
-
-  hcsr 'put me in creative mode' \
-    "$(random_okay)" \
-    "/gamemode creative ${USER}"
-
-  hcsr 'put me in spectator mode' \
-    "$(random_okay)" \
-    "/gamemode spectator ${USER}"
-}
-
-check_weather_actions(){
-  # : ' none -> none
-  # weather modifing actions
-  # '
-  hcsr 'make it clear' \
-    "$(random_okay 'Rain clouds begone!')" \
-    "/weather clear 600"
-
-  hcsr 'make it sunny' \
-    "$(random_okay 'Rain clouds begone!')" \
-    "/weather clear 600"
-
-  hcsr 'make it rainy' \
-    "$(random_okay 'Rain clouds inbound!')" \
-    "/weather rain 600"
-
-  hcsr 'make it day' \
-    "$(random_okay 'Sunshine on the way!')" \
-    "/time set day"
-
-  hcsr 'make it night' \
-    "$(random_okay 'Be careful!')" \
-    "/time set night"
-}
-
-check_effect_actions(){
-  # : ' none -> none
-  # player effect modifing actions
-  # '
-  hcsr 'make me healthy' \
-    "$(random_okay 'This should help you feel better')" \
-    "/effect ${USER} minecraft:instant_health 1 10"
-
-  hcsr 'make me invisible' \
-    "$(random_okay 'Not even I know where you are now!')" \
-    "/effect ${USER} minecraft:invisibility 60 5"
-
-  hcsr 'make me fast' \
-    "$(random_okay 'Gotta go fast!')" \
-    "/effect ${USER} minecraft:speed 60 5"
-}
-
 # UTILITY FUNCTIONS
 hc(){
   # : ' string -> int

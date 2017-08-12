@@ -7,7 +7,7 @@
 
 # teleport.sh
 
-check_teleport_actions(){
+hal_check_teleport_actions(){
   # : ' none -> none
   # wrapper for teleportation actions
   # '

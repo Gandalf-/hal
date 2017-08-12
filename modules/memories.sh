@@ -7,7 +7,7 @@
 
 # memories.sh
 
-check_memory_actions(){
+hal_check_memory_actions(){
   # : ' none -> none
   # check memory actions
   # '

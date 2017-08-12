@@ -21,9 +21,9 @@ clean:
 	@echo "Done"
 
 live_demo:
-	@echo "Live demo available at http://localhost:48000"
+	@echo "Live demo available at http://localhost:2095"
 	@echo "Stop with ctrl-c"
-	@cd demo && python server.py
+	@cd demo && bash web_server.sh
 
 install:
 	@mkdir -p $(install_loc)/modules/

@@ -7,7 +7,7 @@
 
 # chatting.sh
 
-check_chatting_actions(){
+hal_check_chatting_actions(){
   # : ' none -> none
   # chatting actions
   # '
