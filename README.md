@@ -9,7 +9,7 @@ Minecraft AI in Shell
 - Hal is a lightweight AI for Minecraft servers. He is intended to make running
   a server more fun! And provide an easier way for players to interact with the
   Minecraft command line too.
-- **[Live Demo](http://hal-demo.anardil.net:48000/)**
+- **[Live Demo](http://hal.anardil.net:2095/)**
 - [Article describing Hal](https://www.anardil.net/2017/hal.html)
 
 ### Example
