@@ -11,23 +11,35 @@ hal_check_weather_actions(){
   # : ' none -> none
   # weather modifing actions
   # '
-  hcsr 'make it clear' \
-    "$(random_okay 'Rain clouds begone!')" \
-    "/weather clear 600"
+  case "$CLINE" in
+    *'make it clear'*)
+      say "$(random_okay 'Rain clouds begone!')"
+      run "/weather clear 600"
+      ran_command
+      ;;
 
-  hcsr 'make it sunny' \
-    "$(random_okay 'Rain clouds begone!')" \
-    "/weather clear 600"
+    *'make it sunny'*)
+      say "$(random_okay 'Rain clouds begone!')"
+      run "/weather clear 600"
+      ran_command
+      ;;
 
-  hcsr 'make it rainy' \
-    "$(random_okay 'Rain clouds inbound!')" \
-    "/weather rain 600"
+    *'make it rainy'*)
+      say "$(random_okay 'Rain clouds inbound!')"
+      run "/weather rain 600"
+      ran_command
+      ;;
 
-  hcsr 'make it day' \
-    "$(random_okay 'Sunshine on the way!')" \
-    "/time set day"
+    *'make it day'*)
+      say "$(random_okay 'Sunshine on the way!')"
+      run "/time set day"
+      ran_command
+      ;;
 
-  hcsr 'make it night' \
-    "$(random_okay 'Be careful!')" \
-    "/time set night"
+    *'make it night'*)
+      say "$(random_okay 'Be careful!')"
+      run "/time set night"
+      ran_command
+      ;;
+  esac
 }

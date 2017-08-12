@@ -11,15 +11,23 @@ hal_check_effect_actions(){
   # : ' none -> none
   # player effect modifing actions
   # '
-  hcsr 'make me healthy' \
-    "$(random_okay 'This should help you feel better')" \
-    "/effect ${USER} minecraft:instant_health 1 10"
+  case "$CLINE" in
+    *'make me healthy'*|*'heal me'*|*'save me'*)
+      say "$(random_okay 'This should help you feel better')"
+      run "/effect ${USER} minecraft:instant_health 1 10"
+      ran_command
+      ;;
 
-  hcsr 'make me invisible' \
-    "$(random_okay 'Not even I know where you are now!')" \
-    "/effect ${USER} minecraft:invisibility 60 5"
+    *'make me invisible'*)
+      say "$(random_okay 'Not even I know where you are now!')"
+      run "/effect ${USER} minecraft:invisibility 60 5"
+      ran_command
+      ;;
 
-  hcsr 'make me fast' \
-    "$(random_okay 'Gotta go fast!')" \
-    "/effect ${USER} minecraft:speed 60 5"
+    *'make me fast'*)
+      say "$(random_okay 'Gotta go fast!')"
+      run "/effect ${USER} minecraft:speed 60 5"
+      ran_command
+      ;;
+  esac
 }

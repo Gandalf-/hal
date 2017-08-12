@@ -144,7 +144,7 @@ run(){
   # : ' string -> none
   # run a command in the server
   # '
-  if ! [[ -z "${1}" ]]; then
+  if [[ $1 ]]; then
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
     else
@@ -167,7 +167,7 @@ random(){
   # '
   local array
 
-  if ! [[ -z "${1}" ]]; then
+  if [[ $1 ]]; then
     array=("$@")
     echo "${array[$RANDOM % ${#array[@]} ]}"
   fi

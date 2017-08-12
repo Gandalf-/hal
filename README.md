@@ -10,6 +10,7 @@ Minecraft AI in Shell
   a server more fun! And provide an easier way for players to interact with the
   Minecraft command line too.
 - **[Live Demo](http://hal-demo.anardil.net:48000/)**
+- [Article describing Hal](https://www.anardil.net/2017/hal.html)
 
 ### Example
 ```
@@ -41,5 +42,10 @@ Minecraft AI in Shell
 - Run minecraft server in a `tmux` pane named 'minecraft' (case sensitive)
 - Run `~/hal.sh` from a different pane in tmux
 - Done!
+
+## Development
+- You can create your own extensions to Hal by writing a module and placing it
+  in the `modules/` folder after installation. See `modules/weather.sh` for
+  simple example.
 
 Tmux Quick Reference: https://gist.github.com/afair/3489752

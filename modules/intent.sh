@@ -14,7 +14,7 @@ check_intent(){
   # '
   local pattern function
 
-  if ! [[ -z "${INTENT_A}" ]]; then
+  if [[ $INTENT_A ]]; then
     pattern=$( cut -f 1 -d '%' <<< "${INTENT_A}" )
     function=$(cut -f 2 -d '%' <<< "${INTENT_A}" )
 
@@ -24,7 +24,7 @@ check_intent(){
       INTENT_C=''
       eval "${function}"
 
-    elif ! [[ -z "${INTENT_B}" ]]; then
+    elif [[ $INTENT_B ]]; then
       pattern=$( cut -f 1 -d '%' <<< "${INTENT_B}" )
       function=$(cut -f 2 -d '%' <<< "${INTENT_B}" )
 
@@ -33,7 +33,7 @@ check_intent(){
         INTENT_C=''
         eval "$function"
 
-      elif ! [[ -z "${INTENT_C}" ]]; then
+      elif [[ $INTENT_C ]]; then
         pattern=$( cut -f 1 -d '%' <<< "${INTENT_C}" )
         function=$(cut -f 2 -d '%' <<< "${INTENT_C}" )
 
