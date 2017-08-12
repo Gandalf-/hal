@@ -45,20 +45,8 @@ hal_check_chatting_actions(){
     *'tell '*)
       tell_player
       ;;
-    *'hello'*)
-      say "Hey there $USER!"
-      ran_command
-      ;;
-    *'hey'*)
-      say "Hello there $USER!"
-      ran_command
-      ;;
-    *'hi'*)
-      say "Howdy $USER!"
-      ran_command
-      ;;
-    *'sup'*)
-      say "Yo, what's good $USER?"
+    *'hello'*|*'hey'*|*'hi'*|*'howdy'*|*'sup'*)
+      say "$(random 'Hey there' 'Hello there' 'Howdy' 'Yo, whats good') $USER"
       ran_command
       ;;
     *'yes'*)
