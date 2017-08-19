@@ -49,15 +49,15 @@ hal_check_chatting_actions(){
       say "$(random 'Hey there' 'Hello there' 'Howdy' 'Yo, whats good') $USER"
       ran_command
       ;;
-    *'yes'*)
+    *'yes'*|*'yep'*|*'sure'*)
       say 'Ah... okay'
       ran_command
       ;;
-    *'no'*)
+    *'no'*|*'nope'*|*'bad'*)
       say 'Oh... okay'
       ran_command
       ;;
-    *'whatever'*)
+    *'whatever'*|*'nevermind'*)
       say 'Well. If you say so'
       ran_command
       ;;
@@ -97,27 +97,13 @@ random_status(){
   time="scale=6; $LIFETIME"
 
   case "$label" in
-    "millennium")
-      time=$(bc -l <<< "$time / 60 / 24 / 365 / 1000")
-      ;;
-    "years")
-      time=$(bc -l <<< "$time / 60 / 24 / 365")
-      ;;
-    "days")
-      time=$(bc -l <<< "$time / 60 / 24")
-      ;;
-    "hours")
-      time=$(bc -l <<< "$time / 60")
-      ;;
-    "seconds")
-      time=$(bc -l <<< "$time * 1")
-      ;;
-    "milliseconds")
-      time=$(bc -l <<< "$time * 100")
-      ;;
-    "nanoseconds")
-      time=$(bc -l <<< "$time * 1000000000")
-      ;;
+    "millennium")   time=$(bc -l <<< "$time / 60 / 24 / 365 / 1000")  ;;
+    "years")        time=$(bc -l <<< "$time / 60 / 24 / 365")         ;;
+    "days")         time=$(bc -l <<< "$time / 60 / 24")               ;;
+    "hours")        time=$(bc -l <<< "$time / 60")                    ;;
+    "seconds")      time=$(bc -l <<< "$time * 1")                     ;;
+    "milliseconds") time=$(bc -l <<< "$time * 100")                   ;;
+    "nanoseconds")  time=$(bc -l <<< "$time * 1000000000")            ;;
   esac
 
   say "I'm feeling $adverb $adjective! I've been alive for $time $label"
@@ -137,14 +123,15 @@ check_simple_math(){
   if hc "what's" || hc "whats" || hc "what is"; then
     if contains "$base_regex"; then
 
-      exp="$(cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs)"
-      value="$(timeout 0.5 bc -l 2>/dev/null <<< "$exp")"
+      exp="$( cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs )"
+      value="$( timeout 0.5 bc -l 2>/dev/null <<< "$exp" )"
 
-      if ! [[ -z "$value" ]]; then
+      if [[ $value ]]; then
         say "I think that's $value"
       else
         say "I'm not sure..."
       fi
+
     else
       say "I'm not sure..."
     fi
@@ -173,11 +160,11 @@ tell_player(){
   # '
   local player regex msg
 
-  player="$(cut -f 7 -d' ' <<< "${CLINE}" )"
+  player="$( cut -f 7 -d' ' <<< "${CLINE}" )"
   regex='s/[;\|{}&()$]/\\&/g'
-  msg="$(cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
+  msg="$( cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
 
-  if ! [[ -z "$player" || -z "$msg" ]]; then
+  if [[ "$player" && "$msg" ]]; then
     set_intent 'cannot' "intent_tell_player $USER $player $msg"
     say "Sure thing $USER!"
     run "/tell $player $msg"
@@ -241,3 +228,4 @@ tell_joke(){
   'What is a pigmans favorite cereal?  Golden nuggets.')"
   ran_command
 }
+

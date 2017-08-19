@@ -39,8 +39,7 @@ log_file=''
 new_hash=''
 old_hash=''
 starttime=$( date +%s )
-modules=( utility.sh memories.sh chatting.sh teleport.sh intent.sh )
-readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime modules
+readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
 # check for required programs
 # all of these are linux coreutils, but might not be present on other platforms

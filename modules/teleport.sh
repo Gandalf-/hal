@@ -70,13 +70,14 @@ go_home(){
   ycoord=$(cut -f 2 -d ' ' <<< "${homeline}" )
   zcoord=$(cut -f 3 -d ' ' <<< "${homeline}" )
 
-  if [[ -z "$xcoord" || -z "$ycoord" || -z "$zcoord" ]]; then
-    say "Sorry $USER, either you never told me where home was or I forgot!"
-
-  else
+  if [[ "$xcoord" && "$ycoord" && "$zcoord" ]]; then
     say "Off you go $USER!"
     run "/tp $USER $xcoord $ycoord $zcoord"
+
+  else
+    say "Sorry $USER, either you never told me where home was or I forgot!"
   fi
+
   ran_command
 }
 
@@ -92,12 +93,13 @@ set_home(){
   ycoord=$(cut -f 5 -d ' ' <<< "${homeline}" )
   zcoord=$(cut -f 6 -d ' ' <<< "${homeline}" )
 
-  if [[ -z "$xcoord" || -z "$ycoord" || -z "$zcoord" ]]; then
-    say "Sorry $USER, something doesn't look right with those coordinates"
-
-  else
+  if [[ "$xcoord" && "$ycoord" && "$zcoord" ]]; then
     echo "$xcoord $ycoord $zcoord" > "$MEM_DIR""$USER".home
     say "Okay $USER, I've set your home to be $xcoord $ycoord $zcoord!"
+
+  else
+    say "Sorry $USER, something doesn't look right with those coordinates"
   fi
   ran_command
 }
+

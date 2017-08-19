@@ -18,26 +18,26 @@ check_intent(){
     pattern=$( cut -f 1 -d '%' <<< "${INTENT_A}" )
     function=$(cut -f 2 -d '%' <<< "${INTENT_A}" )
 
-    if [[ "${CLINE}" =~ $pattern ]]; then
-      INTENT_A="${INTENT_B}"
-      INTENT_B="${INTENT_C}"
+    if [[ "$CLINE" =~ $pattern ]]; then
+      INTENT_A="$INTENT_B"
+      INTENT_B="$INTENT_C"
       INTENT_C=''
-      eval "${function}"
+      eval "$function"
 
     elif [[ $INTENT_B ]]; then
-      pattern=$( cut -f 1 -d '%' <<< "${INTENT_B}" )
-      function=$(cut -f 2 -d '%' <<< "${INTENT_B}" )
+      pattern=$( cut -f 1 -d '%' <<< "$INTENT_B" )
+      function=$(cut -f 2 -d '%' <<< "$INTENT_B" )
 
-      if [[ "${CLINE}" =~ $pattern ]]; then
-        INTENT_B="${INTENT_C}"
+      if [[ "$CLINE" =~ $pattern ]]; then
+        INTENT_B="$INTENT_C"
         INTENT_C=''
         eval "$function"
 
       elif [[ $INTENT_C ]]; then
-        pattern=$( cut -f 1 -d '%' <<< "${INTENT_C}" )
-        function=$(cut -f 2 -d '%' <<< "${INTENT_C}" )
+        pattern=$( cut -f 1 -d '%' <<< "$INTENT_C" )
+        function=$(cut -f 2 -d '%' <<< "$INTENT_C" )
 
-        if [[ "${CLINE}" =~ $pattern ]]; then
+        if [[ "$CLINE" =~ $pattern ]]; then
           eval "$function"
 
         else
@@ -101,3 +101,4 @@ intent_tell_player(){
  message="$(cut -f 3- -d ' ' <<< "${@}" )"
  echo "${sender}: ${message}" >> "${MEM_DIR}""${target,,}".mail
 }
+

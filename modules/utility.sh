@@ -118,39 +118,39 @@ say(){
   # : ' string -> none
   # say a phrase in the server
   # '
-  if ! (( QUIET )); then
+  (( QUIET )) || {
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/say [Hal] ${1}" Enter
     else
       debug_output "/say [Hal] ${1}"
     fi
-  fi
+  }
 }
 
 tell(){
   # : ' string -> none
   # say a phrase in the server
   # '
-  if ! (( QUIET )); then
+  (( QUIET )) || {
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/tell ${USER} ${1}" Enter
     else
       debug_output "/tell ${USER} ${1}"
     fi
-  fi
+  }
 }
 
 run(){
   # : ' string -> none
   # run a command in the server
   # '
-  if [[ $1 ]]; then
+  [[ $1 ]] && {
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
     else
       debug_output "$@"
     fi
-  fi
+  }
 }
 
 not_repeat(){
@@ -201,3 +201,4 @@ ran_command() {
   # shellcheck disable=SC2034
   RCOMMAND=1
 }
+

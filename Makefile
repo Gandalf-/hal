@@ -3,7 +3,7 @@ exec_file   = ~/hal.sh
 conf_file   = ~/.halrc
 
 all:
-	@echo "Nothing to build. Ready for make install"
+	@echo "Nothing to build. Ready for 'make install'"
 
 test:
 	@echo ">>> Unit Tests <<<"

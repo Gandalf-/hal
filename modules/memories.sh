@@ -32,17 +32,15 @@ remember_phrase(){
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  note="$(
-    grep -oih 'remember .*$' <<< "${CLINE}" |
-    sed -e "$regex")"
+  note="$( grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex" )"
 
-  if ! [[ -z "$note" ]]; then
+  if [[ $note ]]; then
     echo "$note" >> "$MEM_DIR""$USER".memories
     say "Okay $USER, I'll remember!"
 
     # check total disk usage
     memory_files=( $MEM_DIR*.memories )
-    dir_size=$(\
+    dir_size=$(
       du -c "${memory_files[@]}" 2>/dev/null | tail -n 1 | cut -f 1)
 
     if (( dir_size > MAX_MEM_DIR_SIZE )); then
@@ -75,12 +73,10 @@ recall_phrase(){
 
   url='https://en.wikipedia.org/wiki'
   regex='s/\(about\ \|\ hal$\)//gI'
-  phrase=$(
-    grep -oih 'about .*$' <<< "${CLINE}" |
-    sed -e "$regex")
+  phrase=$( grep -oih 'about .*$' <<< "${CLINE}" | sed -e "$regex" )
   mem_file="$MEM_DIR""$USER".memories
 
-  if ! [[ -z "$phrase" ]]; then
+  if [[ "$phrase" ]]; then
     # read from memory file
     if grep -qi "$phrase" "$mem_file" 2>/dev/null ; then
       say "Okay $USER, here's what I know about \"$phrase\":"
@@ -150,7 +146,7 @@ forget_phrase(){
   mem_file="$MEM_DIR""$USER".memories
   file_contents=$(cat "$mem_file")
 
-  if ! [[ -z "$phrase" ]]; then
+  if [[ "$phrase" ]]; then
     grep -iv "$phrase\|^$" <<< "$file_contents" > "$mem_file"
     say "Okay $USER, I've forgetten everything about \"$phrase!\""
 
@@ -169,3 +165,4 @@ forget_everything(){
   echo '' > "$MEM_DIR""$USER".memories
   ran_command
 }
+
