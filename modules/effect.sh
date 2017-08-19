@@ -32,3 +32,4 @@ hal_check_effect_actions(){
       ;;
   esac
 }
+
