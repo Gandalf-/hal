@@ -32,19 +32,19 @@ go_to_dest(){
   local where dest
 
   where=$(
-    grep -oih 'take me to .*$' <<< "${CLINE}" |
-    sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' |
-    cut -f 4- -d ' ')
+    grep -oih 'take me to .*$' <<< "${CLINE}" \
+    | sed -e 's/\(hal\)//gI' -e 's/^[[:space:]]*$//' -e 's/[[:space:]]*$//' \
+    | cut -f 4- -d ' ')
 
   if [[ -z "$where" ]]; then
     say "Sorry $USER, I don't know where that is!"
 
   else
     dest=$(
-      grep '\->' ~/.halrc |
-      grep -i "$where" |
-      grep -oih '\->.*$' |
-      cut -f 2- -d ' ')
+      grep '\->' ~/.halrc \
+        | grep -i "$where" \
+        | grep -oih '\->.*$' \
+        | cut -f 2- -d ' ')
 
     if [[ -z "$dest" ]]; then
       say "Okay $USER, I'll try!"

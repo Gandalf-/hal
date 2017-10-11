@@ -16,9 +16,10 @@ readonly server2client="${ROOT_DIR}server2client"
 readonly client2server="${ROOT_DIR}client2server"
 
 hal_pretty_print() {
-  : ' string -> string
-  Converts from hals Minecraft chat format to html format
-  '
+  # string -> string
+  #
+  # Converts from hals Minecraft chat format to html format
+
   if [[ "${*}" ]]; then
     local message
     message="${*}"
@@ -31,9 +32,10 @@ hal_pretty_print() {
 }
 
 do_get() {
-  : ' none -> none
-  Handles GET requests, only the specified resources are returned
-  '
+  # none -> none
+  #
+  # Handles GET requests, only the specified resources are returned
+
   echo -n "GET: ${RESOURCE}"
   case "${RESOURCE}" in
     /)
@@ -69,12 +71,14 @@ do_get() {
 }
 
 do_post() {
-  : ' none -> none
-  Handles POST requests and User -> Server -> Hal -> Server -> User formatting
-  conversions
-  '
+  # none -> none
+  #
+  # Handles POST requests and User -> Server -> Hal -> Server -> User
+  # formatting conversions
+
   echo "POST"
   local content header user_regex message_regex
+
   content="$(head -c "${CONTENT_LENGTH}" ${client2server})"
   header="[$(date +"%H:%M:%S")] [Server thread/INFO]:"
   user_regex='[A-Za-z]'
@@ -136,9 +140,10 @@ do_post() {
 }
 
 cleanup() {
-  : ' none -> none
-  kill the web server, hal instance and remove FIFOs and log files
-  '
+  # none -> none
+  #
+  # kill the web server, hal instance and remove FIFOs and log files
+
   echo ""
   echo "Stopping hal   "; kill "${HAL_PID}"
   echo "Cleaning up filesystem"; rm -rf "${ROOT_DIR}"
@@ -147,8 +152,10 @@ cleanup() {
 }
 
 main() {
-  : ' none -> none
-  '
+  # none -> none
+  #
+  # setup, start hal, run server
+
   # setup
   trap cleanup INT
   rm -rf ${ROOT_DIR}

@@ -72,9 +72,8 @@ intent_if_yes_do(){
   # evaluate a function given as an agrument if the current line contains yes,
   # sure, or okay
   # '
-  local regex
+  local regex='yes|sure|okay'
 
-  regex='yes|sure|okay'
   if [[ "${CLINE}" =~ $regex ]]; then
     eval "$@"
   fi

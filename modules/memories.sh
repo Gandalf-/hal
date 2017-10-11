@@ -32,7 +32,9 @@ remember_phrase(){
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
-  note="$( grep -oih 'remember .*$' <<< "${CLINE}" | sed -e "$regex" )"
+  note="$(
+    grep -oih 'remember .*$' <<< "${CLINE}" \
+      | sed -e "$regex" )"
 
   if [[ $note ]]; then
     echo "$note" >> "$MEM_DIR""$USER".memories
@@ -41,13 +43,16 @@ remember_phrase(){
     # check total disk usage
     memory_files=( $MEM_DIR*.memories )
     dir_size=$(
-      du -c "${memory_files[@]}" 2>/dev/null | tail -n 1 | cut -f 1)
+      du -c "${memory_files[@]}" 2>/dev/null \
+        | tail -n 1 \
+        | cut -f 1)
 
     if (( dir_size > MAX_MEM_DIR_SIZE )); then
       new_size=$(( MAX_MEM_DIR_SIZE / ${#memory_files[@]} ))
 
       for file in "${memory_files[@]}"; do
-        (( $(wc -c "$file") > new_size )) && truncate -s "$new_size" "$file"
+        (( $(wc -c "$file") > new_size )) \
+          && truncate -s "$new_size" "$file"
       done
 
     # otherwise, make sure this user isn't going over the quota
@@ -55,7 +60,8 @@ remember_phrase(){
       file="$MEM_DIR""$USER"".memories"
       file_size=$(du -c "$file" | tail -n 1 | cut -f 1)
 
-      (( file_size > MAX_MEM_SIZE )) && truncate -s "$MAX_MEM_SIZE" "$file"
+      (( file_size > MAX_MEM_SIZE )) \
+        && truncate -s "$MAX_MEM_SIZE" "$file"
     fi
 
   else
@@ -90,11 +96,11 @@ recall_phrase(){
       phrase=${phrase,,}
       phrase=${phrase^}
       reply=$(
-        curl -s "${url}/${phrase/ /_}" |
-        grep -i "<b>${phrase}" |
-        head -n 1 |
-        sed -n '/^$/!{s/\(<[^>]*>\|\[[^\]]*\)//g;p;}' |
-        head -c 300)
+        curl -s "${url}/${phrase/ /_}" \
+          | grep -i "<b>${phrase}" \
+          | head -n 1 \
+          | sed -n '/^$/!{s/\(<[^>]*>\|\[[^\]]*\)//g;p;}' \
+          | head -c 300)
 
       if [[ -z "$reply" ]]; then
         say "Sorry $USER, looks like I don't know anything about \"${phrase}\"!"
@@ -140,9 +146,9 @@ forget_phrase(){
 
   regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
   phrase=$(
-    sed -e "$regex" <<< "${CLINE}" |
-    grep -oih 'forget .*$' |
-    cut -f 2- -d ' ')
+    sed -e "$regex" <<< "${CLINE}" \
+      | grep -oih 'forget .*$' \
+      | cut -f 2- -d ' ')
   mem_file="$MEM_DIR""$USER".memories
   file_contents=$(cat "$mem_file")
 
