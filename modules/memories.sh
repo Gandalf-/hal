@@ -180,4 +180,3 @@ forget_everything(){
   echo '' > "$MEM_DIR""$USER".memories
   ran_command
 }
-

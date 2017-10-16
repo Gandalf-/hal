@@ -107,4 +107,3 @@ intent_tell_player(){
  message="$(cut -f 3- -d ' ' <<< "$@" )"
  echo "${sender}: ${message}" >> "${MEM_DIR}""${target,,}".mail
 }
-

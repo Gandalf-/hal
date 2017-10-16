@@ -108,4 +108,3 @@ set_home(){
   fi
   ran_command
 }
-
