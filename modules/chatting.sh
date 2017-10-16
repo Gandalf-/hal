@@ -8,9 +8,10 @@
 # chatting.sh
 
 hal_check_chatting_actions(){
-  # : ' none -> none
+  # none -> none
+  #
   # chatting actions
-  # '
+
   local comment
 
   case "$CLINE" in
@@ -19,60 +20,78 @@ hal_check_chatting_actions(){
       set_intent 'yes|sure' 'intent_be_quiet'
       ran_command
       ;;
+
     *'you can talk'*)
       #shellcheck disable=SC2034
       QUIET=0
       say "Hooray!"
       ran_command
       ;;
+
     *'status update'*)
       say "Active players: ${NUM_PLAYERS}"
       say "Uptime: ${LIFETIME}"
       ran_command
       ;;
+
     *'how are you'*)
       random_status
       ;;
+
     *'tell '*' joke'*)
       tell_joke
       ;;
+
     *'tell '*' about everything'*)
       recall_everything
       ;;
+
     *'tell '*' about '*)
       recall_phrase
       ;;
+
     *'tell '*)
       tell_player
       ;;
+
     *'hello'*|*'hey'*|*'hi'*|*'howdy'*|*'sup'*)
-      say "$(random 'Hey there' 'Hello there' 'Howdy' 'Yo, whats good') $USER"
+      say "$( random 'Hey there' 'Hello there' 'Howdy' 'Yo, whats good' ) $USER"
       ran_command
       ;;
+
     *'yes'*|*'yep'*|*'sure'*)
       say 'Ah... okay'
       ran_command
       ;;
+
     *'no'*|*'nope'*|*'bad'*)
       say 'Oh... okay'
       ran_command
       ;;
+
     *'whatever'*|*'nevermind'*)
       say 'Well. If you say so'
       ran_command
       ;;
+
     *'thanks'*)
       say "You're quite welcome $USER!"
       ran_command
       ;;
+
     *'turn down for what'*)
       say "Nothing! Order another round of shots!"
       ran_command
       ;;
+
     *'what'*'up'*)
-      comment="$(random \
-        'holding the world together' 'hanging out' \
-        'mind controlling a squid' 'contemplating the universe')"
+      comment="$(
+        random \
+          'holding the world together' \
+          'hanging out' \
+          'mind controlling a squid' \
+          'contemplating the universe'
+      )"
       say "Not too much $USER! Just $comment"
       ran_command
       ;;
@@ -82,9 +101,10 @@ hal_check_chatting_actions(){
 }
 
 random_status(){
-  # : ' none -> none
+  # none -> none
+  #
   # wrapper around "how are you" logic
-  # '
+
   local adverb adjective label time
 
   adverb=$(random \
@@ -111,23 +131,26 @@ random_status(){
 }
 
 check_simple_math(){
-  # : ' none -> none
+  # none -> none
+  #
   # simple math solutions of the form
   # hal what is (expr)
-  #'
+
   local base_regex regex exp value
 
   base_regex="[\(\)0-9\+\/\*\.\^\%]*"
   regex="$base_regex\|-$base_regex"
 
   if hc "what's" || hc "whats" || hc "what is"; then
+
     if contains "$base_regex"; then
 
-      exp="$( cut -d' ' -f5- <<< "$CLINE" | grep -io "$regex" | xargs )"
+      exp="$( cut -d' ' -f 5- <<< "$CLINE" | grep -io "$regex" | xargs )"
       value="$( timeout 0.5 bc -l 2>/dev/null <<< "$exp" )"
 
       if [[ $value ]]; then
         say "I think that's $value"
+
       else
         say "I'm not sure..."
       fi
@@ -140,42 +163,46 @@ check_simple_math(){
   fi
 }
 
-random_okay(){
-  # : ' string -> string
+random_okay() {
+  # string, ... -> string
+  #
   # returns a random affirmative
-  # '
-  if [[ -z "${1:-}" ]]; then
-    random \
-      'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
-  else
+
+  if [[ $1 ]]; then
     random \
       "$1" 'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
+
+  else
+    random \
+      'Okay!' 'Sure!' 'You got it!' 'Why not!' 'As you wish!' 'Done!'
   fi
 }
 
-tell_player(){
-  # : ' none -> none
+tell_player() {
+  # none -> none
+  #
   # attempts to tell a player a message, if the player isnt in the game,
   # store it until the log in again
-  # '
-  local player regex msg
 
-  player="$( cut -f 7 -d' ' <<< "${CLINE}" )"
+  local player regex message
+
   regex='s/[;\|{}&()$]/\\&/g'
-  msg="$( cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
+  player="$( cut -f 7 -d' ' <<< "${CLINE}" )"
+  message="$( cut -f 8- -d' ' <<< "${CLINE}" | sed -e "$regex" )"
 
-  if [[ "$player" && "$msg" ]]; then
-    set_intent 'cannot' "intent_tell_player $USER $player $msg"
+  if [[ "$player" && "$message" ]]; then
+    set_intent 'cannot' "intent_tell_player $USER $player $message"
     say "Sure thing $USER!"
-    run "/tell $player $msg"
+    run "/tell $player $message"
     ran_command
   fi
 }
 
 random_musing(){
-  # : ' none -> string
+  # none -> string
+  #
   # returns a random musing
-  # '
+
   random \
     'Hmm... I wonder...' 'All systems normal...' 'Counting sheep...' \
     'Just growing some trees...' 'Reorganizing clouds...' \
@@ -185,9 +212,10 @@ random_musing(){
 }
 
 tell_joke(){
-  # : ' none -> none
+  # none -> none
+  #
   # tell a random joke
-  # '
+
   say "$(random \
   'How does Steve get his exercise?  He runs around the block. ' \
   'Have you heard of the creeper that went to a party?  He had a BLAST!' \
@@ -228,4 +256,3 @@ tell_joke(){
   'What is a pigmans favorite cereal?  Golden nuggets.')"
   ran_command
 }
-

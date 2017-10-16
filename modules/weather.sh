@@ -8,9 +8,10 @@
 # weather.sh
 
 hal_check_weather_actions(){
-  # : ' none -> none
+  # none -> none
+  #
   # weather modifing actions
-  # '
+
   case "$CLINE" in
     *'make it clear'*|*'clear weather'*)
       say "$(random_okay 'Rain clouds begone!')"

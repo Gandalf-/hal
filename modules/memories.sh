@@ -8,16 +8,19 @@
 # memories.sh
 
 hal_check_memory_actions(){
-  # : ' none -> none
+  # none -> none
+  #
   # check memory actions
-  # '
+
   case "$CLINE" in
     *'remember'*)
       remember_phrase
       ;;
+
     *'forget everything'*)
       forget_everything
       ;;
+
     *'forget'*)
       forget_phrase
       ;;
@@ -25,10 +28,11 @@ hal_check_memory_actions(){
 }
 
 remember_phrase(){
-  # : ' none -> none
+  # none -> none
+  #
   # "hal remember that apples are nice"
   # parse out note to remember and write to user file
-  # '
+
   local regex note memory_files dir_size new_size file file_size
 
   regex='s/\(remember\ \|remember\ that\ \|hal$\)//gI'
@@ -71,10 +75,11 @@ remember_phrase(){
 }
 
 recall_phrase(){
-  # : ' none -> none
+  # none -> none
+  #
   # "hal tell me about apples"
   # search through user memories for related information
-  # '
+
   local regex phrase mem_file url
 
   url='https://en.wikipedia.org/wiki'
@@ -83,6 +88,7 @@ recall_phrase(){
   mem_file="$MEM_DIR""$USER".memories
 
   if [[ "$phrase" ]]; then
+
     # read from memory file
     if grep -qi "$phrase" "$mem_file" 2>/dev/null ; then
       say "Okay $USER, here's what I know about \"$phrase\":"
@@ -93,8 +99,8 @@ recall_phrase(){
 
     # fetch from wikipedia
     else
-      phrase=${phrase,,}
-      phrase=${phrase^}
+      phrase="${phrase,,}"
+      phrase="${phrase^}"
       reply=$(
         curl -s "${url}/${phrase/ /_}" \
           | grep -i "<b>${phrase}" \
@@ -124,10 +130,11 @@ recall_phrase(){
 }
 
 recall_everything(){
-  # : ' none -> none
+  # none -> none
+  #
   # "hal recall everything"
   # tell user everything in memory file
-  # '
+
   say "Okay $USER, here's everything I know for you!"
 
   while read -r line; do
@@ -138,10 +145,11 @@ recall_everything(){
 }
 
 forget_phrase(){
-  # : ' none -> none
+  # none -> none
+  #
   # "hal forget about apples"
   # remove all related phrases from user file
-  # '
+
   local regex phrase mem_file file_contents
 
   regex='s/\(\ hal\|hal\ \|about\ \|\ about\)//gI'
@@ -163,12 +171,12 @@ forget_phrase(){
 }
 
 forget_everything(){
-  # : ' none -> none
+  # none -> none
+  #
   # "hal forget everything"
   # remove all phrases from user file
-  # '
+
   say "Done $USER, I forgot everything!"
   echo '' > "$MEM_DIR""$USER".memories
   ran_command
 }
-

@@ -8,9 +8,10 @@
 # effect.sh
 
 hal_check_effect_actions(){
-  # : ' none -> none
+  # none -> none
+  #
   # player effect modifing actions
-  # '
+
   case "$CLINE" in
     *'make me healthy'*|*'heal me'*|*'save me'*)
       say "$(random_okay 'This should help you feel better')"
@@ -31,4 +32,3 @@ hal_check_effect_actions(){
       ;;
   esac
 }
-

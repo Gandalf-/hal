@@ -44,24 +44,28 @@ do_get() {
       ) > ${server2client}
       echo " OK"
       ;;
+      
     /index.html)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat index.html
       ) > ${server2client}
       echo " OK"
       ;;
+      
     /favicon.ico)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat favicon.ico
       ) > ${server2client}
       echo " OK"
       ;;
+      
     /robots.txt)
       ( echo -e "HTTP/1.1 200 OK\n"
       cat robots.txt
       ) > ${server2client}
       echo " OK"
       ;;
+      
     *)
       ( echo -e "HTTP/1.1 404 OK\n"
       ) > ${server2client}
@@ -79,8 +83,8 @@ do_post() {
   echo "POST"
   local content header user_regex message_regex
 
-  content="$(head -c "${CONTENT_LENGTH}" ${client2server})"
-  header="[$(date +"%H:%M:%S")] [Server thread/INFO]:"
+  content="$( head -c "${CONTENT_LENGTH}" ${client2server} )"
+  header="[$( date +"%H:%M:%S" )] [Server thread/INFO]:"
   user_regex='[A-Za-z]'
   message_regex='[A-Za-z0-9:\+\/\%\^\*\-\ \(\)\n]'
   echo "U -> S: \"${content}\""
@@ -88,20 +92,20 @@ do_post() {
   # log in
   local name message output
   if [[ "${content}" =~ (has joined the game) ]]; then
-    name="$(tr -cd "${user_regex}" <<< "${content// has joined the game/}")"
+    name="$( tr -cd "${user_regex}" <<< "${content// has joined the game/}" )"
     output="${header} ${name} joined the game"
 
   # log out
   elif [[ "${content}" =~ (left the game) ]]; then
-    name="$(tr -cd "${user_regex}" <<< "${content// left the game/}")"
+    name="$( tr -cd "${user_regex}" <<< "${content// left the game/}" )"
     output="${header} ${name} left the game"
 
   # chatting
   else
-    name="$(grep -o '[^%%%]*' <<< "${content}" | head -n 1 )"
-    message="$(grep -o '[^%%%]*' <<< "${content}" | tail -n +2)"
-    name="$(tr -cd "${user_regex}" <<< "${name}" )"
-    message="$(tr -cd "${message_regex}" <<< "${message}" )"
+    name="$( grep -o '[^%%%]*' <<< "${content}" | head -n 1 )"
+    message="$( grep -o '[^%%%]*' <<< "${content}" | tail -n +2 )"
+    name="$( tr -cd "${user_regex}" <<< "${name}" )"
+    message="$( tr -cd "${message_regex}" <<< "${message}" )"
     output="${header} <${name}> ${message}"
   fi
 
@@ -111,12 +115,12 @@ do_post() {
 
   # wait for hal to work, timeout after 1 second
   local timeout before_time current_time
-  timeout=$(( $(date +'%s') + 1))
-  before_time=$(stat -c '%Z' "${HAL_OUTPUT_FILE}")
+  timeout=$(( $( date +'%s' ) + 1 ))
+  before_time=$( stat -c '%Z' "${HAL_OUTPUT_FILE}" )
   current_time=$before_time
 
   while [[ "$before_time" == "$current_time" ]]; do
-    current_time=$(stat -c '%Z' $HAL_OUTPUT_FILE)
+    current_time=$( stat -c '%Z' $HAL_OUTPUT_FILE )
     (( $(date +'%s') > timeout )) && break
     sleep 0.005
     echo -n "."
@@ -125,10 +129,10 @@ do_post() {
 
   # return hal's response to user, clear output file
   local reply
-  reply="$(cat ${HAL_OUTPUT_FILE})"
+  reply="$( cat ${HAL_OUTPUT_FILE} )"
   echo "H -> S: ${reply}"
 
-  reply="$(hal_pretty_print "${reply}")"
+  reply="$( hal_pretty_print "${reply}" )"
   echo -n "" > ${HAL_OUTPUT_FILE}
   echo "S -> U: ${reply}"
 
@@ -188,13 +192,15 @@ main() {
       case "$line" in
         GET*)
           method="GET"
-          RESOURCE="$(cut -f 2 -d ' ' <<< "${line}")"
+          RESOURCE="$( cut -f 2 -d ' ' <<< "${line}" )"
           ;;
+          
         POST*)
           method="POST"
           ;;
+          
         Content-Length*)
-          CONTENT_LENGTH=$(grep -o "[0-9]*" <<< "${line}")
+          CONTENT_LENGTH=$( grep -o "[0-9]*" <<< "${line}" )
           ;;
       esac
       #echo -e "$line"

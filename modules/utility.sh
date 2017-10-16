@@ -9,9 +9,10 @@
 
 # AGGLOMERATIVE FUNCTIONS
 show_help(){
-  # : ' none -> none
+  # none -> none
+  #
   # print in game usage information
-  # '
+
   say "I'm Hal, a teenie tiny AI that will try to help you!"
   say "Here are some of the things I understand:"
   say "- thanks, yes, no, whatever, tell a joke"
@@ -27,14 +28,15 @@ show_help(){
 }
 
 player_joined(){
-  # : ' string -> int
+  # string -> int
+  #
   # greet player, make comment on number of active players,
   # and check for messages
-  # '
+
   local mfile
 
   sleep 0.1
-  say "Hey there ${USER}! Try saying \"Hal help\""
+  say "Hey there $USER! Try saying \"Hal help\""
   let NUM_PLAYERS++
 
   if (( NUM_PLAYERS == 1 )); then
@@ -49,14 +51,17 @@ player_joined(){
 
   # check for messages
   mfile="$MEM_DIR""${USER,,}".mail
-  if [[ -e "$mfile" ]]; then
-    if (( $(wc -l "$mfile" | cut -f 1 -d ' ') > 1 )); then
+
+  if file_exists "$mfile"; then
+
+    if (( $( wc -l "$mfile" | cut -f 1 -d ' ' ) > 1 )); then
       say "Looks like you have some messages!"
+
     else
       say "Looks like you have a message!"
     fi
 
-    while read -r line || [[ -n "$line" ]]; do
+    while read -r line || [[ "$line" ]]; do
       say "$line"
     done < "$mfile"
 
@@ -67,9 +72,10 @@ player_joined(){
 }
 
 player_left(){
-  # : ' none -> none
+  # none -> none
+  #
   # Say goodbye, comment on player count
-  # '
+
   say "Goodbye ${USER}! See you again soon I hope!"
   let NUM_PLAYERS--
 
@@ -90,37 +96,48 @@ player_left(){
 
 # UTILITY FUNCTIONS
 hc(){
-  # : ' string -> int
+  # string -> int
+  #
   # check if the current line contains the required text and the "hal" keyword
-  # '
+
   [[ "${CLINE}" =~ hal(.*)${1}|${1}(.*)hal ]]
 }
 
+file_exists() {
+
+  [[ -e "$1" ]]
+}
+
 contains(){
-  # : ' string -> int
+  # string -> int
+  #
   # check if the current line contains the required text
-  # '
-  [[ "${CLINE}" =~ ${1} ]]
+
+  [[ "$CLINE" =~ $1 ]]
 }
 
 debug_output(){
-  # : ' string -> none
+  # string -> none
+  #
   # sends output to correct location
-  # '
-  if [[ -e "${OUT_FILE}" ]]; then
-    echo "${@}" >> "${OUT_FILE}"
+
+  if file_exists "$OUT_FILE"; then
+    echo "$@" >> "${OUT_FILE}"
+
   else
-    echo "${@}"
+    echo "$@"
   fi
 }
 
 say(){
-  # : ' string -> none
+  # string -> none
+  #
   # say a phrase in the server
-  # '
+
   (( QUIET )) || {
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/say [Hal] ${1}" Enter
+
     else
       debug_output "/say [Hal] ${1}"
     fi
@@ -128,12 +145,14 @@ say(){
 }
 
 tell(){
-  # : ' string -> none
+  # string -> none
+  #
   # say a phrase in the server
-  # '
+
   (( QUIET )) || {
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "/tell ${USER} ${1}" Enter
+
     else
       debug_output "/tell ${USER} ${1}"
     fi
@@ -141,12 +160,14 @@ tell(){
 }
 
 run(){
-  # : ' string -> none
+  # string -> none
+  #
   # run a command in the server
-  # '
+
   [[ $1 ]] && {
     if ! (( DEBUG )); then
       tmux send-keys -t minecraft "$@" Enter
+
     else
       debug_output "$@"
     fi
@@ -154,17 +175,19 @@ run(){
 }
 
 not_repeat(){
-  # : ' none -> int
+  # none -> int
+  #
   # checks if the current line contains something from Hal
   # makes sure we dont trigger commands off of ourself
-  # '
+
   ! [[ "${CLINE}" =~ \[Hal\] ]]
 }
 
 random(){
-  # : ' any, ... -> any
+  # any, ... -> any
+  #
   # returns a randomly chosen element out of the arguments
-  # '
+
   local array
 
   if [[ $1 ]]; then
@@ -174,9 +197,10 @@ random(){
 }
 
 shut_down(){
-  # : ' none -> none
+  # none -> none
+  #
   # interrupt handler
-  # '
+
   debug_output ""
   debug_output 'Hal shutting down'
   say 'I died!'
@@ -184,9 +208,10 @@ shut_down(){
 }
 
 hcsr(){
-  # : ' string, string, string -> none
+  # string, string, string -> none
+  #
   # wrapper around check 1, say 2, run 3 logic
-  # '
+
   if hc "${1}"; then
     say "${2}"
     run "${3}"
@@ -195,10 +220,10 @@ hcsr(){
 }
 
 ran_command() {
-  # : ' none -> none
+  # none -> none
+  #
   # wrapper to set RCOMMAND
-  # '
+
   # shellcheck disable=SC2034
   RCOMMAND=1
 }
-
