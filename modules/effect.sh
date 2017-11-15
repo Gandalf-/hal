@@ -8,9 +8,10 @@
 # effect.sh
 
 hal_check_effect_actions(){
-  # : ' none -> none
+  # none -> none
+  #
   # player effect modifing actions
-  # '
+
   case "$CLINE" in
     *'make me healthy'*|*'heal me'*|*'save me'*)
       say "$(random_okay 'This should help you feel better')"
@@ -18,7 +19,7 @@ hal_check_effect_actions(){
       ran_command
       ;;
 
-    *'make me invisible'*)
+    *'make me invisible'*|*'hide me'*)
       say "$(random_okay 'Not even I know where you are now!')"
       run "/effect ${USER} minecraft:invisibility 60 5"
       ran_command

@@ -3,7 +3,7 @@ exec_file   = ~/hal.sh
 conf_file   = ~/.halrc
 
 all:
-	@echo "Nothing to build. Ready for make install"
+	@echo "Nothing to build. Ready for 'make install'"
 
 test:
 	@echo ">>> Unit Tests <<<"
@@ -20,7 +20,7 @@ clean:
 	@rm -r $(install_loc) $(exec_file) $(conf_file)
 	@echo "Done"
 
-live_demo:
+demo:
 	@echo "Live demo available at http://localhost:2095"
 	@echo "Stop with ctrl-c"
 	@cd demo && bash web_server.sh

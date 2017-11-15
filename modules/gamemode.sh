@@ -8,19 +8,27 @@
 # gamemode.sh
 
 hal_check_gamemode_actions(){
-  # : ' none -> none
+  # none -> none
+  #
   # gamemode modifing actions
-  # '
-  hcsr 'put me in survival mode' \
-    "$(random_okay 'Remember to eat!')" \
-    "/gamemode surival ${USER}"
 
-  hcsr 'put me in creative mode' \
-    "$(random_okay)" \
-    "/gamemode creative ${USER}"
+  case "$CLINE" in
+    *'put me in survival mode')
+      say "$( random_okay 'Remember to eat!' )"
+      run "/gamemode surival $USER"
+      ran_command
+      ;;
 
-  hcsr 'put me in spectator mode' \
-    "$(random_okay)" \
-    "/gamemode spectator ${USER}"
+    *'put me in creative mode'*)
+      say "$(random_okay)"
+      run "/gamemode creative $USER"
+      ran_command
+      ;;
+
+    *'put me in spectator mode'*)
+      say "$(random_okay)"
+      run "/gamemode spectator $USER"
+      ran_command
+      ;;
+  esac
 }
-

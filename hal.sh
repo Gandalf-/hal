@@ -39,8 +39,7 @@ log_file=''
 new_hash=''
 old_hash=''
 starttime=$( date +%s )
-modules=( utility.sh memories.sh chatting.sh teleport.sh intent.sh )
-readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime modules
+readonly MAX_MEM_SIZE MAX_MEM_DIR_SIZE starttime
 
 # check for required programs
 # all of these are linux coreutils, but might not be present on other platforms
@@ -78,7 +77,7 @@ elif [[ -e ~/.halrc ]]; then
 # no arguments, no halrc
 else
   echo "error: Cannot find ~/.halrc. Did you run make install?"
-  exit
+  exit 1
 fi
 
 # verify configuration
@@ -87,13 +86,13 @@ for configuration in "${inst_dir}" "${log_file}" "${MEM_DIR}"; do
   [[ "${configuration}" ]] || {
     echo "error: Configuration file is incomplete!"
     echo "       Please check ~/.halrc and make sure it reflects your system"
-    exit
+    exit 1
   }
 
   [[ -e "${configuration}" ]] || {
     echo "error: Configuration directory or file ${configuration} not found!"
     echo "       Please check ~/.halrc and make sure it reflects your system"
-    exit
+    exit 1
   }
 done
 
@@ -103,7 +102,7 @@ for module in "${inst_dir}"modules/*.sh; do
   # shellcheck disable=SC1090,SC1091
   source "${module}" 2>/dev/null || {
     echo "error: Cannot find module ${module}. Did you run make install?"
-    exit
+    exit 1
   }
 done
 
@@ -128,10 +127,10 @@ while :; do
     # preparation
     RCOMMAND=0
     CLINE="$( tail -n 1 "${log_file}" )"
-    LIFETIME=$(( $(date +%s) - starttime ))
+    LIFETIME=$(( $( date +%s ) - starttime ))
 
     # parse user name, format differs between chat and log in
-    USER="$( grep -oi '<[^ ]*>' <<< "${CLINE}" | grep -oi '[^<>]*')"
+    USER="$( grep -oi '<[^ ]*>' <<< "${CLINE}" | grep -oi '[^<>]*' )"
 
     if [[ -z ${USER} ]]; then
       if contains 'User Authenticator'; then
@@ -183,7 +182,7 @@ while :; do
 
       # not sure what to do
       if ! (( RCOMMAND )) && contains "hal"; then
-        say "$(random 'Well..?' 'Uhh..?' 'Hmm..?' 'Ehh..?' 'Oh..?')"
+        say "$( random 'Well..?' 'Uhh..?' 'Hmm..?' 'Ehh..?' 'Oh..?' )"
       fi
 
     fi # user initiated actions

@@ -17,3 +17,4 @@ while read -r file; do
 done < <(find . -name "*.sh")
 
 exit $ret
+
