@@ -37,7 +37,7 @@ player_joined(){
 
   sleep 0.1
   say "Hey there $USER! Try saying \"Hal help\""
-  let NUM_PLAYERS++
+  (( NUM_PLAYERS++ ))
 
   if (( NUM_PLAYERS == 1 )); then
     say "You're the first one here!"
@@ -77,7 +77,7 @@ player_left(){
   # Say goodbye, comment on player count
 
   say "Goodbye ${USER}! See you again soon I hope!"
-  let NUM_PLAYERS--
+  (( NUM_PLAYERS-- ))
 
   if (( NUM_PLAYERS < 0 )); then
     say "I seem to have gotten confused..."

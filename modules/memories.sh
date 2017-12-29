@@ -45,7 +45,7 @@ remember_phrase(){
     say "Okay $USER, I'll remember!"
 
     # check total disk usage
-    memory_files=( $MEM_DIR*.memories )
+    memory_files=( "$MEM_DIR"*.memories )
     dir_size=$(
       du -c "${memory_files[@]}" 2>/dev/null \
         | tail -n 1 \
@@ -161,6 +161,7 @@ forget_phrase(){
   file_contents=$(cat "$mem_file")
 
   if [[ "$phrase" ]]; then
+    # shellcheck disable=SC1117
     grep -iv "$phrase\|^$" <<< "$file_contents" > "$mem_file"
     say "Okay $USER, I've forgetten everything about \"$phrase!\""
 

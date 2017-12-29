@@ -64,7 +64,7 @@ hal_check_chatting_actions(){
       ran_command
       ;;
 
-    *'no'*|*'nope'*|*'bad'*)
+    *'no'*|*'bad'*)
       say 'Oh... okay'
       ran_command
       ;;
@@ -138,7 +138,10 @@ check_simple_math(){
 
   local base_regex regex exp value
 
+  # shellcheck disable=SC1117
   base_regex="[\(\)0-9\+\/\*\.\^\%]*"
+
+  # shellcheck disable=SC1117
   regex="$base_regex\|-$base_regex"
 
   if hc "what's" || hc "whats" || hc "what is"; then

@@ -44,35 +44,35 @@ do_get() {
   echo -n "GET: ${RESOURCE}"
   case "${RESOURCE}" in
     /)
-      ( echo -e "HTTP/1.1 200 OK\n"
+      ( echo -e "HTTP/1.1 200 OK"\\n
       cat index.html
       ) > ${server2client}
       echo " OK"
       ;;
 
     /index.html)
-      ( echo -e "HTTP/1.1 200 OK\n"
+      ( echo -e "HTTP/1.1 200 OK"\\n
       cat index.html
       ) > ${server2client}
       echo " OK"
       ;;
 
     /favicon.ico)
-      ( echo -e "HTTP/1.1 200 OK\n"
+      ( echo -e "HTTP/1.1 200 OK"\\n
       cat favicon.ico
       ) > ${server2client}
       echo " OK"
       ;;
 
     /robots.txt)
-      ( echo -e "HTTP/1.1 200 OK\n"
+      ( echo -e "HTTP/1.1 200 OK"\\n
       cat robots.txt
       ) > ${server2client}
       echo " OK"
       ;;
 
     *)
-      ( echo -e "HTTP/1.1 404 OK\n"
+      ( echo -e "HTTP/1.1 404 OK"\\n
       ) > ${server2client}
       echo " FAIL"
       ;;

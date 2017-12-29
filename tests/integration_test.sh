@@ -7,6 +7,7 @@
 
 # integration_test.sh
 
+# shellcheck disable=SC1091
 source "./test_framework.sh"
 
 source "../modules/utility.sh"
