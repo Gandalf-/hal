@@ -142,7 +142,7 @@ while :; do
 
     # check for quiet timeout
     (( QUIET > 300 )) && QUIET=0
-    (( QUIET >   0 )) && let QUIET++
+    (( QUIET >   0 )) && (( QUIET++ ))
 
     # do all intention checks
     check_intent

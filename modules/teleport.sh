@@ -71,9 +71,7 @@ go_home(){
   local homeline xcoord ycoord zcoord
 
   homeline=$(cat "$MEM_DIR""$USER".home 2>/dev/null)
-  xcoord=$(cut -f 1 -d ' ' <<< "${homeline}" )
-  ycoord=$(cut -f 2 -d ' ' <<< "${homeline}" )
-  zcoord=$(cut -f 3 -d ' ' <<< "${homeline}" )
+  read -r xcoord ycoord zcoord <<< "$homeline"
 
   if [[ "$xcoord" && "$ycoord" && "$zcoord" ]]; then
     say "Off you go $USER!"
@@ -95,9 +93,7 @@ set_home(){
   local homeline xcoord ycoord zcoord
 
   homeline=$(grep -io 'set home as .*$' <<< "${CLINE}" )
-  xcoord=$(cut -f 4 -d ' ' <<< "${homeline}" )
-  ycoord=$(cut -f 5 -d ' ' <<< "${homeline}" )
-  zcoord=$(cut -f 6 -d ' ' <<< "${homeline}" )
+  read -r _ _ _ xcoord ycoord zcoord <<< "$homeline"
 
   if [[ "$xcoord" && "$ycoord" && "$zcoord" ]]; then
     echo "$xcoord $ycoord $zcoord" > "$MEM_DIR""$USER".home
