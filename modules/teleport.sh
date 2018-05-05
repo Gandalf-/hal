@@ -93,7 +93,7 @@ set_home(){
   local homeline xcoord ycoord zcoord
 
   homeline=$(grep -io 'set home as .*$' <<< "${CLINE}" )
-  read -r _ _ _ xcoord ycoord zcoord <<< "$homeline"
+  read -r _ _ _ xcoord ycoord zcoord _ <<< "$homeline"
 
   if [[ "$xcoord" && "$ycoord" && "$zcoord" ]]; then
     echo "$xcoord $ycoord $zcoord" > "$MEM_DIR""$USER".home

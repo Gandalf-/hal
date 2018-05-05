@@ -107,6 +107,7 @@ for module in "${inst_dir}"modules/*.sh; do
 done
 
 # gather module action functions
+# shellcheck disable=SC2207
 hal_actions=( $( declare -F | cut -d' ' -f3 | grep hal_check_ ) )
 
 # startup messages and set up
