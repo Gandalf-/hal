@@ -2,8 +2,11 @@ sudo: true
 language: bash
 dist: trusty
 before_install:
-  - wget http://ftp.us.debian.org/debian/pool/main/s/shellcheck/shellcheck_0.4.6-1_i386.deb
-  - sudo dpkg -i shellcheck_0.4.6-1_i386.deb || true
+  - scversion="stable" # or "v0.4.7", or "latest"
+  - wget "https://storage.googleapis.com/shellcheck/shellcheck-$scversion.linux.x86_64.tar.xz"
+  - tar --xz -xvf "shellcheck-$scversion.linux.x86_64.tar.xz"
+  - shellcheck() { "shellcheck-$scversion/shellcheck" "$@"; }
+  - export PATH=$PATH:/shellcheck-$scversion/
   - sudo apt-get -qq update
   - sudo apt-get install -f
   - sudo apt-get -y install tmux
