@@ -16,7 +16,7 @@ readonly server2client="${ROOT_DIR}server2client"
 readonly client2server="${ROOT_DIR}client2server"
 
 for nc_prog in nc ncat; do
-  which "$nc_prog" && NC_PROG="$nc_prog"
+  command -v "$nc_prog" && NC_PROG="$nc_prog"
 done
 [[ $NC_PROG ]] || { echo "Can't find suitable nc program"; exit 1; }
 

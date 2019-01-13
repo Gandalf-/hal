@@ -47,7 +47,7 @@ progs=('tmux' 'sha1sum' 'truncate' 'tr' 'sed' 'bc' 'cut' 'grep' 'du' 'wc'
        'tail' 'curl')
 for req_prog in "${progs[@]}"; do
 
-  which "$req_prog" >/dev/null || {
+  command -v "$req_prog" >/dev/null || {
     echo "error: hal.sh requires ${req_prog} to run"
     exit 1
   }
